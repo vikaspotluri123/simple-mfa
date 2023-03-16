@@ -1,0 +1,21 @@
+{
+  "name": "@potluri/simple-mfa",
+  "version": "0.0.1",
+  "description": "MFA implementation made simple",
+  "type": "module",
+  "main": "index.js",
+  "repository": "https://github.com/vikaspotluri123/simple-mfa",
+  "author": "Vikas Potluri",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "xo": "^0.53.1"
+  },
+  "xo": {
+    "rules": {
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/consistent-type-definitions": ["error", "interface"]
+    }
+  }
+}
