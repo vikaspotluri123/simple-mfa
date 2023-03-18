@@ -23,5 +23,14 @@ export function createStrategyWrapper(config: CoercedConfig) {
 
 			return strategy.validate(storedStrategy.context, userPayload);
 		},
+
+		share(storedStrategy: SerializedAuthStrategy<unknown>) {
+			const strategy = strategyLut[storedStrategy.type];
+			if (!strategy) {
+				throw new StrategyError('Invalid strategy', false);
+			}
+
+			return strategy.share(storedStrategy);
+		},
 	};
 }

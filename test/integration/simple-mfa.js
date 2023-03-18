@@ -10,7 +10,7 @@ const instance = createSimpleMFA({strategies: DEFAULT_STRATEGIES});
 describe('Integration > SimpleMFA', () => {
 	it('OTP Strategy', () => {
 		const otpStore = instance.create('otp', 'abcd');
-		const sharedSecret = otpStore.context.split(':').pop();
+		const sharedSecret = instance.share(otpStore);
 		const currentToken = totp.generate(sharedSecret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
 	});
