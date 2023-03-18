@@ -19,6 +19,7 @@ export const OtpStrategy = {
 	create(owner_id: string, {generateId}) {
 		return {
 			id: generateId(),
+			status: 'pending',
 			owner_id,
 			context: `0:${authenticator.generateSecret()}`,
 			type: strategyName,
