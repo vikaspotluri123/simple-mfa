@@ -12,6 +12,7 @@
     "@types/node": "^18.15.3",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
+    "sinon": "^15.0.2",
     "typescript": "^4.9.5",
     "xo": "^0.53.1"
   },
@@ -23,15 +24,21 @@
         "interface"
       ]
     },
-    "overrides": [{
-      "files": ["test/**/*.js"],
-      "envs": ["mocha"],
-      "rules": {
-        "@typescript-eslint/consistent-type-definitions": "off",
-        "prefer-arrow-callback": "off",
-        "no-unused-expressions": "off"
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js"
+        ],
+        "envs": [
+          "mocha"
+        ],
+        "rules": {
+          "@typescript-eslint/consistent-type-definitions": "off",
+          "prefer-arrow-callback": "off",
+          "no-unused-expressions": "off"
+        }
       }
-    }]
+    ]
   },
   "dependencies": {
     "otplib": "^12.0.1"

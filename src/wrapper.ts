@@ -15,6 +15,15 @@ export function createStrategyWrapper(config: CoercedConfig) {
 			return strategy.create(owner, strategyConfig);
 		},
 
+		prepare(storedStrategy: SerializedAuthStrategy<unknown>) {
+			const strategy = strategyLut[storedStrategy.type];
+			if (!strategy) {
+				throw new StrategyError('Invalid strategy', false);
+			}
+
+			return strategy.prepare(storedStrategy, strategyConfig);
+		},
+
 		validate(storedStrategy: SerializedAuthStrategy<unknown>, userPayload: unknown) {
 			const strategy = strategyLut[storedStrategy.type];
 			if (!strategy) {
