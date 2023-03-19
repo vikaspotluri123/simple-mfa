@@ -4,10 +4,31 @@ import {type SerializedAuthStrategy} from './storage.js';
 type MaybePromise<T> = T | Promise<T>;
 
 export interface AuthStrategy<TAuthContext, TSharedConfig> {
+	/**
+	 * @description
+	 * A unique slug to identify this strategy. This is stored in the database and used as a lookup key.
+	 */
 	type: SerializedAuthStrategy<any>['type'];
+	/**
+	 * @description
+	 * Create a globally unique strategy for the specific user
+	 */
 	create: (owner: string, config: StrategyConfig) => SerializedAuthStrategy<TAuthContext>;
-	validate: (context: TAuthContext, untrustedPayload: unknown) => boolean | Promise<boolean>;
+	/**
+	 * @description
+	 * After the user selects to authenticate with this strategy, perform an action and respond with context
+	 * This isn't required in many scenarios, and can default to a noop.
+	 */
 	prepare: (strategy: SerializedAuthStrategy<TAuthContext>) => MaybePromise<void | string>;
+	/**
+	 * @description
+	 * Authenticate the user using this strategy based on the data they provided
+	 */
+	validate: (context: TAuthContext, untrustedPayload: unknown) => MaybePromise<boolean>;
+	/**
+	 * @description
+	 * Convert the private stored data into a user-specific public version
+	 */
 	share: (strategy: SerializedAuthStrategy<TAuthContext>) => TSharedConfig;
 }
 
