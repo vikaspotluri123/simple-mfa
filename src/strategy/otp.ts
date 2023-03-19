@@ -27,8 +27,8 @@ export const OtpStrategy = {
 		};
 	},
 	prepare: noop,
-	validate(context, untrustedPayload) {
-		const serverSecret = stripVersion(context);
+	validate(strategy, untrustedPayload) {
+		const serverSecret = stripVersion(strategy.context);
 
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Invalid client payload', true);
