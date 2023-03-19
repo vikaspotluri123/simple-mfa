@@ -67,14 +67,18 @@ export async function decryptString(key: string, encrypted: string) {
 	const [textIv, payload] = encrypted.split(':', 2);
 
 	if (!textIv || !payload) {
-		throw new StrategyError('Invalid encrypted payload', false);
+		throw new StrategyError('Unable to read token', false);
 	}
 
-	const binaryDecryptedPayload = await decrypt(
-		{name: 'AES-GCM', iv: new Uint8Array(Buffer.from(textIv, 'hex'))},
-		await memoImportKey(key),
-		Buffer.from(payload, 'hex'),
-	);
+	try {
+		const binaryDecryptedPayload = await decrypt(
+			{name: 'AES-GCM', iv: new Uint8Array(Buffer.from(textIv, 'hex'))},
+			await memoImportKey(key),
+			Buffer.from(payload, 'hex'),
+		);
 
-	return Buffer.from(binaryDecryptedPayload).toString('utf8');
+		return Buffer.from(binaryDecryptedPayload).toString('utf8');
+	} catch (error: unknown) {
+		throw new StrategyError('Unable to read token', true, {cause: error});
+	}
 }
