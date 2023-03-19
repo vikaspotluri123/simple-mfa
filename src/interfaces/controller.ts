@@ -19,7 +19,7 @@ export interface AuthStrategy<TAuthContext, TSharedConfig> {
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
 	 * This isn't required in many scenarios, and can default to a noop.
 	 */
-	prepare: (strategy: SerializedAuthStrategy<TAuthContext>) => MaybePromise<void | string>;
+	prepare: (strategy: SerializedAuthStrategy<TAuthContext>, config: StrategyConfig) => MaybePromise<void | string>;
 	/**
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided
