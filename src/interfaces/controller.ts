@@ -24,7 +24,7 @@ export interface AuthStrategy<TAuthContext, TSharedConfig> {
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided
 	 */
-	validate: (strategy: SerializedAuthStrategy<TAuthContext>, untrustedPayload: unknown) => MaybePromise<boolean>;
+	validate: (strategy: SerializedAuthStrategy<TAuthContext>, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<boolean>;
 	/**
 	 * @description
 	 * Convert the private stored data into a user-specific public version

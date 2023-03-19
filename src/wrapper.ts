@@ -21,7 +21,7 @@ export function createStrategyWrapper(config: CoercedConfig) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.validate(storedStrategy.context, userPayload);
+			return strategy.validate(storedStrategy, userPayload, strategyConfig);
 		},
 
 		share(storedStrategy: SerializedAuthStrategy<unknown>) {
