@@ -22,7 +22,16 @@
         "error",
         "interface"
       ]
-    }
+    },
+    "overrides": [{
+      "files": ["test/**/*.js"],
+      "envs": ["mocha"],
+      "rules": {
+        "@typescript-eslint/consistent-type-definitions": "off",
+        "prefer-arrow-callback": "off",
+        "no-unused-expressions": "off"
+      }
+    }]
   },
   "dependencies": {
     "otplib": "^12.0.1"
