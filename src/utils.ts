@@ -1,7 +1,8 @@
 import {Buffer} from 'node:buffer';
-import crypto, {type webcrypto} from 'node:crypto';
-import {type StrategyConfig} from './interfaces/config.js';
+import crypto from 'node:crypto';
 import {StrategyError} from './error.js';
+
+const {importKey, encrypt, decrypt} = crypto.webcrypto.subtle;
 
 export const textEncoder = new TextEncoder();
 
@@ -39,7 +40,7 @@ export class RingMap<TValue> {
 
 const keys = new RingMap<CryptoKey>();
 
-async function getKey(rawKey: string, importKey: typeof webcrypto.subtle.importKey) {
+async function memoImportKey(rawKey: string) {
 	if (keys.has(rawKey)) {
 		return keys.get(rawKey)!;
 	}
@@ -51,27 +52,27 @@ async function getKey(rawKey: string, importKey: typeof webcrypto.subtle.importK
 	return key;
 }
 
-export async function encryptString(key: string, text: string, config: StrategyConfig) {
+export async function encryptString(key: string, text: string) {
 	const iv = crypto.randomBytes(16);
-	const binaryEncryptedPayload = await config.encrypt(
+	const binaryEncryptedPayload = await encrypt(
 		{name: 'AES-GCM', iv},
-		await getKey(key, config.importKey),
+		await memoImportKey(key),
 		textEncoder.encode(text),
 	);
 
 	return `${Buffer.from(iv).toString('hex')}:${Buffer.from(binaryEncryptedPayload).toString('hex')}`;
 }
 
-export async function decryptString(key: string, encrypted: string, config: StrategyConfig) {
+export async function decryptString(key: string, encrypted: string) {
 	const [textIv, payload] = encrypted.split(':', 2);
 
 	if (!textIv || !payload) {
 		throw new StrategyError('Invalid encrypted payload', false);
 	}
 
-	const binaryDecryptedPayload = await config.decrypt(
+	const binaryDecryptedPayload = await decrypt(
 		{name: 'AES-GCM', iv: new Uint8Array(Buffer.from(textIv, 'hex'))},
-		await getKey(key, config.importKey),
+		await memoImportKey(key),
 		Buffer.from(payload, 'hex'),
 	);
 

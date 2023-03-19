@@ -25,11 +25,11 @@ export const MagicLinkStrategy = {
 	async prepare(strategy, config) {
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
-		const encryptedToken = await encryptString(strategy.context, plainTextToken, config);
+		const encryptedToken = await encryptString(strategy.context, plainTextToken);
 		await config.sendEmail(strategyName, {token: encryptedToken});
 		return 'email_sent';
 	},
-	async validate(strategy, untrustedPayload, config) {
+	async validate(strategy, untrustedPayload) {
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Unable to understand this MagicLink', true);
 		}
@@ -38,7 +38,7 @@ export const MagicLinkStrategy = {
 			throw new StrategyError('This MagicLink has already been used', true);
 		}
 
-		const decryptedToken = await decryptString(strategy.context, untrustedPayload, config);
+		const decryptedToken = await decryptString(strategy.context, untrustedPayload);
 		const [id, expiration, _] = decryptedToken.split('::');
 
 		if (id === strategy.id && Number(expiration) > Date.now()) {
