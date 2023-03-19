@@ -1,6 +1,7 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategy} from '../interfaces/controller.js';
+import {noop} from '../utils.js';
 
 const strategyName = 'otp';
 
@@ -25,6 +26,7 @@ export const OtpStrategy = {
 			type: strategyName,
 		};
 	},
+	prepare: noop,
 	validate(context, untrustedPayload) {
 		const serverSecret = stripVersion(context);
 
