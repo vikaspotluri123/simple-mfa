@@ -10,7 +10,7 @@ const expiredTokens = new RingMap();
 
 let counter = Math.floor(Math.random() * 100);
 
-export const MagicLinkStrategy = {
+export const MagicLinkStrategy: AuthStrategy<string, 0> = {
 	type: strategyName,
 	create(owner_id: string, {generateId}) {
 		const id = generateId();
@@ -51,4 +51,4 @@ export const MagicLinkStrategy = {
 	share(_) {
 		throw new StrategyError('MagicLink is not shareable', false);
 	},
-} satisfies AuthStrategy<string, 0>;
+};

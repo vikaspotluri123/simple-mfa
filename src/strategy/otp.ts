@@ -15,7 +15,7 @@ function stripVersion(context: string) {
 	return serverSecret;
 }
 
-export const OtpStrategy = {
+export const OtpStrategy: AuthStrategy<string, string> = {
 	type: strategyName,
 	create(owner_id: string, {generateId}) {
 		return {
@@ -39,4 +39,4 @@ export const OtpStrategy = {
 	share(strategy) {
 		return stripVersion(strategy.context);
 	},
-} satisfies AuthStrategy<string, string>;
+};

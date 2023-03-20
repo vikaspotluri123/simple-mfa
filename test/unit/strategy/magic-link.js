@@ -13,7 +13,7 @@ const sendEmail = sinon.stub();
 
 const config = {generateId, sendEmail};
 
-describe('Unit > MagicLink', function () {
+describe('Unit > Strategy > MagicLink', function () {
 	it('create', function () {
 		const store = MagicLinkStrategy.create(owner_id, config);
 		expect(store).to.deep.contain({
@@ -46,9 +46,9 @@ describe('Unit > MagicLink', function () {
 		});
 
 		it('does not allow duplicate uses', async function () {
-			expect(await MagicLinkStrategy.validate(store, token)).to.be.ok;
+			expect(await MagicLinkStrategy.validate(store, token, config)).to.be.ok;
 			try {
-				await MagicLinkStrategy.validate(store, token);
+				await MagicLinkStrategy.validate(store, token, config);
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
 				expect(error).to.contain({isUserFacing: true});
@@ -58,14 +58,14 @@ describe('Unit > MagicLink', function () {
 
 		it('invalid token', async function () {
 			try {
-				await MagicLinkStrategy.validate(store, 15);
+				await MagicLinkStrategy.validate(store, 15, config);
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
 				expect(error.message).to.contain('Unable to understand');
 			}
 
 			try {
-				await MagicLinkStrategy.validate(store, token.slice(5));
+				await MagicLinkStrategy.validate(store, token.slice(5), config);
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
 				expect(error.message).to.contain('Unable to read token');
@@ -75,7 +75,7 @@ describe('Unit > MagicLink', function () {
 		it('broken strategy', async function () {
 			// NOTE: this test case is **highly** unlikely
 			store.id = generateId + 'x';
-			expect(await MagicLinkStrategy.validate(store, token)).to.be.false;
+			expect(await MagicLinkStrategy.validate(store, token, config)).to.be.false;
 		});
 	});
 
