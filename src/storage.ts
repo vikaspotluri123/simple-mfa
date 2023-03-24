@@ -1,0 +1,60 @@
+import {Buffer} from 'node:buffer';
+import {webcrypto} from 'node:crypto';
+
+const KEY_USAGES: ['encrypt', 'decrypt'] = ['encrypt', 'decrypt'];
+const ALGORITHM = 'AES-GCM';
+
+const IV_BYTE_LENGTH = 16;
+const ENCODED_IV_LENGTH = IV_BYTE_LENGTH * 2; // Initialization Vector is encoded in hex, 2 characters make up 1 byte
+
+const IV_ENCODING = 'hex';
+const CYPHER_ENCODING = 'base64';
+const TEXT_ENCODING = 'utf8';
+
+Object.freeze(KEY_USAGES);
+
+export class StorageService<TKeyType extends string = string> {
+	private readonly _keys: Map<string, CryptoKey | Promise<CryptoKey>>;
+
+	constructor(keys: Record<TKeyType, string>, private readonly crypto = webcrypto) {
+		this._keys = new Map();
+		for (const [keyId, key] of Object.entries<string>(keys)) {
+			this._keys.set(keyId, this._importKey(keyId as TKeyType, key));
+		}
+	}
+
+	async decodeSecret(keyId: TKeyType, encryptedValue: string) {
+		const key = await this._keys.get(keyId)!;
+		const iv = encryptedValue.slice(0, ENCODED_IV_LENGTH);
+		const cypher = encryptedValue.slice(ENCODED_IV_LENGTH);
+
+		const binPlainText = await this.crypto.subtle.decrypt(
+			{name: ALGORITHM, iv: Buffer.from(iv, IV_ENCODING)},
+			key,
+			Buffer.from(cypher, CYPHER_ENCODING),
+		);
+
+		return Buffer.from(binPlainText).toString(TEXT_ENCODING);
+	}
+
+	async encodeSecret(keyId: TKeyType, plainText: string) {
+		const key = await this._keys.get(keyId)!;
+		const iv = this.crypto.getRandomValues(new Uint8Array(IV_BYTE_LENGTH));
+		const cypher = await this.crypto.subtle.encrypt(
+			{name: 'AES-GCM', iv},
+			key,
+			Buffer.from(plainText, TEXT_ENCODING),
+		);
+
+		return `${Buffer.from(iv).toString(IV_ENCODING)}${Buffer.from(cypher).toString(CYPHER_ENCODING)}`;
+	}
+
+	private async _importKey(keyId: TKeyType, key64: string): Promise<CryptoKey> {
+		const importedKey = await this.crypto.subtle.importKey(
+			'raw', Buffer.from(key64, 'base64'), {name: ALGORITHM}, true, KEY_USAGES,
+		);
+
+		this._keys.set(keyId, importedKey);
+		return importedKey;
+	}
+}
