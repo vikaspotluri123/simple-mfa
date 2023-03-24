@@ -1,6 +1,6 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
-import {type AuthStrategy} from '../interfaces/controller.js';
+import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {noop} from '../utils.js';
 
 const strategyName = 'otp';
@@ -15,9 +15,14 @@ function stripVersion(context: string) {
 	return serverSecret;
 }
 
-export const OtpStrategy: AuthStrategy<string, string> = {
-	type: strategyName,
-	create(owner_id: string, {generateId}) {
+type MyStrategy = AuthStrategyHelper<string>;
+type Strategy = MyStrategy['strategy'];
+type Config = MyStrategy['config'];
+
+export class OtpStrategy implements AuthStrategy<string, string> {
+	readonly type = strategyName;
+
+	create(owner_id: string, {generateId}: Config): Strategy {
 		return {
 			id: generateId(),
 			status: 'pending',
@@ -25,9 +30,13 @@ export const OtpStrategy: AuthStrategy<string, string> = {
 			context: `0:${authenticator.generateSecret()}`,
 			type: strategyName,
 		};
-	},
-	prepare: noop,
-	validate(strategy, untrustedPayload) {
+	}
+
+	prepare(_strategy: Strategy, _config: Config) {
+		// Noop
+	}
+
+	validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
 		const serverSecret = stripVersion(strategy.context);
 
 		if (typeof untrustedPayload !== 'string') {
@@ -35,8 +44,9 @@ export const OtpStrategy: AuthStrategy<string, string> = {
 		}
 
 		return totp.check(untrustedPayload, serverSecret);
-	},
-	share(strategy) {
+	}
+
+	share(strategy: Strategy) {
 		return stripVersion(strategy.context);
-	},
-};
+	}
+}

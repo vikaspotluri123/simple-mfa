@@ -1,6 +1,6 @@
 import {authenticator} from 'otplib';
 import {StrategyError} from '../error.js';
-import {type AuthStrategy} from '../interfaces/controller.js';
+import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {RingMap, decryptString, encryptString} from '../utils.js';
 
 const strategyName = 'magic-link';
@@ -10,9 +10,13 @@ const expiredTokens = new RingMap();
 
 let counter = Math.floor(Math.random() * 100);
 
-export const MagicLinkStrategy: AuthStrategy<string, 0> = {
-	type: strategyName,
-	create(owner_id: string, {generateId}) {
+type MyStrategy = AuthStrategyHelper<string>;
+type Strategy = MyStrategy['strategy'];
+type Config = MyStrategy['config'];
+
+export class MagicLinkStrategy implements AuthStrategy<string, void> {
+	readonly type = strategyName;
+	create(owner_id: string, {generateId}: Config): Strategy {
 		const id = generateId();
 		return {
 			id,
@@ -21,15 +25,17 @@ export const MagicLinkStrategy: AuthStrategy<string, 0> = {
 			owner_id,
 			context: authenticator.generateSecret(),
 		};
-	},
-	async prepare(strategy, config) {
+	}
+
+	async prepare(strategy: Strategy, config: Config) {
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
 		const encryptedToken = await encryptString(strategy.context, plainTextToken);
 		await config.sendEmail(strategyName, {token: encryptedToken});
 		return 'email_sent';
-	},
-	async validate(strategy, untrustedPayload) {
+	}
+
+	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Unable to understand this MagicLink', true);
 		}
@@ -47,8 +53,9 @@ export const MagicLinkStrategy: AuthStrategy<string, 0> = {
 		}
 
 		return false;
-	},
-	share(_) {
+	}
+
+	share(_: Strategy) {
 		throw new StrategyError('MagicLink is not shareable', false);
-	},
-};
+	}
+}

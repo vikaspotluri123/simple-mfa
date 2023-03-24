@@ -32,6 +32,11 @@ export interface AuthStrategy<TAuthContext, TSharedConfig> {
 	share: (strategy: SerializedAuthStrategy<TAuthContext>) => TSharedConfig;
 }
 
+export interface AuthStrategyHelper<TAuthContext> {
+	config: StrategyConfig;
+	strategy: SerializedAuthStrategy<TAuthContext>;
+}
+
 export type AuthStrategyValidator = (
 	strategy: SerializedAuthStrategy<unknown>, untrustedPayload: unknown
 ) => Promise<boolean>;

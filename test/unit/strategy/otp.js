@@ -12,18 +12,20 @@ const owner_id = 'owner_id';
 const generateId = () => 'rAnDOmId';
 const sendEmail = sinon.stub();
 
+const strategy = new OtpStrategy();
+
 const config = {generateId, sendEmail};
 
 describe('Unit > Strategy > OTP', function () {
-	/** @type {ReturnType<OtpStrategy['create']>} */
+	/** @type {ReturnType<strategy['create']>} */
 	let store;
 
 	function realOtp() {
-		return totp.generate(OtpStrategy.share(store));
+		return totp.generate(strategy.share(store));
 	}
 
 	beforeEach(function () {
-		store = OtpStrategy.create(owner_id, config);
+		store = strategy.create(owner_id, config);
 	});
 
 	it('create', function () {
@@ -38,19 +40,19 @@ describe('Unit > Strategy > OTP', function () {
 	});
 
 	it('prepare', async function () {
-		expect(OtpStrategy.prepare(store, config)).to.equal(undefined);
+		expect(strategy.prepare(store, config)).to.equal(undefined);
 	});
 
 	describe('validate', function () {
 		it('valid use case', function () {
-			expect(OtpStrategy.validate(store, realOtp(), config)).to.be.ok;
+			expect(strategy.validate(store, realOtp(), config)).to.be.ok;
 		});
 
 		it('invalid OTP', async function () {
-			expect(await OtpStrategy.validate(store, '000-000', config)).to.be.false;
+			expect(await strategy.validate(store, '000-000', config)).to.be.false;
 
 			try {
-				await OtpStrategy.validate(store, 15, config);
+				await strategy.validate(store, 15, config);
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
 				expect(error.message).to.contain('Invalid client payload');
@@ -62,7 +64,7 @@ describe('Unit > Strategy > OTP', function () {
 			store.context = store.context.replace('0:', '-1:');
 
 			try {
-				await OtpStrategy.validate(store, realOtp(), config);
+				await strategy.validate(store, realOtp(), config);
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
 				expect(error).to.be.an.instanceof(StrategyError);
@@ -72,6 +74,6 @@ describe('Unit > Strategy > OTP', function () {
 	});
 
 	it('share', function () {
-		expect(OtpStrategy.share(OtpStrategy.create(owner_id, config))).to.be.a('string').with.length(16);
+		expect(strategy.share(strategy.create(owner_id, config))).to.be.a('string').with.length(16);
 	});
 });
