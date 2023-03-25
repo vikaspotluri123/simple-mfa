@@ -36,7 +36,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.create(owner, config) as NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>;
+			return strategy.create(owner, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
 		},
 
 		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>) {
@@ -65,7 +65,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.share(storedStrategy) as ShareType<TStrategies[TStrategy]>;
+			return strategy.share(storedStrategy) as MaybePromise<ShareType<TStrategies[TStrategy]>>;
 		},
 	};
 }

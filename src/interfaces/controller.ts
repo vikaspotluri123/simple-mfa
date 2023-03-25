@@ -13,7 +13,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Create a globally unique strategy for the specific user
 	 */
-	create: (owner: string, config: StrategyConfig) => SerializedAuthStrategy<TStrategies, TAuthContext>;
+	create: (owner: string, config: StrategyConfig) => MaybePromise<SerializedAuthStrategy<TStrategies, TAuthContext>>;
 	/**
 	 * @description
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
@@ -33,7 +33,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Convert the private stored data into a user-specific public version
 	 */
-	share: (strategy: SerializedAuthStrategy<TStrategies, TAuthContext>) => TSharedConfig;
+	share: (strategy: SerializedAuthStrategy<TStrategies, TAuthContext>) => MaybePromise<TSharedConfig>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {
