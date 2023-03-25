@@ -1,18 +1,9 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
+import {type StorageService} from '../storage.js';
 
 const strategyName = 'otp';
-
-function stripVersion(context: string) {
-	const [version, serverSecret] = context.split(':');
-
-	if (version !== '0') {
-		throw new StrategyError('Invalid server secret: unknown version', false);
-	}
-
-	return serverSecret;
-}
 
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
@@ -20,13 +11,22 @@ type Config = MyStrategy['config'];
 
 export class OtpStrategy implements AuthStrategy<string, string, void> {
 	static readonly type = strategyName;
+	#lastDecryptedSecretCypher?: string;
+	#lastDecryptedSecretPlain?: string;
 
-	create(owner_id: string, {generateId}: Config): Strategy {
+	constructor(private readonly _storageService: StorageService) {}
+
+	async create(owner_id: string, {generateId}: Config): Promise<Strategy> {
+		const plainText = authenticator.generateSecret();
+		const context = await this._storageService.encodeSecret('otp', plainText);
+		this.#lastDecryptedSecretPlain = plainText;
+		this.#lastDecryptedSecretCypher = context;
+
 		return {
 			id: generateId(),
 			status: 'pending',
 			owner_id,
-			context: `0:${authenticator.generateSecret()}`,
+			context,
 			type: strategyName,
 		};
 	}
@@ -35,17 +35,29 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 		// Noop
 	}
 
-	validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
-		const serverSecret = stripVersion(strategy.context);
-
+	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Invalid client payload', true);
 		}
 
-		return totp.check(untrustedPayload, serverSecret);
+		const serverMemorySecret = await this._decode(strategy.context);
+
+		return totp.check(untrustedPayload, serverMemorySecret);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/promise-function-async
 	share(strategy: Strategy) {
-		return stripVersion(strategy.context);
+		return this._decode(strategy.context);
+	}
+
+	private async _decode(secret: string) {
+		if (this.#lastDecryptedSecretCypher === secret) {
+			return this.#lastDecryptedSecretPlain!;
+		}
+
+		const plainText = await this._storageService.decodeSecret(OtpStrategy.type, secret);
+		this.#lastDecryptedSecretCypher = secret;
+		this.#lastDecryptedSecretPlain = plainText;
+		return plainText;
 	}
 }

@@ -4,34 +4,35 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {totp} from 'otplib';
 import {createSimpleMFA} from '../../dist/index.js';
-import {DEFAULT_STRATEGIES} from '../../dist/default-strategies.js';
+import {defaultStrategies} from '../../dist/default-strategies.js';
+import {MockedStorageService} from '../fixtures/storage.js';
 
 const sendEmail = sinon.stub();
 
 const instance = createSimpleMFA({
-	strategies: DEFAULT_STRATEGIES,
+	strategies: defaultStrategies(new MockedStorageService()),
 	sendEmail,
 });
 
 /** @type {import('../../dist/interfaces/storage.js').SerializedAuthStrategy[]} */
-const mockDatabase = [
+const mockDatabase = await Promise.all([
 	instance.create('otp', 'abcd'),
 	instance.create('magic-link', 'abcd'),
 	instance.create('otp', 'bcde'),
 	instance.create('otp', 'cdef'),
 	instance.create('magic-link', 'defg'),
-];
+]);
 
 describe('Integration > SimpleMFA', function () {
-	it('OTP Strategy', function () {
-		const otpStore = instance.create('otp', 'abcd');
-		const sharedSecret = instance.share(otpStore);
+	it('OTP Strategy', async function () {
+		const otpStore = await instance.create('otp', 'abcd');
+		const sharedSecret = await instance.share(otpStore);
 		const currentToken = totp.generate(sharedSecret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
 	});
 
 	it('MagicLink Strategy', async function () {
-		const magicLinkStore = instance.create('magic-link', 'abcd');
+		const magicLinkStore = await instance.create('magic-link', 'abcd');
 		/** @type {'email_sent'} */
 		const response = await instance.prepare(magicLinkStore);
 

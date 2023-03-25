@@ -5,6 +5,7 @@ import {expect} from 'chai';
 import {totp} from 'otplib';
 import {OtpStrategy} from '../../../dist/strategy/otp.js';
 import {StrategyError} from '../../../dist/error.js';
+import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase
 const owner_id = 'owner_id';
@@ -12,23 +13,24 @@ const owner_id = 'owner_id';
 const generateId = () => 'rAnDOmId';
 const sendEmail = sinon.stub();
 
-const strategy = new OtpStrategy();
+const storageService = new MockedStorageService();
+const strategy = new OtpStrategy(storageService);
 
 const config = {generateId, sendEmail};
 
 describe('Unit > Strategy > OTP', function () {
-	/** @type {ReturnType<strategy['create']>} */
+	/** @type {Awaited<ReturnType<strategy['create']>>} */
 	let store;
 
-	function realOtp() {
-		return totp.generate(strategy.share(store));
+	async function realOtp() {
+		return totp.generate(await strategy.share(store));
 	}
 
-	beforeEach(function () {
-		store = strategy.create(owner_id, config);
+	beforeEach(async function () {
+		store = await strategy.create(owner_id, config);
 	});
 
-	it('create', function () {
+	it('create', async function () {
 		expect(store).to.deep.contain({
 			id: generateId(),
 			type: 'otp',
@@ -36,7 +38,9 @@ describe('Unit > Strategy > OTP', function () {
 			owner_id, // eslint-disable-line camelcase
 		});
 
-		expect(store.context).to.be.a('string').with.length(18);
+		expect(store.context).to.be.a('string').and.with.length.greaterThan(16);
+		const decrypted = await storageService.decodeSecret(OtpStrategy.type, store.context);
+		expect(decrypted).to.have.length(16);
 	});
 
 	it('prepare', async function () {
@@ -58,22 +62,11 @@ describe('Unit > Strategy > OTP', function () {
 				expect(error.message).to.contain('Invalid client payload');
 			}
 		});
-
-		it('broken strategy', async function () {
-			// NOTE: this test case is **highly** unlikely
-			store.context = store.context.replace('0:', '-1:');
-
-			try {
-				await strategy.validate(store, realOtp(), config);
-				expect(false, 'should have thrown').to.be.true;
-			} catch (error) {
-				expect(error).to.be.an.instanceof(StrategyError);
-				expect(error.message).to.contain('unknown version');
-			}
-		});
 	});
 
-	it('share', function () {
-		expect(strategy.share(strategy.create(owner_id, config))).to.be.a('string').with.length(16);
+	it('share', async function () {
+		expect(
+			await strategy.share(await strategy.create(owner_id, config)),
+		).to.be.a('string').with.length(16);
 	});
 });
