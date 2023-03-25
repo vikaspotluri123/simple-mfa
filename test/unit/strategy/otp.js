@@ -62,11 +62,26 @@ describe('Unit > Strategy > OTP', function () {
 				expect(error.message).to.contain('Invalid client payload');
 			}
 		});
+
+		it('invalid secret (not likely)', async function () {
+			const validOtp = await realOtp();
+			store.context = store.context.slice(0, -5);
+			expect(await strategy.validate(store, validOtp, config)).to.be.false;
+		});
 	});
 
 	it('share', async function () {
 		expect(
 			await strategy.share(await strategy.create(owner_id, config)),
 		).to.be.a('string').with.length(16);
+
+		store.context = store.context.slice(0, -5);
+
+		try {
+			await strategy.share(store);
+			expect(false, 'should have thrown').to.be.true;
+		} catch (error) {
+			expect(error).to.be.an.instanceOf(StrategyError);
+		}
 	});
 });
