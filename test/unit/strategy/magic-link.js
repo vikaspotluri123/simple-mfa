@@ -64,18 +64,13 @@ describe('Unit > Strategy > MagicLink', function () {
 
 		it('invalid token', async function () {
 			try {
-				await strategy.validate(store, 15, config);
+				expect(await strategy.validate(store, 15, config)).to.be.false;
 				expect(false, 'should have thrown').to.be.true;
 			} catch (error) {
-				expect(error.message).to.contain('Unable to understand');
+				expect(error.message).to.contain('Unable to understand this MagicLink');
 			}
 
-			try {
-				await strategy.validate(store, token.slice(5), config);
-				expect(false, 'should have thrown').to.be.true;
-			} catch (error) {
-				expect(error.message).to.contain('Unable to read token');
-			}
+			expect(await strategy.validate(store, token.slice(5), config)).to.be.false;
 		});
 
 		it('broken strategy', async function () {

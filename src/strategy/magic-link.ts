@@ -48,6 +48,10 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 		}
 
 		const decrypted = await this._storageService.decodeSecret(strategyName, untrustedPayload);
+		if (!decrypted) {
+			return false;
+		}
+
 		const [id, expiration, _] = decrypted.split('::');
 
 		if (id === strategy.id && Number(expiration) > Date.now()) {

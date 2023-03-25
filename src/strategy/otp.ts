@@ -42,12 +42,21 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 
 		const serverMemorySecret = await this._decode(strategy.context);
 
+		if (!serverMemorySecret) {
+			return false;
+		}
+
 		return totp.check(untrustedPayload, serverMemorySecret);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/promise-function-async
-	share(strategy: Strategy) {
-		return this._decode(strategy.context);
+	async share(strategy: Strategy) {
+		const decoded = await this._decode(strategy.context);
+
+		if (!decoded) {
+			throw new StrategyError('Unable to extract secret', false);
+		}
+
+		return decoded;
 	}
 
 	private async _decode(secret: string) {
@@ -56,6 +65,10 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 		}
 
 		const plainText = await this._storageService.decodeSecret(OtpStrategy.type, secret);
+		if (!plainText) {
+			return null;
+		}
+
 		this.#lastDecryptedSecretCypher = secret;
 		this.#lastDecryptedSecretPlain = plainText;
 		return plainText;

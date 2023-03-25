@@ -24,17 +24,22 @@ export class StorageService<TKeyType extends string = string> {
 	}
 
 	async decodeSecret(keyId: TKeyType, encryptedValue: string) {
+		// NOTE: We intentionally allow key retrieval to throw an exception - if we're not able to get the key,
+		// it's a big issue that shouldn't be suppressed.
 		const key = await this._keys.get(keyId)!;
 		const iv = encryptedValue.slice(0, ENCODED_IV_LENGTH);
 		const cypher = encryptedValue.slice(ENCODED_IV_LENGTH);
 
-		const binPlainText = await this.crypto.subtle.decrypt(
-			{name: ALGORITHM, iv: Buffer.from(iv, IV_ENCODING)},
-			key,
-			Buffer.from(cypher, CYPHER_ENCODING),
-		);
-
-		return Buffer.from(binPlainText).toString(TEXT_ENCODING);
+		try {
+			const binPlainText = await this.crypto.subtle.decrypt(
+				{name: ALGORITHM, iv: Buffer.from(iv, IV_ENCODING)},
+				key,
+				Buffer.from(cypher, CYPHER_ENCODING),
+			);
+			return Buffer.from(binPlainText).toString(TEXT_ENCODING);
+		} catch {
+			return null;
+		}
 	}
 
 	async encodeSecret(keyId: TKeyType, plainText: string) {
