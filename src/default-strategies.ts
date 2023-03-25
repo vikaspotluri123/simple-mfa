@@ -5,6 +5,6 @@ import {OtpStrategy} from './strategy/otp.js';
 export function defaultStrategies(storageService: StorageService) {
 	return {
 		[OtpStrategy.type]: new OtpStrategy(storageService),
-		[MagicLinkStrategy.type]: new MagicLinkStrategy(),
+		[MagicLinkStrategy.type]: new MagicLinkStrategy(storageService),
 	};
 }

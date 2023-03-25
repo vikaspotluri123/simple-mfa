@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 import {MagicLinkStrategy} from '../../../dist/strategy/magic-link.js';
 import {StrategyError} from '../../../dist/error.js';
+import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase
 const owner_id = 'owner_id';
@@ -11,7 +12,7 @@ const owner_id = 'owner_id';
 const generateId = () => 'rAnDOmId';
 const sendEmail = sinon.stub();
 
-const strategy = new MagicLinkStrategy();
+const strategy = new MagicLinkStrategy(new MockedStorageService());
 
 const config = {generateId, sendEmail};
 
@@ -25,7 +26,7 @@ describe('Unit > Strategy > MagicLink', function () {
 			owner_id, // eslint-disable-line camelcase
 		});
 
-		expect(store.context).to.be.a('string').with.length(16);
+		expect(store.context).to.be.undefined;
 	});
 
 	it('prepare', async function () {

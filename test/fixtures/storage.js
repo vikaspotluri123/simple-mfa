@@ -4,6 +4,7 @@ export class MockedStorageService extends StorageService {
 	constructor() {
 		super({
 			otp: 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
+			'magic-link': 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
 		});
 	}
 }
