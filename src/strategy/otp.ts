@@ -18,7 +18,7 @@ type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-export class OtpStrategy implements AuthStrategy<string, string> {
+export class OtpStrategy implements AuthStrategy<string, string, void> {
 	static readonly type = strategyName;
 
 	create(owner_id: string, {generateId}: Config): Strategy {

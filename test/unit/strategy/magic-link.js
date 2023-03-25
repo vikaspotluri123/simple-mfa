@@ -30,7 +30,10 @@ describe('Unit > Strategy > MagicLink', function () {
 
 	it('prepare', async function () {
 		const store = strategy.create(owner_id, config);
-		expect(await strategy.prepare(store, config)).to.equal('email_sent');
+		// Explicitly type the response to make sure it aligns
+		/** @type {'email_sent'} */
+		const prepareResponse = await strategy.prepare(store, config);
+		expect(prepareResponse).to.equal('email_sent');
 		expect(sendEmail.calledOnce).to.be.true;
 	});
 

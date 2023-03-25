@@ -1,9 +1,14 @@
 import {type StrategyConfig} from './config.js';
 import {type SerializedAuthStrategy} from './storage.js';
 
-type MaybePromise<T> = T | Promise<T>;
+export type MaybePromise<T> = T | Promise<T>;
 
-export interface AuthStrategy<TAuthContext, TSharedConfig, TStrategies extends string = string> {
+export interface AuthStrategy<
+	TAuthContext,
+	TSharedConfig,
+	TPrepareResponse extends string | void,
+	TStrategies extends string = string,
+> {
 	/**
 	 * @description
 	 * Create a globally unique strategy for the specific user
@@ -14,12 +19,16 @@ export interface AuthStrategy<TAuthContext, TSharedConfig, TStrategies extends s
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
 	 * This isn't required in many scenarios, and can default to a noop.
 	 */
-	prepare: (strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, config: StrategyConfig) => MaybePromise<void | string>;
+	prepare: (
+		strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, config: StrategyConfig,
+	) => MaybePromise<TPrepareResponse>;
 	/**
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided
 	 */
-	validate: (strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<boolean>;
+	validate: (
+		strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, untrustedPayload: unknown, config: StrategyConfig
+	) => MaybePromise<boolean>;
 	/**
 	 * @description
 	 * Convert the private stored data into a user-specific public version

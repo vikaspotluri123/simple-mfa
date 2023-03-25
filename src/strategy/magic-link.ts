@@ -14,7 +14,7 @@ type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-export class MagicLinkStrategy implements AuthStrategy<string, void> {
+export class MagicLinkStrategy implements AuthStrategy<string, never, 'email_sent'> {
 	static readonly type = strategyName;
 	create(owner_id: string, {generateId}: Config): Strategy {
 		const id = generateId();
@@ -32,7 +32,7 @@ export class MagicLinkStrategy implements AuthStrategy<string, void> {
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
 		const encryptedToken = await encryptString(strategy.context, plainTextToken);
 		await config.sendEmail(strategyName, {token: encryptedToken});
-		return 'email_sent';
+		return 'email_sent' as const;
 	}
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
@@ -55,7 +55,7 @@ export class MagicLinkStrategy implements AuthStrategy<string, void> {
 		return false;
 	}
 
-	share(_: Strategy) {
+	share(_: Strategy): never {
 		throw new StrategyError('MagicLink is not shareable', false);
 	}
 }

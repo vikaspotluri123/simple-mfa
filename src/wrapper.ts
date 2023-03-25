@@ -1,15 +1,18 @@
 import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
-import {type AuthStrategy} from './interfaces/controller.js';
+import {type MaybePromise, type AuthStrategy} from './interfaces/controller.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 
-type NarrowSerializedFromStrategy<TStrategy extends AuthStrategy<any, any>, TNarrowStrategies extends string> =
-	TStrategy extends AuthStrategy<infer AuthContext, any>
+type NarrowSerializedFromStrategy<TStrategy extends AuthStrategy<any, any, any>, TNarrowStrategies extends string> =
+	TStrategy extends AuthStrategy<infer AuthContext, any, any>
 		? SerializedAuthStrategy<TNarrowStrategies, AuthContext>
 		: never;
 
-type ShareType<TStrategy extends AuthStrategy<any, any>> =
-	TStrategy extends AuthStrategy<any, infer ShareContext> ? ShareContext : never;
+type ShareType<TStrategy extends AuthStrategy<any, any, any>> =
+	TStrategy extends AuthStrategy<any, infer ShareContext, any> ? ShareContext : never;
+
+type PrepareType<TStrategy extends AuthStrategy<any, any, any>> =
+	TStrategy extends AuthStrategy<any, any, infer Prepare> ? Prepare : never;
 
 export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
 	internalConfig: InternalSimpleMfaConfig<TStrategies>,
@@ -34,7 +37,8 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.prepare(storedStrategy, config);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return strategy.prepare(storedStrategy, config) as MaybePromise<PrepareType<TStrategies[TStrategy]>>;
 		},
 
 		validate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
