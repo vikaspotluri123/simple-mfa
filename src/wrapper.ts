@@ -22,6 +22,14 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 	type Strategy = keyof TStrategies;
 
 	return {
+		coerce(storedStrategy: SerializedAuthStrategy<any>): SerializedAuthStrategy<Strategy & string> {
+			if (storedStrategy.type in strategies) {
+				return storedStrategy as SerializedAuthStrategy<Strategy & string>;
+			}
+
+			throw new StrategyError('Invalid strategy', false);
+		},
+
 		create<TStrategy extends Strategy>(type: TStrategy, owner: string) {
 			const strategy = strategies[type];
 			if (!strategy) {
