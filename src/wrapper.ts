@@ -1,5 +1,5 @@
 import {StrategyError} from './error.js';
-import {type UntypedStrategyRecord, type CoercedConfig} from './interfaces/config.js';
+import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
 import {type AuthStrategy} from './interfaces/controller.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 
@@ -11,41 +11,43 @@ type NarrowSerializedFromStrategy<TStrategy extends AuthStrategy<any, any>, TNar
 type ShareType<TStrategy extends AuthStrategy<any, any>> =
 	TStrategy extends AuthStrategy<any, infer ShareContext> ? ShareContext : never;
 
-export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(config: CoercedConfig<TStrategies>) {
-	const {strategyConfig, strategies: strategyLut} = config;
+export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
+	internalConfig: InternalSimpleMfaConfig<TStrategies>,
+) {
+	const {config, strategies} = internalConfig;
 
 	type Strategy = keyof TStrategies;
 
 	return {
 		create<TStrategy extends Strategy>(type: TStrategy, owner: string) {
-			const strategy = strategyLut[type];
+			const strategy = strategies[type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.create(owner, strategyConfig) as NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>;
+			return strategy.create(owner, config) as NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>;
 		},
 
 		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>) {
-			const strategy = strategyLut[storedStrategy.type];
+			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.prepare(storedStrategy, strategyConfig);
+			return strategy.prepare(storedStrategy, config);
 		},
 
 		validate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
-			const strategy = strategyLut[storedStrategy.type];
+			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.validate(storedStrategy, userPayload, strategyConfig);
+			return strategy.validate(storedStrategy, userPayload, config);
 		},
 
 		share<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>) {
-			const strategy = strategyLut[storedStrategy.type];
+			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}

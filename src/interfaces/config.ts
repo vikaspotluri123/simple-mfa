@@ -4,7 +4,7 @@ export type UntypedStrategyRecord = Record<string, AuthStrategy<any, any>>;
 
 export interface CreateSimpleMfaConfig<TStrategies = UntypedStrategyRecord> {
 	generateId: () => string;
-	sendEmail?: (context: string, variables: Record<string, string>) => Promise<void>;
+	sendEmail: (context: string, variables: Record<string, string>) => Promise<void>;
 	strategies: TStrategies;
 }
 
@@ -15,7 +15,7 @@ export type SimpleMfaConfig<
 
 export type StrategyConfig = Required<Omit<CreateSimpleMfaConfig, 'strategies'>>;
 
-export interface CoercedConfig<TStrategies = UntypedStrategyRecord> {
-	strategyConfig: StrategyConfig;
+export interface InternalSimpleMfaConfig<TStrategies = UntypedStrategyRecord> {
+	config: StrategyConfig;
 	strategies: TStrategies;
 }

@@ -1,10 +1,10 @@
 import {webcrypto} from 'node:crypto';
 import {StrategyError} from './error.js';
-import {type SimpleMfaConfig, type CoercedConfig} from './interfaces/config.js';
+import {type SimpleMfaConfig, type InternalSimpleMfaConfig} from './interfaces/config.js';
 
 const DEFAULT_ID_GENERATOR = webcrypto.randomUUID;
 
-export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): CoercedConfig<TStrategies> {
+export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): InternalSimpleMfaConfig<TStrategies> {
 	const {
 		generateId = DEFAULT_ID_GENERATOR,
 		sendEmail = () => {
@@ -14,7 +14,7 @@ export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): Coerc
 	} = config;
 
 	return {
-		strategyConfig: {generateId, sendEmail},
+		config: {generateId, sendEmail},
 		strategies,
 	};
 }
