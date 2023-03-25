@@ -1,8 +1,8 @@
 
-export interface SerializedAuthStrategy<TContext> {
+export interface SerializedAuthStrategy<TTypes extends string, TContext = any> {
 	id: string;
 	owner_id: string;
-	type: 'otp' | 'magic-link' | 'web-authn';
+	type: TTypes;
 	status: 'pending' | 'active' | 'disabled';
 	context: TContext;
 }

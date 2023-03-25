@@ -15,7 +15,7 @@ type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 export class MagicLinkStrategy implements AuthStrategy<string, void> {
-	readonly type = strategyName;
+	static readonly type = strategyName;
 	create(owner_id: string, {generateId}: Config): Strategy {
 		const id = generateId();
 		return {

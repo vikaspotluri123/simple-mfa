@@ -1,7 +1,6 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
-import {noop} from '../utils.js';
 
 const strategyName = 'otp';
 
@@ -20,7 +19,7 @@ type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 export class OtpStrategy implements AuthStrategy<string, string> {
-	readonly type = strategyName;
+	static readonly type = strategyName;
 
 	create(owner_id: string, {generateId}: Config): Strategy {
 		return {
