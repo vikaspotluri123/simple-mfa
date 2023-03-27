@@ -5,6 +5,7 @@ export class MockedStorageService extends StorageService {
 		super({
 			otp: 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
 			'magic-link': 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
+			'backup-code': 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
 		});
 	}
 }

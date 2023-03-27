@@ -54,6 +54,11 @@ export class StorageService<TKeyType extends string = string> {
 		return `${Buffer.from(iv).toString(IV_ENCODING)}${Buffer.from(cypher).toString(CYPHER_ENCODING)}`;
 	}
 
+	generateSecret(bytes: number) {
+		const response = new Uint8Array(bytes);
+		return this.crypto.getRandomValues(response);
+	}
+
 	private async _importKey(keyId: TKeyType, key64: string): Promise<CryptoKey> {
 		const importedKey = await this.crypto.subtle.importKey(
 			'raw', Buffer.from(key64, 'base64'), {name: ALGORITHM}, true, KEY_USAGES,
