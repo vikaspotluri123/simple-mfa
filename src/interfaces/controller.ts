@@ -8,32 +8,29 @@ export interface AuthStrategy<
 	TSharedConfig,
 	TPrepareResponse extends string | void,
 	TStrategies extends string = string,
+	TInternalStrategy = SerializedAuthStrategy<TStrategies, TAuthContext>,
 > {
 	/**
 	 * @description
 	 * Create a globally unique strategy for the specific user
 	 */
-	create: (owner: string, config: StrategyConfig) => MaybePromise<SerializedAuthStrategy<TStrategies, TAuthContext>>;
+	create: (owner: string, config: StrategyConfig) => MaybePromise<TInternalStrategy>;
 	/**
 	 * @description
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
 	 * This isn't required in many scenarios, and can default to a noop.
 	 */
-	prepare: (
-		strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, config: StrategyConfig,
-	) => MaybePromise<TPrepareResponse>;
+	prepare: (strategy: TInternalStrategy, config: StrategyConfig) => MaybePromise<TPrepareResponse>;
 	/**
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided
 	 */
-	validate: (
-		strategy: SerializedAuthStrategy<TStrategies, TAuthContext>, untrustedPayload: unknown, config: StrategyConfig
-	) => MaybePromise<boolean>;
+	validate: (strategy: TInternalStrategy, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<boolean>;
 	/**
 	 * @description
 	 * Convert the private stored data into a user-specific public version
 	 */
-	share: (strategy: SerializedAuthStrategy<TStrategies, TAuthContext>) => MaybePromise<TSharedConfig>;
+	share: (strategy: TInternalStrategy) => MaybePromise<TSharedConfig>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {
