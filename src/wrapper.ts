@@ -58,6 +58,15 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.validate(storedStrategy, userPayload, config);
 		},
 
+		postValidate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, payload: unknown) {
+			const strategy = strategies[storedStrategy.type];
+			if (!strategy) {
+				throw new StrategyError('Invalid strategy', false);
+			}
+
+			return strategy.postValidate(storedStrategy, payload, config);
+		},
+
 		share<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
