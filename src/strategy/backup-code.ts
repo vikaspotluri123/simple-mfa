@@ -30,6 +30,10 @@ export class BackupCodeStrategy implements AuthStrategy<string, string, void> {
 		return typeof untrustedPayload === 'string' && decoded === untrustedPayload;
 	}
 
+	postValidate(_strategy: Strategy, _code: unknown, _config: Config) {
+		// Noop
+	}
+
 	async share(strategy: Strategy) {
 		const decoded = await this._storage.decodeSecret('backup-code', strategy.context);
 

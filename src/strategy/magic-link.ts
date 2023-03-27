@@ -62,6 +62,10 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 		return false;
 	}
 
+	postValidate(_strategy: Strategy, _token: unknown, _config: Config) {
+		// Noop
+	}
+
 	share(_: Strategy): never {
 		throw new StrategyError('MagicLink is not shareable', false);
 	}

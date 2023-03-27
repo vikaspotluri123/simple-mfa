@@ -49,6 +49,10 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 		return totp.check(untrustedPayload, serverMemorySecret);
 	}
 
+	postValidate(_strategy: Strategy, _otp: unknown, _config: Config) {
+		// Noop
+	}
+
 	async share(strategy: Strategy) {
 		const decoded = await this._decode(strategy.context);
 
