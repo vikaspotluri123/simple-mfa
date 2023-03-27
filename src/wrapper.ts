@@ -30,13 +30,13 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			throw new StrategyError('Invalid strategy', false);
 		},
 
-		create<TStrategy extends Strategy>(type: TStrategy, owner: string) {
+		create<TStrategy extends Strategy & string>(type: TStrategy, owner: string) {
 			const strategy = strategies[type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.create(owner, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
+			return strategy.create(owner, type, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
 		},
 
 		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>) {

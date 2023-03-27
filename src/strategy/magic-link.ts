@@ -3,7 +3,7 @@ import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controll
 import {RingMap} from '../utils.js';
 import {type StorageService} from '../storage.js';
 
-const strategyName = 'magic-link';
+const TYPE = 'magic-link';
 const EXPIRATION_TIME_MS = 36_000_000; // 10 Minutes
 
 const expiredTokens = new RingMap();
@@ -15,15 +15,15 @@ type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'> {
-	static readonly type = strategyName;
+	static readonly type = TYPE;
 
 	constructor(private readonly _storageService: StorageService) {}
 
-	create(owner_id: string, {generateId}: Config): Strategy {
+	create(owner_id: string, type: string, {generateId}: Config): Strategy {
 		const id = generateId();
 		return {
 			id,
-			type: strategyName,
+			type,
 			status: 'active',
 			owner_id,
 			context: undefined,
@@ -33,8 +33,8 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 	async prepare(strategy: Strategy, config: Config) {
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
-		const encryptedToken = await this._storageService.encodeSecret(strategyName, plainTextToken);
-		await config.sendEmail(strategyName, {token: encryptedToken});
+		const encryptedToken = await this._storageService.encodeSecret(strategy.type, plainTextToken);
+		await config.sendEmail(TYPE, {token: encryptedToken});
 		return 'email_sent' as const;
 	}
 
@@ -47,7 +47,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 			throw new StrategyError('This MagicLink has already been used', true);
 		}
 
-		const decrypted = await this._storageService.decodeSecret(strategyName, untrustedPayload);
+		const decrypted = await this._storageService.decodeSecret(strategy.type, untrustedPayload);
 		if (!decrypted) {
 			return false;
 		}

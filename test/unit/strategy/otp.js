@@ -27,13 +27,13 @@ describe('Unit > Strategy > OTP', function () {
 	}
 
 	beforeEach(async function () {
-		store = await strategy.create(owner_id, config);
+		store = await strategy.create(owner_id, OtpStrategy.type, config);
 	});
 
 	it('create', async function () {
 		expect(store).to.deep.contain({
 			id: generateId(),
-			type: 'otp',
+			type: OtpStrategy.type,
 			status: 'pending',
 			owner_id, // eslint-disable-line camelcase
 		});
@@ -72,7 +72,7 @@ describe('Unit > Strategy > OTP', function () {
 
 	it('share', async function () {
 		expect(
-			await strategy.share(await strategy.create(owner_id, config)),
+			await strategy.share(await strategy.create(owner_id, OtpStrategy.type, config)),
 		).to.be.a('string').with.length(16);
 
 		store.context = store.context.slice(0, -5);

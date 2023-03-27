@@ -3,20 +3,18 @@ import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {type StorageService} from '../storage.js';
 
-const strategyName = 'otp';
-
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 export class OtpStrategy implements AuthStrategy<string, string, void> {
-	static readonly type = strategyName;
+	static readonly type = 'otp';
 	#lastDecryptedSecretCypher?: string;
 	#lastDecryptedSecretPlain?: string;
 
 	constructor(private readonly _storageService: StorageService) {}
 
-	async create(owner_id: string, {generateId}: Config): Promise<Strategy> {
+	async create(owner_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const plainText = authenticator.generateSecret();
 		const context = await this._storageService.encodeSecret('otp', plainText);
 		this.#lastDecryptedSecretPlain = plainText;
@@ -27,7 +25,7 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 			status: 'pending',
 			owner_id,
 			context,
-			type: strategyName,
+			type,
 		};
 	}
 

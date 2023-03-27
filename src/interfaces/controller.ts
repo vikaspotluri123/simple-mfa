@@ -14,7 +14,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Create a globally unique strategy for the specific user
 	 */
-	create: (owner: string, config: StrategyConfig) => MaybePromise<TInternalStrategy>;
+	create: (owner: string, type: string, config: StrategyConfig) => MaybePromise<TInternalStrategy>;
 	/**
 	 * @description
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context

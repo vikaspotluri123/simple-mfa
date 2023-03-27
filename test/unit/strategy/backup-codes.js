@@ -18,22 +18,22 @@ const config = {generateId, sendEmail};
 
 describe('Unit > Strategy > Backup Codes', function () {
 	it('create', async function () {
-		const store = await strategy.create(owner_id, config);
+		const store = await strategy.create(owner_id, BackupCodeStrategy.type, config);
 		expect(store).to.deep.contain({
 			id: generateId(),
-			type: 'backup-code',
+			type: BackupCodeStrategy.type,
 			status: 'active',
 			owner_id, // eslint-disable-line camelcase
 		});
 	});
 
 	it('prepare', async function () {
-		const store = strategy.create(owner_id, config);
+		const store = strategy.create(owner_id, BackupCodeStrategy.type, config);
 		expect(strategy.prepare(store[0], config)).to.be.undefined;
 	});
 
 	it('validate', async function () {
-		const store = await strategy.create(owner_id, config);
+		const store = await strategy.create(owner_id, BackupCodeStrategy.type, config);
 		// eslint-disable-next-line unicorn/no-await-expression-member
 		const token = (await strategy.share(store))[0].replace(/-/g, '');
 
@@ -44,7 +44,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 	});
 
 	it('postValidate', async function () {
-		let store = await strategy.create(owner_id, config);
+		let store = await strategy.create(owner_id, BackupCodeStrategy.type, config);
 		const codes = await strategy.share(store);
 
 		let codesCount = codes.length;
@@ -62,7 +62,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 	});
 
 	it('share', async function () {
-		const store = await strategy.create(owner_id, config);
+		const store = await strategy.create(owner_id, BackupCodeStrategy.type, config);
 		const codes = await strategy.share(store);
 		expect(codes).to.be.an('array').with.length(10);
 		for (const code of codes) {

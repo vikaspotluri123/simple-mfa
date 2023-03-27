@@ -18,10 +18,10 @@ const config = {generateId, sendEmail};
 
 describe('Unit > Strategy > MagicLink', function () {
 	it('create', function () {
-		const store = strategy.create(owner_id, config);
+		const store = strategy.create(owner_id, MagicLinkStrategy.type, config);
 		expect(store).to.deep.contain({
 			id: generateId(),
-			type: 'magic-link',
+			type: MagicLinkStrategy.type,
 			status: 'active',
 			owner_id, // eslint-disable-line camelcase
 		});
@@ -30,7 +30,7 @@ describe('Unit > Strategy > MagicLink', function () {
 	});
 
 	it('prepare', async function () {
-		const store = strategy.create(owner_id, config);
+		const store = strategy.create(owner_id, MagicLinkStrategy.type, config);
 		// Explicitly type the response to make sure it aligns
 		/** @type {'email_sent'} */
 		const prepareResponse = await strategy.prepare(store, config);
@@ -46,7 +46,7 @@ describe('Unit > Strategy > MagicLink', function () {
 
 		beforeEach(async function () {
 			sendEmail.reset();
-			store = strategy.create(owner_id, config);
+			store = strategy.create(owner_id, MagicLinkStrategy.type, config);
 			await strategy.prepare(store, config);
 			token = sendEmail.args[0][1].token;
 		});
@@ -81,6 +81,6 @@ describe('Unit > Strategy > MagicLink', function () {
 	});
 
 	it('share', function () {
-		expect(() => strategy.share(strategy.create(owner_id, config))).to.throw(StrategyError);
+		expect(() => strategy.share(strategy.create(owner_id, MagicLinkStrategy.type, config))).to.throw(StrategyError);
 	});
 });

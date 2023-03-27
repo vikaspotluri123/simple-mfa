@@ -2,8 +2,6 @@ import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {type StorageService} from '../storage.js';
 
-const strategyName = 'backup-code';
-
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
@@ -11,10 +9,10 @@ type Config = MyStrategy['config'];
 const decryptionCache = new WeakMap<Strategy, string[]>();
 
 export class BackupCodeStrategy implements AuthStrategy<string, string[], void> {
-	readonly type = strategyName;
+	static readonly type = 'backup-code';
 	constructor(private readonly _storage: StorageService, private readonly countToCreate = 10) {}
 
-	async create(owner_id: string, {generateId}: Config): Promise<Strategy> {
+	async create(owner_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const codes: string[] = Array.from({length: this.countToCreate});
 		for (const [index, _] of codes.entries()) {
 			const untrimmedCode = Array.from(this._storage.generateSecret(12)).join('');
@@ -26,7 +24,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 			id: generateId(),
 			owner_id,
 			status: 'active',
-			type: strategyName,
+			type,
 			context: '',
 		};
 
@@ -56,7 +54,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 
 	private async _serialize(strategy: Strategy, codes: string[]) {
 		decryptionCache.set(strategy, codes);
-		strategy.context = await this._storage.encodeSecret(strategyName, codes.join('|'));
+		strategy.context = await this._storage.encodeSecret(strategy.type, codes.join('|'));
 		return strategy;
 	}
 
@@ -66,7 +64,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 			return cached;
 		}
 
-		const decrypted = await this._storage.decodeSecret(strategyName, strategy.context);
+		const decrypted = await this._storage.decodeSecret(strategy.type, strategy.context);
 		if (!decrypted) {
 			throw new StrategyError('Failed deserializing context', false);
 		}
