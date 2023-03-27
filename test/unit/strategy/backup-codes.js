@@ -16,23 +16,15 @@ const strategy = new BackupCodeStrategy(new MockedStorageService());
 
 const config = {generateId, sendEmail};
 
-describe('Unit > Strategy > MagicLink', function () {
+describe('Unit > Strategy > Backup Codes', function () {
 	it('create', async function () {
-		const rows = await strategy.create(owner_id, config);
-		expect(rows).to.be.an('array').with.length(10);
-
-		for (const store of rows) {
-			console.log({store});
-			expect(store).to.deep.contain({
-				id: generateId(),
-				type: 'backup-code',
-				status: 'active',
-				owner_id, // eslint-disable-line camelcase
-			});
-			expect(store.context).to.be.a('string').with.length(72);
-			// eslint-disable-next-line no-await-in-loop
-			expect(await strategy.share(store)).to.have.length(14);
-		}
+		const store = await strategy.create(owner_id, config);
+		expect(store).to.deep.contain({
+			id: generateId(),
+			type: 'backup-code',
+			status: 'active',
+			owner_id, // eslint-disable-line camelcase
+		});
 	});
 
 	it('prepare', async function () {
@@ -40,32 +32,47 @@ describe('Unit > Strategy > MagicLink', function () {
 		expect(strategy.prepare(store[0], config)).to.be.undefined;
 	});
 
-	describe('validate', function () {
-		/** @type {Awaited<ReturnType<strategy['create']>>} */
-		let store;
-		/** @type {string} */
-		let token;
+	it('validate', async function () {
+		const store = await strategy.create(owner_id, config);
+		// eslint-disable-next-line unicorn/no-await-expression-member
+		const token = (await strategy.share(store))[0].replace(/-/g, '');
 
-		beforeEach(async function () {
-			store = await strategy.create(owner_id, config);
-			// eslint-disable-next-line unicorn/no-await-expression-member
-			token = (await strategy.share(store[0])).replace(/-/g, '');
-		});
+		// Trigger cache miss for coverage
+		expect(await strategy.validate({...store}, 15, config)).to.be.false;
+		expect(await strategy.validate(store, token.slice(5), config)).to.be.false;
+		expect(await strategy.validate(store, token.replace(/-/g, ''), config)).to.be.true;
+	});
 
-		it('invalid token', async function () {
-			expect(await strategy.validate(store[0], 15, config)).to.be.false;
-			expect(await strategy.validate(store[0], token.slice(5), config)).to.be.false;
-		});
+	it('postValidate', async function () {
+		let store = await strategy.create(owner_id, config);
+		const codes = await strategy.share(store);
+
+		let codesCount = codes.length;
+
+		/* eslint-disable no-await-in-loop */
+		for (const hyphenateCode of codes) {
+			const code = hyphenateCode.replace(/-/g, '');
+			expect(await strategy.validate(store, code, config), 'first use should pass').to.be.true;
+			store = await strategy.postValidate(store, code, config);
+			expect(await strategy.validate(store, code, config), 'second use should fail').to.be.false;
+			expect(await strategy.share(store), 'shared codes should not include expired codes')
+				.to.have.length(--codesCount);
+		}
+		/* eslint-enable no-await-in-loop */
 	});
 
 	it('share', async function () {
 		const store = await strategy.create(owner_id, config);
-		expect(await strategy.share(store[0])).to.match(/^(?:\d{4}-){2}\d{4}$/);
+		const codes = await strategy.share(store);
+		expect(codes).to.be.an('array').with.length(10);
+		for (const code of codes) {
+			expect(code).to.match(/^(?:\d{4}-){2}\d{4}$/);
+		}
 
-		// NOTE: this is highly unlikely
-		store[0].context = '';
 		try {
-			await strategy.share(store[0]);
+			// Create a new object to prevent using cached data
+			await strategy.share({...store, context: ''});
+			expect(false, 'should have failed').to.be.true;
 		} catch (error) {
 			expect(error).to.be.instanceOf(StrategyError);
 		}
