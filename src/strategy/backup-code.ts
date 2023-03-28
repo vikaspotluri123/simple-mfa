@@ -42,7 +42,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 
 	async postValidate(strategy: Strategy, expiredCode: unknown, _config: Config) {
 		let codes = await this._deserialize(strategy);
-		codes = codes.filter(maybeExpiredCode => expiredCode === maybeExpiredCode);
+		codes = codes.filter(maybeExpiredCode => expiredCode !== maybeExpiredCode);
 		// @TODO: how do we trigger code regeneration?
 		return this._serialize(strategy, codes);
 	}
