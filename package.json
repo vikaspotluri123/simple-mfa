@@ -22,7 +22,8 @@
       "@typescript-eslint/consistent-type-definitions": [
         "error",
         "interface"
-      ]
+      ],
+      "@typescript-eslint/class-literal-property-style": ["error", "fields"]
     },
     "overrides": [
       {
@@ -34,6 +35,7 @@
         ],
         "rules": {
           "@typescript-eslint/consistent-type-definitions": "off",
+          "@typescript-eslint/class-literal-property-style": "off",
           "prefer-arrow-callback": "off",
           "no-unused-expressions": "off"
         }
