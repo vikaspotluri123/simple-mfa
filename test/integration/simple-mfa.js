@@ -44,6 +44,12 @@ describe('Integration > SimpleMFA', function () {
 		expect(await instance.validate(magicLinkStore, sendEmail.args[0][1].token)).to.be.true;
 	});
 
+	it('BackupCode Strategy', async function () {
+		const backupCodesStore = await instance.create('backup-code', 'abcd');
+		const sharedCodes = await instance.share(backupCodesStore);
+		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.true;
+	});
+
 	it('Valid, but untyped `type` (from storage)', async function () {
 		const unsafeStore = mockDatabase.at(Math.floor(Math.random() * mockDatabase.length));
 
