@@ -3,7 +3,7 @@ import {Buffer} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {StorageService} from '../../dist/storage.js';
+import {StorageService} from '../../dist/esm/storage.js';
 
 const KEY = 'action';
 const crypto = {

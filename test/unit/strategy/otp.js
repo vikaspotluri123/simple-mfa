@@ -3,8 +3,8 @@
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {totp} from 'otplib';
-import {OtpStrategy} from '../../../dist/strategy/otp.js';
-import {StrategyError} from '../../../dist/error.js';
+import {OtpStrategy} from '../../../dist/esm/strategy/otp.js';
+import {StrategyError} from '../../../dist/esm/error.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase

@@ -3,8 +3,8 @@
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {totp} from 'otplib';
-import {createSimpleMFA} from '../../dist/index.js';
-import {defaultStrategies} from '../../dist/default-strategies.js';
+import {createSimpleMFA} from '../../dist/esm/index.js';
+import {defaultStrategies} from '../../dist/esm/default-strategies.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
 const sendEmail = sinon.stub();
@@ -14,7 +14,7 @@ const instance = createSimpleMFA({
 	sendEmail,
 });
 
-/** @type {import('../../dist/interfaces/storage.js').SerializedAuthStrategy[]} */
+/** @type {import('../../dist/esm/interfaces/storage.js').SerializedAuthStrategy[]} */
 const mockDatabase = await Promise.all([
 	instance.create('otp', 'abcd'),
 	instance.create('magic-link', 'abcd'),

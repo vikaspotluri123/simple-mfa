@@ -1,7 +1,7 @@
 {
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "dist/esm",
     "declaration": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,

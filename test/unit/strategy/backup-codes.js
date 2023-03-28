@@ -2,9 +2,9 @@
 
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {BackupCodeStrategy} from '../../../dist/strategy/backup-code.js';
+import {BackupCodeStrategy} from '../../../dist/esm/strategy/backup-code.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
-import {StrategyError} from '../../../dist/error.js';
+import {StrategyError} from '../../../dist/esm/error.js';
 
 // eslint-disable-next-line camelcase
 const owner_id = 'owner_id';

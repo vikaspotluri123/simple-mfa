@@ -2,8 +2,8 @@
 
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {MagicLinkStrategy} from '../../../dist/strategy/magic-link.js';
-import {StrategyError} from '../../../dist/error.js';
+import {MagicLinkStrategy} from '../../../dist/esm/strategy/magic-link.js';
+import {StrategyError} from '../../../dist/esm/error.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase

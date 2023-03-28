@@ -8,8 +8,20 @@
   "author": "Vikas Potluri",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "build": "tsc",
+    "lint": "xo && tsc -p tsconfig-tests.json",
+    "dev": "tsc -w",
+    "build:cjs": "tsc -p tsconfig-cjs.json",
+    "pretest:coverage": "tsc -p tsconfig-coverage.json",
+    "test:coverage": "c8 --all --src src --exclude src/interfaces node_modules/.bin/mocha test/unit/**/* test/integration/**/*"
+  },
   "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.3",
+    "@types/sinon": "^10.0.13",
+    "c8": "^7.13.0",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "sinon": "^15.0.2",
@@ -23,7 +35,10 @@
         "error",
         "interface"
       ],
-      "@typescript-eslint/class-literal-property-style": ["error", "fields"]
+      "@typescript-eslint/class-literal-property-style": [
+        "error",
+        "fields"
+      ]
     },
     "overrides": [
       {

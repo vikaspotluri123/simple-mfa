@@ -1,0 +1,9 @@
+{
+  "include": ["test/**/*.js"],
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "checkJs": true,
+    "strict": false
+  }
+}

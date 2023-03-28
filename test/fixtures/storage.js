@@ -1,4 +1,4 @@
-import {StorageService} from '../../dist/storage.js';
+import {StorageService} from '../../dist/esm/storage.js';
 
 export class MockedStorageService extends StorageService {
 	constructor() {
