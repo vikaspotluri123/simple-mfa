@@ -19,13 +19,13 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 
 	constructor(private readonly _storageService: StorageService) {}
 
-	create(owner_id: string, type: string, {generateId}: Config): Strategy {
+	create(user_id: string, type: string, {generateId}: Config): Strategy {
 		const id = generateId();
 		return {
 			id,
 			type,
 			status: 'active',
-			owner_id,
+			user_id,
 			context: undefined,
 		};
 	}

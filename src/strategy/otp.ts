@@ -14,7 +14,7 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 
 	constructor(private readonly _storageService: StorageService) {}
 
-	async create(owner_id: string, type: string, {generateId}: Config): Promise<Strategy> {
+	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const plainText = authenticator.generateSecret();
 		const context = await this._storageService.encodeSecret('otp', plainText);
 		this.#lastDecryptedSecretPlain = plainText;
@@ -23,7 +23,7 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 		return {
 			id: generateId(),
 			status: 'pending',
-			owner_id,
+			user_id,
 			context,
 			type,
 		};

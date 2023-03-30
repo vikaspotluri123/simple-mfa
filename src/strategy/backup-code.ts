@@ -12,7 +12,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 	static readonly type = 'backup-code';
 	constructor(private readonly _storage: StorageService, private readonly countToCreate = 10) {}
 
-	async create(owner_id: string, type: string, {generateId}: Config): Promise<Strategy> {
+	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const codes: string[] = Array.from({length: this.countToCreate});
 		for (const [index, _] of codes.entries()) {
 			const untrimmedCode = Array.from(this._storage.generateSecret(12)).join('');
@@ -22,7 +22,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 
 		const response: Strategy = {
 			id: generateId(),
-			owner_id,
+			user_id,
 			status: 'active',
 			type,
 			context: '',

@@ -8,7 +8,7 @@ import {StrategyError} from '../../../dist/esm/error.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase
-const owner_id = 'owner_id';
+const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
 const sendEmail = sinon.stub();
@@ -27,7 +27,7 @@ describe('Unit > Strategy > OTP', function () {
 	}
 
 	beforeEach(async function () {
-		store = await strategy.create(owner_id, OtpStrategy.type, config);
+		store = await strategy.create(user_id, OtpStrategy.type, config);
 	});
 
 	it('create', async function () {
@@ -35,7 +35,7 @@ describe('Unit > Strategy > OTP', function () {
 			id: generateId(),
 			type: OtpStrategy.type,
 			status: 'pending',
-			owner_id, // eslint-disable-line camelcase
+			user_id, // eslint-disable-line camelcase
 		});
 
 		expect(store.context).to.be.a('string').and.with.length.greaterThan(16);
@@ -72,7 +72,7 @@ describe('Unit > Strategy > OTP', function () {
 
 	it('share', async function () {
 		expect(
-			await strategy.share(await strategy.create(owner_id, OtpStrategy.type, config)),
+			await strategy.share(await strategy.create(user_id, OtpStrategy.type, config)),
 		).to.be.a('string').with.length(16);
 
 		store.context = store.context.slice(0, -5);
