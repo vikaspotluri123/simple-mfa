@@ -23,6 +23,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 		const id = generateId();
 		return {
 			id,
+			name: '',
 			type,
 			status: 'active',
 			user_id,

@@ -22,6 +22,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 
 		const response: Strategy = {
 			id: generateId(),
+			name: '',
 			user_id,
 			status: 'active',
 			type,

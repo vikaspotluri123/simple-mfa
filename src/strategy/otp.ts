@@ -22,6 +22,7 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 
 		return {
 			id: generateId(),
+			name: '',
 			status: 'pending',
 			user_id,
 			context,
