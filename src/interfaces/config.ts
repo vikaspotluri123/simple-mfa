@@ -17,5 +17,5 @@ export type StrategyConfig = Required<Omit<CreateSimpleMfaConfig, 'strategies'>>
 
 export interface InternalSimpleMfaConfig<TStrategies = UntypedStrategyRecord> {
 	config: StrategyConfig;
-	strategies: TStrategies;
+	strategies: Required<TStrategies>;
 }

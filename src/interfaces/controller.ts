@@ -37,6 +37,14 @@ export interface AuthStrategy<
 	 * Convert the private stored data into a user-specific public version
 	 */
 	share: (strategy: TInternalStrategy) => MaybePromise<TSharedConfig>;
+	/**
+	 * @description
+	 * Convert the private stored data into an api-compatible format
+	 *  - remove sensitive data
+	 *  - decrypt data if required
+	 * If a serializer is not provided, a default serializer is used - the store is cloned, and `context` is removed
+	 */
+	serialize?: (strategy: Readonly<TInternalStrategy>) => MaybePromise<Partial<TInternalStrategy>>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {
