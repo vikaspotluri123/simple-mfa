@@ -10,6 +10,7 @@ const ENCODED_IV_LENGTH = IV_BYTE_LENGTH * 2; // Initialization Vector is encode
 const IV_ENCODING = 'hex';
 const CYPHER_ENCODING = 'base64';
 const TEXT_ENCODING = 'utf8';
+const KEY_ENCODING = 'hex';
 
 Object.freeze(KEY_USAGES);
 
@@ -67,13 +68,13 @@ export class StorageService<TKeyType extends string = string> {
 		return this.crypto.getRandomValues(response);
 	}
 
-	generateSecret64(bytes: number) {
-		return Buffer.from(this.generateSecret(bytes)).toString('base64');
+	generateSecretEncoded(bytes: number) {
+		return Buffer.from(this.generateSecret(bytes)).toString(KEY_ENCODING);
 	}
 
 	private async _importKey(keyId: TKeyType, key64: string): Promise<CryptoKey> {
 		const importedKey = await this.crypto.subtle.importKey(
-			'raw', Buffer.from(key64, 'base64'), {name: ALGORITHM}, true, KEY_USAGES,
+			'raw', Buffer.from(key64, KEY_ENCODING), {name: ALGORITHM}, true, KEY_USAGES,
 		);
 
 		this._keys.set(keyId, importedKey);

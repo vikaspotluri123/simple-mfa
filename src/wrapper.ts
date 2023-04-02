@@ -29,7 +29,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 					(strategy as TStrategies[Strategy]).secretType === 'aes'
 					&& !Object.hasOwnProperty.call(store, strategyType)
 				) {
-					store[strategyType] = storageService.generateSecret64(32);
+					store[strategyType] = storageService.generateSecretEncoded(32);
 					void storageService.update(strategyType, store[strategyType]);
 				}
 			}

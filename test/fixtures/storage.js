@@ -1,9 +1,9 @@
 import {StorageService} from '../../dist/esm/storage.js';
 
 const DEFAULT_KEYS = {
-	otp: 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
-	'magic-link': 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
-	'backup-code': 'U3VwZXJEdXBlclNhZmVBbmRTZWN1cmUh',
+	otp: '5375706572447570657253616665416e6453656375726521',
+	'magic-link': '5375706572447570657253616665416e6453656375726521',
+	'backup-code': '5375706572447570657253616665416e6453656375726521',
 };
 
 export class MockedStorageService extends StorageService {
