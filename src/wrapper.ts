@@ -76,5 +76,14 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return strategy.share(storedStrategy) as MaybePromise<ShareType<TStrategies[TStrategy]>>;
 		},
+
+		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>) {
+			const strategy = strategies[storedStrategy.type];
+			if (!strategy) {
+				throw new StrategyError('Invalid strategy', false);
+			}
+
+			return strategy.serialize!(storedStrategy);
+		},
 	};
 }
