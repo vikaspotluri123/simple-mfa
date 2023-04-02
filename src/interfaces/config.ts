@@ -1,10 +1,10 @@
-import {type AuthStrategy} from './controller.js';
+import {type MaybePromise, type AuthStrategy} from './controller.js';
 
 export type UntypedStrategyRecord = Record<string, AuthStrategy<any, any, any>>;
 
 export interface CreateSimpleMfaConfig<TStrategies = UntypedStrategyRecord> {
 	generateId: () => string;
-	sendEmail: (context: string, variables: Record<string, string>) => Promise<void>;
+	sendEmail: (context: string, variables: Record<string, string>) => MaybePromise<void>;
 	strategies: TStrategies;
 }
 
