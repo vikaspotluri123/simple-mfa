@@ -10,6 +10,7 @@ export interface AuthStrategy<
 	TStrategies extends string = string,
 	TInternalStrategy = SerializedAuthStrategy<TStrategies, TAuthContext>,
 > {
+	readonly secretType?: 'none' | 'aes';
 	/**
 	 * @description
 	 * Create a globally unique strategy for the specific user

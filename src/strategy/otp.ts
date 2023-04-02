@@ -9,6 +9,7 @@ type Config = MyStrategy['config'];
 
 export class OtpStrategy implements AuthStrategy<string, string, void> {
 	static readonly type = 'otp';
+	public readonly secretType = 'aes';
 	#lastDecryptedSecretCypher?: string;
 	#lastDecryptedSecretPlain?: string;
 

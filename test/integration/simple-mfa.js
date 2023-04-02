@@ -10,7 +10,7 @@ import {MockedStorageService} from '../fixtures/storage.js';
 const sendEmail = sinon.stub();
 
 const instance = createSimpleMFA({
-	strategies: defaultStrategies(new MockedStorageService()),
+	strategies: defaultStrategies( new MockedStorageService()),
 	sendEmail,
 });
 
@@ -66,5 +66,26 @@ describe('Integration > SimpleMFA', function () {
 
 		expect(prepareResponse === undefined || prepareResponse === 'email_sent').to.be.true;
 		expect(await instance.validate(store, '')).to.be.false;
+	});
+
+	it('syncSecrets', async function () {
+		const storageService = new MockedStorageService({});
+		/** @type {Record<string, string>} */
+		const currentState = {};
+		instance.syncSecrets(storageService, currentState);
+		expect(Object.keys(currentState)).to.deep.equal(['otp', 'magic-link', 'backup-code']);
+		// Wait for key imports to complete
+		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
+		expect(storageService.lastUpdateFailed).to.be.false;
+
+		delete currentState.otp;
+		const unchangedState = {...currentState};
+
+		instance.syncSecrets(storageService, currentState);
+		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
+		expect(storageService.lastUpdateFailed).to.be.true; // Tried to recreate a key
+
+		expect(Object.keys(currentState)).to.deep.equal(['magic-link', 'backup-code', 'otp']);
+		expect(currentState).to.deep.contain(unchangedState);
 	});
 });

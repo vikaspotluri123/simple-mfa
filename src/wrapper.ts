@@ -2,6 +2,7 @@ import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
 import {type MaybePromise, type AuthStrategy} from './interfaces/controller.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
+import {type StorageService} from './storage.js';
 
 type NarrowSerializedFromStrategy<TStrategy extends AuthStrategy<any, any, any>, TNarrowStrategies extends string> =
 	TStrategy extends AuthStrategy<infer AuthContext, any, any>
@@ -22,6 +23,20 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 	type Strategy = keyof TStrategies;
 
 	return {
+		syncSecrets(storageService: StorageService, store: Record<string, string> = {}) {
+			for (const [strategyType, strategy] of Object.entries(strategies)) {
+				if (
+					(strategy as TStrategies[Strategy]).secretType === 'aes'
+					&& !Object.hasOwnProperty.call(store, strategyType)
+				) {
+					store[strategyType] = storageService.generateSecret64(32);
+					void storageService.update(strategyType, store[strategyType]);
+				}
+			}
+
+			return store;
+		},
+
 		coerce(storedStrategy: SerializedAuthStrategy<any>): SerializedAuthStrategy<Strategy & string> {
 			if (storedStrategy.type in strategies) {
 				return storedStrategy as SerializedAuthStrategy<Strategy & string>;

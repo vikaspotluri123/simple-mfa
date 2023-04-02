@@ -23,6 +23,14 @@ export class StorageService<TKeyType extends string = string> {
 		}
 	}
 
+	async update(keyId: TKeyType, key64: string) {
+		if (this._keys.has(keyId)) {
+			throw new Error('overriding keys is not supported');
+		}
+
+		return this._importKey(keyId, key64);
+	}
+
 	async decodeSecret(keyId: TKeyType, encryptedValue: string) {
 		// NOTE: We intentionally allow key retrieval to throw an exception - if we're not able to get the key,
 		// it's a big issue that shouldn't be suppressed.
@@ -57,6 +65,10 @@ export class StorageService<TKeyType extends string = string> {
 	generateSecret(bytes: number) {
 		const response = new Uint8Array(bytes);
 		return this.crypto.getRandomValues(response);
+	}
+
+	generateSecret64(bytes: number) {
+		return Buffer.from(this.generateSecret(bytes)).toString('base64');
 	}
 
 	private async _importKey(keyId: TKeyType, key64: string): Promise<CryptoKey> {

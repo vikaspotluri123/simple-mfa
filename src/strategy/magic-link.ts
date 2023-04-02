@@ -16,6 +16,7 @@ type Config = MyStrategy['config'];
 
 export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'> {
 	static readonly type = TYPE;
+	public readonly secretType = 'aes';
 
 	constructor(private readonly _storageService: StorageService) {}
 

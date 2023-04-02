@@ -10,6 +10,7 @@ const decryptionCache = new WeakMap<Strategy, string[]>();
 
 export class BackupCodeStrategy implements AuthStrategy<string, string[], void> {
 	static readonly type = 'backup-code';
+	public readonly secretType = 'aes';
 	constructor(private readonly _storage: StorageService, private readonly countToCreate = 10) {}
 
 	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
