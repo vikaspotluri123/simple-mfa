@@ -48,7 +48,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 		create<TStrategy extends Strategy & string>(type: TStrategy, owner: string) {
 			const strategy = strategies[type];
 			if (!strategy) {
-				throw new StrategyError('Invalid strategy', false);
+				throw new StrategyError(`Invalid type: ${type}`, true);
 			}
 
 			return strategy.create(owner, type, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
