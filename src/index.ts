@@ -5,3 +5,5 @@ import {createStrategyWrapper} from './wrapper.js';
 export const createSimpleMFA = <TStrategies extends UntypedStrategyRecord>(
 	config: SimpleMfaConfig<TStrategies>,
 ) => createStrategyWrapper<TStrategies>(coerce(config));
+
+export * from './public-api.js';
