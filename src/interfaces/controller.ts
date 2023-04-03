@@ -6,7 +6,7 @@ export type MaybePromise<T> = T | Promise<T>;
 export interface AuthStrategy<
 	TAuthContext,
 	TSharedConfig,
-	TPrepareResponse extends string | void,
+	TPrepareResponse extends string | undefined,
 	TStrategies extends string = string,
 	TInternalStrategy = SerializedAuthStrategy<TStrategies, TAuthContext>,
 > {

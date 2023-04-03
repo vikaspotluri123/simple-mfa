@@ -7,7 +7,7 @@ type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-export class OtpStrategy implements AuthStrategy<string, string, void> {
+export class OtpStrategy implements AuthStrategy<string, string, undefined> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
 	#lastDecryptedSecretCypher?: string;
@@ -32,7 +32,7 @@ export class OtpStrategy implements AuthStrategy<string, string, void> {
 	}
 
 	prepare(_strategy: Strategy, _config: Config) {
-		// Noop
+		return undefined;
 	}
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {

@@ -8,7 +8,7 @@ type Config = MyStrategy['config'];
 
 const decryptionCache = new WeakMap<Strategy, string[]>();
 
-export class BackupCodeStrategy implements AuthStrategy<string, string[], void> {
+export class BackupCodeStrategy implements AuthStrategy<string, string[], undefined> {
 	static readonly type = 'backup-code';
 	public readonly secretType = 'aes';
 	constructor(private readonly _storage: StorageService, private readonly countToCreate = 10) {}
@@ -34,7 +34,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], void> 
 	}
 
 	prepare(_strategy: Strategy, _config: Config) {
-		// Noop
+		return undefined;
 	}
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
