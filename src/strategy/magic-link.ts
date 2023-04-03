@@ -14,7 +14,8 @@ type MyStrategy = AuthStrategyHelper<void>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export class MagicLinkStrategy implements AuthStrategy<void, null, 'email_sent'> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
 
@@ -68,7 +69,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, never, 'email_sent'
 		// Noop
 	}
 
-	share(_: Strategy): never {
-		throw new StrategyError('MagicLink is not shareable', false);
+	share(_: Strategy) {
+		return null;
 	}
 }
