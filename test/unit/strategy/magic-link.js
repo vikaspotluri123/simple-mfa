@@ -81,6 +81,6 @@ describe('Unit > Strategy > MagicLink', function () {
 	});
 
 	it('share', function () {
-		expect(() => strategy.share(strategy.create(user_id, MagicLinkStrategy.type, config))).to.throw(StrategyError);
+		expect(strategy.share(strategy.create(user_id, MagicLinkStrategy.type, config))).to.equal(null);
 	});
 });
