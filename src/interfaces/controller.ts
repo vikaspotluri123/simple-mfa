@@ -45,7 +45,7 @@ export interface AuthStrategy<
 	 *  - decrypt data if required
 	 * If a serializer is not provided, a default serializer is used - the store is cloned, and `context` is removed
 	 */
-	serialize?: (strategy: Readonly<TInternalStrategy>) => MaybePromise<Partial<TInternalStrategy>>;
+	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, share: this['share']) => MaybePromise<Partial<TInternalStrategy>>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {

@@ -22,7 +22,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 
 	type Strategy = keyof TStrategies;
 
-	return {
+	const wrapper = {
 		syncSecrets(storageService: StorageService, store: Record<string, string> = {}) {
 			for (const [strategyType, strategy] of Object.entries(strategies)) {
 				if (
@@ -92,13 +92,15 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.share(storedStrategy) as MaybePromise<ShareType<TStrategies[TStrategy]>>;
 		},
 
-		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>) {
+		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>, isUntrusted: boolean) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.serialize!(storedStrategy);
+			return strategy.serialize!(storedStrategy, isUntrusted, wrapper.share);
 		},
 	};
+
+	return wrapper;
 }

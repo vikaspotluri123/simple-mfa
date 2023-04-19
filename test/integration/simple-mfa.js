@@ -10,7 +10,7 @@ import {MockedStorageService} from '../fixtures/storage.js';
 const sendEmail = sinon.stub();
 
 const instance = createSimpleMFA({
-	strategies: defaultStrategies( new MockedStorageService()),
+	strategies: defaultStrategies(new MockedStorageService()),
 	sendEmail,
 });
 
@@ -29,10 +29,19 @@ describe('Integration > SimpleMFA', function () {
 		const sharedSecret = await instance.share(otpStore);
 		const currentToken = totp.generate(sharedSecret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
+
+		expect(await instance.serialize(otpStore, false)).to.not.include.keys('context');
+		expect(await instance.serialize(otpStore, true)).to.include.keys('context');
+
+		otpStore.status = 'active';
+		expect(await instance.serialize(otpStore, false)).to.not.include.keys('context');
+		expect(await instance.serialize(otpStore, true)).to.not.include.keys('context');
 	});
 
 	it('MagicLink Strategy', async function () {
 		const magicLinkStore = await instance.create('magic-link', 'abcd');
+		expect(magicLinkStore.status).to.equal('active');
+
 		/** @type {'email_sent'} */
 		const response = await instance.prepare(magicLinkStore);
 
@@ -46,6 +55,7 @@ describe('Integration > SimpleMFA', function () {
 
 	it('BackupCode Strategy', async function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
+		expect(backupCodesStore.status).to.equal('active');
 		const sharedCodes = await instance.share(backupCodesStore);
 		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.true;
 	});

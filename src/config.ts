@@ -5,9 +5,19 @@ import {type SerializedAuthStrategy} from './interfaces/storage.js';
 
 const DEFAULT_ID_GENERATOR = webcrypto.randomUUID;
 
-const DEFAULT_STRATEGY_SERIALIZER = (store: SerializedAuthStrategy<string>) => {
+const DEFAULT_STRATEGY_SERIALIZER = async (
+	store: SerializedAuthStrategy<string>,
+	isTrusted: boolean,
+	share: (store: SerializedAuthStrategy<string>) => unknown,
+) => {
 	const cloned: Partial<SerializedAuthStrategy<string>> = {...store};
-	delete cloned.context;
+
+	if (isTrusted && store.status === 'pending') {
+		cloned.context = await share(store);
+	} else {
+		delete cloned.context;
+	}
+
 	return cloned;
 };
 
