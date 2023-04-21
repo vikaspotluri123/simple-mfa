@@ -92,13 +92,13 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.share(storedStrategy) as MaybePromise<ShareType<TStrategies[TStrategy]>>;
 		},
 
-		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>, isUntrusted: boolean) {
+		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>, isTrusted: boolean) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.serialize!(storedStrategy, isUntrusted, wrapper.share);
+			return strategy.serialize!(storedStrategy, isTrusted, wrapper.share);
 		},
 	};
 
