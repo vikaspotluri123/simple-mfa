@@ -3,7 +3,7 @@
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {totp} from 'otplib';
-import {createSimpleMFA} from '../../dist/esm/index.js';
+import {createSimpleMFA, StrategyError} from '../../dist/esm/index.js';
 import {defaultStrategies} from '../../dist/esm/default-strategies.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
@@ -97,5 +97,35 @@ describe('Integration > SimpleMFA', function () {
 
 		expect(Object.keys(currentState)).to.deep.equal(['magic-link', 'backup-code', 'otp']);
 		expect(currentState).to.deep.contain(unchangedState);
+	});
+
+	it('assertStatusTransition', function () {
+		/**
+		 * @typedef {typeof mockDatabase[number]['status']} Status
+		 * @type {(from: Status, to: Status, isAllowed: boolean) => void}
+		 */
+		const assertTransition = (from, to, isAllowed) => {
+			// @ts-expect-error duck typing
+			const deferredTransition = () => instance.assertStatusTransition({status: from}, to);
+			const expectAssertion = expect(deferredTransition, `${from} -> ${to}`);
+
+			if (isAllowed) {
+				expectAssertion.to.not.throw().and.equal(true);
+			} else {
+				expectAssertion.to.throw(StrategyError);
+			}
+		};
+
+		assertTransition('active', 'disabled', true);
+		assertTransition('active', 'pending', false);
+		assertTransition('active', 'active', false);
+
+		assertTransition('pending', 'disabled', false);
+		assertTransition('pending', 'pending', false);
+		assertTransition('pending', 'active', true);
+
+		assertTransition('disabled', 'disabled', false);
+		assertTransition('disabled', 'pending', false);
+		assertTransition('disabled', 'active', true);
 	});
 });

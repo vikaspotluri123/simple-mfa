@@ -23,6 +23,26 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 	type Strategy = keyof TStrategies;
 
 	const wrapper = {
+		assertStatusTransition(storedStrategy: SerializedAuthStrategy<any>, nextStatus: SerializedAuthStrategy<any>['status']) {
+			const {status: currentStatus} = storedStrategy;
+			if (
+				// CASE: transitioning to the current status doesn't make any sense
+				currentStatus !== nextStatus
+				&& (
+					// CASE: active is only not allowed to transition to pending
+					(currentStatus === 'active' && nextStatus !== 'pending')
+					// CASE: disabled is only not allowed to transition to pending
+					|| (currentStatus === 'disabled' && nextStatus !== 'pending')
+					// CASE: pending is only not allowed to transition to disabled
+					|| (currentStatus === 'pending' && nextStatus !== 'disabled')
+				)
+			) {
+				return true;
+			}
+
+			throw new StrategyError(`Cannot change status from ${currentStatus} to ${nextStatus}`, true);
+		},
+
 		syncSecrets(storageService: StorageService, store: Record<string, string> = {}) {
 			for (const [strategyType, strategy] of Object.entries(strategies)) {
 				if (
