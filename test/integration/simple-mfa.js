@@ -2,9 +2,9 @@
 
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {totp} from 'otplib';
 import {createSimpleMFA, StrategyError} from '../../dist/esm/index.js';
 import {defaultStrategies} from '../../dist/esm/default-strategies.js';
+import {createOtp} from '../../dist/esm/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
 const sendEmail = sinon.stub();
@@ -27,7 +27,7 @@ describe('Integration > SimpleMFA', function () {
 	it('OTP Strategy', async function () {
 		const otpStore = await instance.create('otp', 'abcd');
 		const sharedSecret = await instance.share(otpStore);
-		const currentToken = totp.generate(sharedSecret);
+		const currentToken = createOtp(sharedSecret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
 
 		expect(await instance.serialize(otpStore, false)).to.not.include.keys('context');

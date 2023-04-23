@@ -2,9 +2,9 @@
 
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {totp} from 'otplib';
 import {OtpStrategy} from '../../../dist/esm/strategy/otp.js';
 import {StrategyError} from '../../../dist/esm/error.js';
+import {createOtp} from '../../../dist/esm/testing/index.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase
@@ -23,7 +23,7 @@ describe('Unit > Strategy > OTP', function () {
 	let store;
 
 	async function realOtp() {
-		return totp.generate(await strategy.share(store));
+		return createOtp(await strategy.share(store));
 	}
 
 	beforeEach(async function () {
