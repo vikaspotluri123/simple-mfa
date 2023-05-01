@@ -55,8 +55,10 @@ describe('Integration > SimpleMFA', function () {
 
 	it('BackupCode Strategy', async function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
-		expect(backupCodesStore.status).to.equal('active');
+		expect(backupCodesStore.status).to.equal('pending');
 		const sharedCodes = await instance.share(backupCodesStore);
+		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.false;
+		backupCodesStore.status = 'active';
 		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.true;
 	});
 

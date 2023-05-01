@@ -25,7 +25,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 			id: generateId(),
 			name: '',
 			user_id,
-			status: 'active',
+			status: 'pending',
 			type,
 			context: '',
 		};
@@ -38,6 +38,10 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 	}
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
+		if (strategy.status === 'pending') {
+			return untrustedPayload === 'acknowledged';
+		}
+
 		const codes = await this._deserialize(strategy);
 		return typeof untrustedPayload === 'string' && codes.includes(untrustedPayload);
 	}

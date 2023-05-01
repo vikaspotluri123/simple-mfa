@@ -22,7 +22,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 		expect(store).to.deep.contain({
 			id: generateId(),
 			type: BackupCodeStrategy.type,
-			status: 'active',
+			status: 'pending',
 			user_id, // eslint-disable-line camelcase
 		});
 	});
@@ -34,17 +34,23 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 	it('validate', async function () {
 		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
-		// eslint-disable-next-line unicorn/no-await-expression-member
-		const token = (await strategy.share(store))[0].replace(/-/g, '');
+		const codes = await strategy.share(store);
+		const validCode = codes[0].replace(/-/g, '');
+
+		expect(await strategy.validate(store, 'acknowledged', config)).to.be.true;
+		expect(await strategy.validate(store, validCode, config)).to.be.false;
+
+		store.status = 'active';
 
 		// Trigger cache miss for coverage
 		expect(await strategy.validate({...store}, 15, config)).to.be.false;
-		expect(await strategy.validate(store, token.slice(5), config)).to.be.false;
-		expect(await strategy.validate(store, token.replace(/-/g, ''), config)).to.be.true;
+		expect(await strategy.validate(store, validCode.slice(5), config)).to.be.false;
+		expect(await strategy.validate(store, validCode.replace(/-/g, ''), config)).to.be.true;
 	});
 
 	it('postValidate', async function () {
 		let store = await strategy.create(user_id, BackupCodeStrategy.type, config);
+		store.status = 'active';
 		const codes = await strategy.share(store);
 
 		let codesCount = codes.length;
