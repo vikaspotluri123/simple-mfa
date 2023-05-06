@@ -28,6 +28,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, 'email_sent'>
 			name: '',
 			type,
 			status: 'active',
+			priority: null,
 			user_id,
 			context: undefined,
 		};

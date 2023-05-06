@@ -26,6 +26,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 			name: '',
 			user_id,
 			status: 'pending',
+			priority: null,
 			type,
 			context: '',
 		};
