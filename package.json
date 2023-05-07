@@ -4,59 +4,114 @@
   "description": "MFA implementation made simple",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/esm/index.d.ts"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./default-strategies": {
-      "types": "./dist/esm/default-strategies.d.ts",
-      "import": "./dist/esm/default-strategies.js",
-      "require": "./dist/cjs/default-strategies.js"
+      "import": {
+        "types": "./dist/esm/default-strategies.d.ts",
+        "default": "./dist/esm/default-strategies.js"
+      },
+      "require": {
+        "types": "./dist/cjs/default-strategies.d.ts",
+        "default": "./dist/cjs/default-strategies.js"
+      }
     },
     "./default-strategies.js": {
-      "types": "./dist/esm/default-strategies.d.ts",
-      "import": "./dist/esm/default-strategies.js",
-      "require": "./dist/cjs/default-strategies.js"
+      "import": {
+        "types": "./dist/esm/default-strategies.d.ts",
+        "default": "./dist/esm/default-strategies.js"
+      },
+      "require": {
+        "types": "./dist/cjs/default-strategies.d.ts",
+        "default": "./dist/cjs/default-strategies.js"
+      }
     },
     "./testing": {
-      "types": "./dist/esm/testing/index.d.ts",
-      "import": "./dist/esm/testing/index.js",
-      "require": "./dist/cjs/testing/index.js"
+      "import": {
+        "types": "./dist/esm/testing/index.d.ts",
+        "default": "./dist/esm/testing/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/testing/index.d.ts",
+        "default": "./dist/cjs/testing/index.js"
+      }
     },
     "./testing.js": {
-      "types": "./dist/esm/testing/index.d.ts",
-      "import": "./dist/esm/testing/index.js",
-      "require": "./dist/cjs/testing/index.js"
+      "import": {
+        "types": "./dist/esm/testing/index.d.ts",
+        "default": "./dist/esm/testing/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/testing/index.d.ts",
+        "default": "./dist/cjs/testing/index.js"
+      }
     },
     "./testing/*": {
-      "types": "./dist/esm/testing/*.d.ts",
-      "import": "./dist/esm/testing/*.js",
-      "require": "./dist/cjs/testing/*.js"
+      "import": {
+        "types": "./dist/esm/testing/*.d.ts",
+        "default": "./dist/esm/testing/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/testing/*.d.ts",
+        "default": "./dist/cjs/testing/*.js"
+      }
     },
     "./testing/*.js": {
-      "types": "./dist/esm/testing/*.d.ts",
-      "import": "./dist/esm/testing/*.js",
-      "require": "./dist/cjs/testing/*.js"
+      "import": {
+        "types": "./dist/esm/testing/*.d.ts",
+        "default": "./dist/esm/testing/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/testing/*.d.ts",
+        "default": "./dist/cjs/testing/*.js"
+      }
     },
     "./strategy/*": {
-      "types": "./dist/esm/strategy/*.d.ts",
-      "import": "./dist/esm/strategy/*.js",
-      "require": "./dist/cjs/strategy/*.js"
+      "import": {
+        "types": "./dist/esm/strategy/*.d.ts",
+        "default": "./dist/esm/strategy/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/strategy/*.d.ts",
+        "default": "./dist/cjs/strategy/*.js"
+      }
     },
     "./strategy/*.js": {
-      "types": "./dist/esm/strategy/*.d.ts",
-      "import": "./dist/esm/strategy/*.js",
-      "require": "./dist/cjs/strategy/*.js"
+      "import": {
+        "types": "./dist/esm/strategy/*.d.ts",
+        "default": "./dist/esm/strategy/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/strategy/*.d.ts",
+        "default": "./dist/cjs/strategy/*.js"
+      }
     },
     "./browser": {
-      "types": "./dist/esm/browser/index.d.ts",
-      "import": "./dist/esm/browser/index.js",
-      "require": "./dist/cjs/browser/index.js"
+      "import": {
+        "types": "./dist/esm/browser/index.d.ts",
+        "default": "./dist/esm/browser/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/browser/index.d.ts",
+        "default": "./dist/cjs/browser/index.js"
+      }
     },
     "./browser.js": {
-      "types": "./dist/esm/browser/index.d.ts",
-      "import": "./dist/esm/browser/index.js",
-      "require": "./dist/cjs/browser/index.js"
+      "import": {
+        "types": "./dist/esm/browser/index.d.ts",
+        "default": "./dist/esm/browser/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/browser/index.d.ts",
+        "default": "./dist/cjs/browser/index.js"
+      }
     }
   },
   "repository": "https://github.com/vikaspotluri123/simple-mfa",
