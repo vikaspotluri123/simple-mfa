@@ -1,7 +1,6 @@
 import {type StrategyConfig} from './config.js';
+import {type MaybePromise} from './shared.js';
 import {type SerializedAuthStrategy} from './storage.js';
-
-export type MaybePromise<T> = T | Promise<T>;
 
 export interface AuthStrategy<
 	TAuthContext,

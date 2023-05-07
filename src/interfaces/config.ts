@@ -1,4 +1,5 @@
-import {type MaybePromise, type AuthStrategy} from './controller.js';
+import {type MaybePromise,} from './shared.js';
+import {type AuthStrategy} from './controller.js';
 
 export type UntypedStrategyRecord = Record<string, AuthStrategy<any, any, any>>;
 

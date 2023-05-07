@@ -1,6 +1,7 @@
 import {StrategyError} from './error.js';
+import {type MaybePromise} from './interfaces/shared.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
-import {type MaybePromise, type AuthStrategy} from './interfaces/controller.js';
+import {type AuthStrategy} from './interfaces/controller.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 import {type StorageService} from './storage.js';
 
