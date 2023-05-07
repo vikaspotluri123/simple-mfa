@@ -2,16 +2,72 @@
   "name": "@potluri/simple-mfa",
   "version": "0.0.1",
   "description": "MFA implementation made simple",
-  "type": "module",
-  "main": "index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./default-strategies": {
+      "types": "./dist/esm/default-strategies.d.ts",
+      "import": "./dist/esm/default-strategies.js",
+      "require": "./dist/cjs/default-strategies.js"
+    },
+    "./default-strategies.js": {
+      "types": "./dist/esm/default-strategies.d.ts",
+      "import": "./dist/esm/default-strategies.js",
+      "require": "./dist/cjs/default-strategies.js"
+    },
+    "./testing": {
+      "types": "./dist/esm/testing/index.d.ts",
+      "import": "./dist/esm/testing/index.js",
+      "require": "./dist/cjs/testing/index.js"
+    },
+    "./testing.js": {
+      "types": "./dist/esm/testing/index.d.ts",
+      "import": "./dist/esm/testing/index.js",
+      "require": "./dist/cjs/testing/index.js"
+    },
+    "./testing/*": {
+      "types": "./dist/esm/testing/*.d.ts",
+      "import": "./dist/esm/testing/*.js",
+      "require": "./dist/cjs/testing/*.js"
+    },
+    "./testing/*.js": {
+      "types": "./dist/esm/testing/*.d.ts",
+      "import": "./dist/esm/testing/*.js",
+      "require": "./dist/cjs/testing/*.js"
+    },
+    "./strategy/*": {
+      "types": "./dist/esm/strategy/*.d.ts",
+      "import": "./dist/esm/strategy/*.js",
+      "require": "./dist/cjs/strategy/*.js"
+    },
+    "./strategy/*.js": {
+      "types": "./dist/esm/strategy/*.d.ts",
+      "import": "./dist/esm/strategy/*.js",
+      "require": "./dist/cjs/strategy/*.js"
+    },
+    "./browser": {
+      "types": "./dist/esm/browser/index.d.ts",
+      "import": "./dist/esm/browser/index.js",
+      "require": "./dist/cjs/browser/index.js"
+    },
+    "./browser.js": {
+      "types": "./dist/esm/browser/index.d.ts",
+      "import": "./dist/esm/browser/index.js",
+      "require": "./dist/cjs/browser/index.js"
+    }
+  },
   "repository": "https://github.com/vikaspotluri123/simple-mfa",
   "author": "Vikas Potluri",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "tsc",
+    "build": "yarn build:esm && yarn build:cjs",
     "lint": "xo && tsc -p tsconfig-tests.json",
     "dev": "tsc -w",
+    "build:esm": "tsc",
     "build:cjs": "tsc -p tsconfig-cjs.json",
     "pretest:coverage": "tsc -p tsconfig-coverage.json",
     "test:coverage": "c8 --all --src src --exclude src/interfaces node_modules/.bin/mocha test/unit/**/* test/integration/**/*"
