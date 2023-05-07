@@ -2,14 +2,14 @@
 
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {createSimpleMFA, StrategyError} from '../../dist/esm/index.js';
+import {createSimpleMfa, StrategyError} from '../../dist/esm/index.js';
 import {defaultStrategies} from '../../dist/esm/default-strategies.js';
 import {createOtp} from '../../dist/esm/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
 const sendEmail = sinon.stub();
 
-const instance = createSimpleMFA({
+const instance = createSimpleMfa({
 	strategies: defaultStrategies(new MockedStorageService()),
 	sendEmail,
 });
