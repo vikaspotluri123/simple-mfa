@@ -4,6 +4,13 @@ export function getOtpUri(
 	secret: string,
 	label = issuer,
 ) {
-	const safeSecret = secret.replace(/\D/g, '').toUpperCase();
-	return `otpauth://totp/${encodeURI(label)}:${encodeURI(account)}?secret=${safeSecret}&issuer=${encodeURI(issuer)}`;
+	// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
+	// > The issuer and account name should be separated by a literal or url-encoded colon, and optional spaces may precede the account name. Neither issuer nor account name may themselves contain a colon.
+	const safeLabel = label.replace(/:/g, '-');
+	const safeAccount = account.replace(/:/g, '-');
+	const safeSecret = secret.toUpperCase();
+	const extras = new URLSearchParams();
+	extras.set('secret', safeSecret);
+	extras.set('issuer', issuer);
+	return `otpauth://totp/${encodeURI(safeLabel)}:${encodeURI(safeAccount)}?${extras.toString()}`;
 }
