@@ -1,6 +1,5 @@
 // @ts-check
 
-import sinon from 'sinon';
 import {expect} from 'chai';
 import {OtpStrategy} from '../../../dist/esm/strategy/otp.js';
 import {StrategyError} from '../../../dist/esm/error.js';
@@ -11,12 +10,11 @@ import {MockedStorageService} from '../../fixtures/storage.js';
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
-const sendEmail = sinon.stub();
 
 const storageService = new MockedStorageService();
 const strategy = new OtpStrategy(storageService);
 
-const config = {generateId, sendEmail};
+const config = {generateId};
 
 describe('Unit > Strategy > OTP', function () {
 	/** @type {Awaited<ReturnType<strategy['create']>>} */

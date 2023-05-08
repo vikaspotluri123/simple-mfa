@@ -2,10 +2,15 @@ import {type StrategyConfig} from './config.js';
 import {type MaybePromise} from './shared.js';
 import {type SerializedAuthStrategy} from './storage.js';
 
+export interface PrepareResponse {
+	type: string;
+	data: unknown;
+}
+
 export interface AuthStrategy<
 	TAuthContext,
 	TSharedConfig,
-	TPrepareResponse extends string | undefined,
+	TPrepareResponse extends string | PrepareResponse | undefined,
 	TStrategies extends string = string,
 	TInternalStrategy = SerializedAuthStrategy<TStrategies, TAuthContext>,
 > {

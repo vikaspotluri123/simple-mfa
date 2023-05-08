@@ -1,6 +1,5 @@
 // @ts-check
 
-import sinon from 'sinon';
 import {expect} from 'chai';
 import {BackupCodeStrategy} from '../../../dist/esm/strategy/backup-code.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
@@ -10,11 +9,9 @@ import {StrategyError} from '../../../dist/esm/error.js';
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
-const sendEmail = sinon.stub();
 
 const strategy = new BackupCodeStrategy(new MockedStorageService());
-
-const config = {generateId, sendEmail};
+const config = {generateId};
 
 describe('Unit > Strategy > Backup Codes', function () {
 	it('create', async function () {

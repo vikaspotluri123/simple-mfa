@@ -1,5 +1,4 @@
 import {webcrypto} from 'node:crypto';
-import {StrategyError} from './error.js';
 import {type SimpleMfaConfig, type InternalSimpleMfaConfig, type UntypedStrategyRecord} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 
@@ -24,9 +23,6 @@ const DEFAULT_STRATEGY_SERIALIZER = async (
 export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): InternalSimpleMfaConfig<TStrategies> {
 	const {
 		generateId = DEFAULT_ID_GENERATOR,
-		sendEmail = () => {
-			throw new StrategyError('sendEmail was used but not provided when initializing the service', false);
-		},
 		strategies,
 	} = config;
 
@@ -35,7 +31,7 @@ export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): Inter
 	}
 
 	return {
-		config: {generateId, sendEmail},
+		config: {generateId},
 		strategies: strategies as Required<TStrategies>,
 	};
 }

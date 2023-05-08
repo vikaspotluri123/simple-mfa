@@ -1,17 +1,13 @@
 // @ts-check
 
-import sinon from 'sinon';
 import {expect} from 'chai';
-import {createSimpleMfa, StrategyError} from '../../dist/esm/index.js';
+import {createSimpleMfa, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/esm/index.js';
 import {defaultStrategies} from '../../dist/esm/default-strategies.js';
 import {createOtp} from '../../dist/esm/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
-const sendEmail = sinon.stub();
-
 const instance = createSimpleMfa({
 	strategies: defaultStrategies(new MockedStorageService()),
-	sendEmail,
 });
 
 /** @type {import('../../dist/esm/interfaces/storage.js').SerializedAuthStrategy[]} */
@@ -42,15 +38,14 @@ describe('Integration > SimpleMFA', function () {
 		const magicLinkStore = await instance.create('magic-link', 'abcd');
 		expect(magicLinkStore.status).to.equal('active');
 
-		/** @type {'email_sent'} */
+		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}}} */
 		const response = await instance.prepare(magicLinkStore);
 
-		expect(sendEmail.calledOnce).to.be.true;
-		expect(sendEmail.args[0][0]).to.equal('magic-link');
-		expect(sendEmail.args[0][1]).to.have.property('token');
-		expect(response).to.equal('email_sent');
+		expect(response.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
+		expect(response.data).to.be.an('object').with.keys(['token']);
+		expect(Object.keys(response)).to.have.length(2);
 
-		expect(await instance.validate(magicLinkStore, sendEmail.args[0][1].token)).to.be.true;
+		expect(await instance.validate(magicLinkStore, response.data.token)).to.be.true;
 	});
 
 	it('BackupCode Strategy', async function () {
@@ -73,10 +68,10 @@ describe('Integration > SimpleMFA', function () {
 
 		const store = instance.coerce(unsafeStore);
 
-		/** @type {'email_sent' | void} */
+		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL; data: {token: string}} | undefined} */
 		const prepareResponse = await instance.prepare(store);
 
-		expect(prepareResponse === undefined || prepareResponse === 'email_sent').to.be.true;
+		expect(prepareResponse === undefined || prepareResponse.type === MAGIC_LINK_SERVER_TO_SEND_EMAIL).to.be.true;
 		expect(await instance.validate(store, '')).to.be.false;
 	});
 

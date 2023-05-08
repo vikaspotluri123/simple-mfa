@@ -1,20 +1,16 @@
 // @ts-check
 
-import sinon from 'sinon';
 import {expect} from 'chai';
+import {MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/esm/constants.js';
 import {MagicLinkStrategy} from '../../../dist/esm/strategy/magic-link.js';
-import {StrategyError} from '../../../dist/esm/error.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
-const sendEmail = sinon.stub();
-
 const strategy = new MagicLinkStrategy(new MockedStorageService());
-
-const config = {generateId, sendEmail};
+const config = {generateId};
 
 describe('Unit > Strategy > MagicLink', function () {
 	it('create', function () {
@@ -32,10 +28,11 @@ describe('Unit > Strategy > MagicLink', function () {
 	it('prepare', async function () {
 		const store = strategy.create(user_id, MagicLinkStrategy.type, config);
 		// Explicitly type the response to make sure it aligns
-		/** @type {'email_sent'} */
+		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}}} */
 		const prepareResponse = await strategy.prepare(store, config);
-		expect(prepareResponse).to.equal('email_sent');
-		expect(sendEmail.calledOnce).to.be.true;
+		expect(prepareResponse.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
+		expect(prepareResponse.data).to.be.an('object').with.keys(['token']);
+		expect(Object.keys(prepareResponse)).to.have.length(2);
 	});
 
 	describe('validate', function () {
@@ -45,10 +42,8 @@ describe('Unit > Strategy > MagicLink', function () {
 		let token;
 
 		beforeEach(async function () {
-			sendEmail.reset();
 			store = strategy.create(user_id, MagicLinkStrategy.type, config);
-			await strategy.prepare(store, config);
-			token = sendEmail.args[0][1].token;
+			({data: {token}} = await strategy.prepare(store, config));
 		});
 
 		it('does not allow duplicate uses', async function () {
