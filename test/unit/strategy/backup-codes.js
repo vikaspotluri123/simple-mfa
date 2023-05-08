@@ -1,9 +1,9 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {BackupCodeStrategy} from '../../../dist/esm/strategy/backup-code.js';
+import {BackupCodeStrategy} from '../../../dist/cjs/strategy/backup-code.js';
+import {StrategyError} from '../../../dist/cjs/error.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
-import {StrategyError} from '../../../dist/esm/error.js';
 
 // eslint-disable-next-line camelcase
 const user_id = 'user_id';

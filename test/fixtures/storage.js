@@ -1,4 +1,4 @@
-import {StorageService} from '../../dist/esm/storage.js';
+import {StorageService} from '../../dist/cjs/storage.js';
 
 const DEFAULT_KEYS = {
 	otp: '5375706572447570657253616665416e6453656375726521',

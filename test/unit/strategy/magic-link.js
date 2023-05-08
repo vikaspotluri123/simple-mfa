@@ -1,8 +1,8 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/esm/constants.js';
-import {MagicLinkStrategy} from '../../../dist/esm/strategy/magic-link.js';
+import {MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/cjs/constants.js';
+import {MagicLinkStrategy} from '../../../dist/cjs/strategy/magic-link.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase

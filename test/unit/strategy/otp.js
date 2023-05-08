@@ -1,9 +1,9 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {OtpStrategy} from '../../../dist/esm/strategy/otp.js';
-import {StrategyError} from '../../../dist/esm/error.js';
-import {createOtp} from '../../../dist/esm/testing/index.js';
+import {OtpStrategy} from '../../../dist/cjs/strategy/otp.js';
+import {StrategyError} from '../../../dist/cjs/error.js';
+import {createOtp} from '../../../dist/cjs/testing/index.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
 // eslint-disable-next-line camelcase

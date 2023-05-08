@@ -1,5 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "$extends_note": "Node throws ERR_REQUIRE_ESM when the root package json has `type: module`, even with export maps, so we use the cjs version of the library when testing",
+  "extends": "./tsconfig-cjs.json",
   "compilerOptions": {
     "sourceMap": true
   }

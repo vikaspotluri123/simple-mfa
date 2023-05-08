@@ -1,16 +1,16 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {createSimpleMfa, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/esm/index.js';
-import {defaultStrategies} from '../../dist/esm/default-strategies.js';
-import {createOtp} from '../../dist/esm/testing/index.js';
+import {createSimpleMfa, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/cjs/index.js';
+import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
+import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
 
 const instance = createSimpleMfa({
 	strategies: defaultStrategies(new MockedStorageService()),
 });
 
-/** @type {import('../../dist/esm/interfaces/storage.js').SerializedAuthStrategy[]} */
+/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy[]} */
 const mockDatabase = await Promise.all([
 	instance.create('otp', 'abcd'),
 	instance.create('magic-link', 'abcd'),
