@@ -32,7 +32,7 @@ export class OtpStrategy implements AuthStrategy<string, string, undefined> {
 		};
 	}
 
-	prepare(_strategy: Strategy, _config: Config) {
+	prepare(_strategy: Strategy, _untrustedPayload: unknown, _config: Config) {
 		return undefined;
 	}
 

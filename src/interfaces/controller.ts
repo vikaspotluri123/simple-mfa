@@ -25,7 +25,7 @@ export interface AuthStrategy<
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
 	 * This isn't required in many scenarios, and can default to a noop.
 	 */
-	prepare: (strategy: TInternalStrategy, config: StrategyConfig) => MaybePromise<TPrepareResponse>;
+	prepare: (strategy: TInternalStrategy, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<TPrepareResponse>;
 	/**
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided

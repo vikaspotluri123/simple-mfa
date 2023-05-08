@@ -26,7 +26,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 	it('prepare', async function () {
 		const store = strategy.create(user_id, BackupCodeStrategy.type, config);
-		expect(strategy.prepare(store[0], config)).to.be.undefined;
+		expect(strategy.prepare(store[0], '', config)).to.be.undefined;
 	});
 
 	it('validate', async function () {

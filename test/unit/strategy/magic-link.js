@@ -1,7 +1,7 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/cjs/constants.js';
+import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/cjs/constants.js';
 import {MagicLinkStrategy} from '../../../dist/cjs/strategy/magic-link.js';
 import {MockedStorageService} from '../../fixtures/storage.js';
 
@@ -27,9 +27,18 @@ describe('Unit > Strategy > MagicLink', function () {
 
 	it('prepare', async function () {
 		const store = strategy.create(user_id, MagicLinkStrategy.type, config);
+		expect(await strategy.prepare(store, '', config)).to.not.be.ok;
+
 		// Explicitly type the response to make sure it aligns
-		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}}} */
-		const prepareResponse = await strategy.prepare(store, config);
+		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}} | undefined} */
+		const prepareResponse = await strategy.prepare(store, MAGIC_LINK_REQUESTING_EMAIL, config);
+
+		// Wrapped like this for type safety
+		if (!prepareResponse) {
+			expect(prepareResponse).to.be.ok;
+			return;
+		}
+
 		expect(prepareResponse.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
 		expect(prepareResponse.data).to.be.an('object').with.keys(['token']);
 		expect(Object.keys(prepareResponse)).to.have.length(2);
@@ -43,7 +52,8 @@ describe('Unit > Strategy > MagicLink', function () {
 
 		beforeEach(async function () {
 			store = strategy.create(user_id, MagicLinkStrategy.type, config);
-			({data: {token}} = await strategy.prepare(store, config));
+			// @ts-expect-error we can't do non-null assertions in js
+			({data: {token}} = await strategy.prepare(store, MAGIC_LINK_REQUESTING_EMAIL, config));
 		});
 
 		it('does not allow duplicate uses', async function () {

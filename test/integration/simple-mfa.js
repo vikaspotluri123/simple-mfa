@@ -1,7 +1,7 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {createSimpleMfa, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/cjs/index.js';
+import {createSimpleMfa, MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/cjs/index.js';
 import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
@@ -37,9 +37,16 @@ describe('Integration > SimpleMFA', function () {
 	it('MagicLink Strategy', async function () {
 		const magicLinkStore = await instance.create('magic-link', 'abcd');
 		expect(magicLinkStore.status).to.equal('active');
+		expect(await instance.prepare(magicLinkStore, '')).to.not.be.ok;
 
-		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}}} */
-		const response = await instance.prepare(magicLinkStore);
+		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}} | undefined} */
+		const response = await instance.prepare(magicLinkStore, MAGIC_LINK_REQUESTING_EMAIL);
+
+		// Wrapped like this for type safety
+		if (!response) {
+			expect(response).to.be.ok;
+			return;
+		}
 
 		expect(response.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
 		expect(response.data).to.be.an('object').with.keys(['token']);

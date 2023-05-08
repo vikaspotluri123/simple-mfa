@@ -3,7 +3,7 @@ import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controll
 import {RingMap} from '../utils.js';
 import {type StorageService} from '../storage.js';
 import {type MaybePromise} from '../interfaces/shared.js';
-import {MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../constants.js';
+import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../constants.js';
 
 const TYPE = 'magic-link' as const;
 const EXPIRATION_TIME_MS = 36_000_000; // 10 Minutes
@@ -35,7 +35,7 @@ type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse> {
+export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse | undefined> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
 	private readonly _expiredTokens: TokenExpiryStore;
@@ -57,7 +57,12 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		};
 	}
 
-	async prepare(strategy: Strategy, _config: Config) {
+	async prepare(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
+		// CASE: This is not a request to send an email --> proceed to validation stage
+		if (untrustedPayload !== MAGIC_LINK_REQUESTING_EMAIL) {
+			return undefined;
+		}
+
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
 		const encryptedToken = await this._storageService.encodeSecret(strategy.type, plainTextToken);

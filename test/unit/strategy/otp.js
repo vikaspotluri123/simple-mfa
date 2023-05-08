@@ -42,7 +42,7 @@ describe('Unit > Strategy > OTP', function () {
 	});
 
 	it('prepare', async function () {
-		expect(strategy.prepare(store, config)).to.equal(undefined);
+		expect(strategy.prepare(store, '', config)).to.equal(undefined);
 	});
 
 	describe('validate', function () {

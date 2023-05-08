@@ -75,14 +75,14 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.create(owner, type, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
 		},
 
-		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>) {
+		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.prepare(storedStrategy, config) as MaybePromise<PrepareType<TStrategies[TStrategy]>>;
+			return strategy.prepare(storedStrategy, userPayload, config) as MaybePromise<PrepareType<TStrategies[TStrategy]>>;
 		},
 
 		validate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
