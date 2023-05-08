@@ -1,3 +1,4 @@
+import {BACKUP_CODE_PENDING_TO_ACTIVE_PROOF} from '../constants.js';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {type StorageService} from '../storage.js';
@@ -40,7 +41,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
 		if (strategy.status === 'pending') {
-			return untrustedPayload === 'acknowledged';
+			return untrustedPayload === BACKUP_CODE_PENDING_TO_ACTIVE_PROOF;
 		}
 
 		const codes = await this._deserialize(strategy);
