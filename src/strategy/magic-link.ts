@@ -2,11 +2,23 @@ import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {RingMap} from '../utils.js';
 import {type StorageService} from '../storage.js';
+import {type MaybePromise} from '../interfaces/shared.js';
 
 const TYPE = 'magic-link';
 const EXPIRATION_TIME_MS = 36_000_000; // 10 Minutes
 
-const expiredTokens = new RingMap();
+let expiredTokens: RingMap<string>;
+
+const defaultTokenStore = () => {
+	expiredTokens ??= new RingMap();
+	return expiredTokens;
+};
+
+export interface TokenExpiryStore {
+	get(token: string): MaybePromise<string | undefined>;
+	has(token: string): MaybePromise<boolean>;
+	set(token: string, value: string | undefined): MaybePromise<void>;
+}
 
 let counter = Math.floor(Math.random() * 100);
 
@@ -18,8 +30,11 @@ type Config = MyStrategy['config'];
 export class MagicLinkStrategy implements AuthStrategy<void, null, 'email_sent'> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
+	private readonly _expiredTokens: TokenExpiryStore;
 
-	constructor(private readonly _storageService: StorageService) {}
+	constructor(private readonly _storageService: StorageService, tokenStore = defaultTokenStore()) {
+		this._expiredTokens = tokenStore;
+	}
 
 	create(user_id: string, type: string, {generateId}: Config): Strategy {
 		const id = generateId();
@@ -47,7 +62,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, 'email_sent'>
 			throw new StrategyError('Unable to understand this MagicLink', true);
 		}
 
-		if (expiredTokens.has(untrustedPayload)) {
+		if (await this._expiredTokens.has(untrustedPayload)) {
 			throw new StrategyError('This MagicLink has already been used', true);
 		}
 
@@ -59,7 +74,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, 'email_sent'>
 		const [id, expiration, _] = decrypted.split('::');
 
 		if (id === strategy.id && Number(expiration) > Date.now()) {
-			expiredTokens.set(untrustedPayload, undefined);
+			await this._expiredTokens.set(untrustedPayload, undefined);
 			return true;
 		}
 
