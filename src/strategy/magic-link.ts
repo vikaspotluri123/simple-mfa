@@ -5,7 +5,7 @@ import {type StorageService} from '../storage.js';
 import {type MaybePromise} from '../interfaces/shared.js';
 import {MAGIC_LINK_EMAIL_SENT} from '../constants.js';
 
-const TYPE = 'magic-link';
+const TYPE = 'magic-link' as const;
 const EXPIRATION_TIME_MS = 36_000_000; // 10 Minutes
 
 let expiredTokens: RingMap<string>;
@@ -19,6 +19,14 @@ export interface TokenExpiryStore {
 	get(token: string): MaybePromise<string | undefined>;
 	has(token: string): MaybePromise<boolean>;
 	set(token: string, value: string | undefined): MaybePromise<void>;
+}
+
+declare global {
+	interface SimpleMfaEmailParameters {
+		[TYPE]: {
+			token: string;
+		};
+	}
 }
 
 let counter = Math.floor(Math.random() * 100);
