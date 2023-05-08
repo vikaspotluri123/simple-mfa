@@ -7,13 +7,18 @@ const DEFAULT_KEYS = {
 };
 
 export class MockedStorageService extends StorageService {
+	/** @type {boolean | null} */
 	lastUpdateFailed = null;
 	/** @param {Record<string, string>} keys */
 	constructor(keys = DEFAULT_KEYS) {
 		super(keys);
 	}
 
-	/** @returns {Promise<CryptoKey>} */
+	/**
+	 * @param {any} keyId
+	 * @param {any} key64
+	 * @returns {Promise<CryptoKey>}
+	 */
 	async update(keyId, key64) {
 		try {
 			const response = await super.update(keyId, key64);

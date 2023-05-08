@@ -10,7 +10,7 @@ const instance = createSimpleMfa({
 	strategies: defaultStrategies(new MockedStorageService()),
 });
 
-/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy[]} */
+/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<string>[]} */
 const mockDatabase = await Promise.all([
 	instance.create('otp', 'abcd'),
 	instance.create('magic-link', 'abcd'),
@@ -76,7 +76,7 @@ describe('Integration > SimpleMFA', function () {
 		const store = instance.coerce(unsafeStore);
 
 		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL; data: {token: string}} | undefined} */
-		const prepareResponse = await instance.prepare(store);
+		const prepareResponse = await instance.prepare(store, '');
 
 		expect(prepareResponse === undefined || prepareResponse.type === MAGIC_LINK_SERVER_TO_SEND_EMAIL).to.be.true;
 		expect(await instance.validate(store, '')).to.be.false;

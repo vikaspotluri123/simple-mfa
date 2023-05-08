@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
-    "module": "es2020",
+    "module": "es2022",
     "moduleResolution": "node",
     "target": "es2020",
     "noEmit": false,

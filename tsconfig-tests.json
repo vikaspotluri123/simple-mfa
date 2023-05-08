@@ -4,6 +4,7 @@
   "compilerOptions": {
     "noEmit": true,
     "checkJs": true,
-    "strict": false
+    "strict": true,
+    "useUnknownInCatchVariables": false
   }
 }
