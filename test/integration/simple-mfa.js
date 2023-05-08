@@ -20,6 +20,32 @@ const mockDatabase = await Promise.all([
 ]);
 
 describe('Integration > SimpleMFA', function () {
+	it('Invalid strategy', async function () {
+		const strategy = await instance.create('otp', 'abcd');
+		// @ts-expect-error
+		strategy.type = 'Does not exist';
+
+		/**
+		 * @template T
+		 * @param {T} fn
+		 * @param {Parameters<T extends (...args: any[]) => any ? T : () => void>} args
+		 */
+		const shouldThrow = (fn, ...args) => {
+			// @ts-expect-error
+			expect(() => fn(...args)).to.throw(StrategyError);
+		};
+
+		shouldThrow(instance.coerce, strategy);
+		// @ts-expect-error
+		shouldThrow(instance.create, 'does not exist');
+		shouldThrow(instance.prepare, strategy, '');
+		shouldThrow(instance.validate, strategy, '');
+		shouldThrow(instance.postValidate, strategy, '');
+		shouldThrow(instance.share, strategy);
+		shouldThrow(instance.serialize, strategy, false);
+		shouldThrow(instance.serialize, strategy, true);
+	});
+
 	it('OTP Strategy', async function () {
 		const otpStore = await instance.create('otp', 'abcd');
 		const sharedSecret = await instance.share(otpStore);
