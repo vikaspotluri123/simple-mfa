@@ -68,6 +68,12 @@ describe('Unit > Strategy > OTP', function () {
 		});
 	});
 
+	it('postvalidate', async function () {
+		const store = await strategy.create(user_id, OtpStrategy.type, config);
+		const token = createOtp(await strategy.share(store));
+		expect(strategy.postValidate(store, token, config)).to.not.be.ok;
+	});
+
 	it('share', async function () {
 		expect(
 			await strategy.share(await strategy.create(user_id, OtpStrategy.type, config)),

@@ -85,9 +85,14 @@ describe('Integration > SimpleMFA', function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
 		expect(backupCodesStore.status).to.equal('pending');
 		const sharedCodes = await instance.share(backupCodesStore);
-		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.false;
+		const realToken = sharedCodes[0].replace(/-/g, '');
+		expect(await instance.validate(backupCodesStore, realToken)).to.be.false;
 		backupCodesStore.status = 'active';
-		expect(await instance.validate(backupCodesStore, sharedCodes[0].replace(/-/g, ''))).to.be.true;
+		expect(await instance.validate(backupCodesStore, realToken)).to.be.true;
+
+		const currentStrategyStringified = JSON.stringify(backupCodesStore);
+		expect(JSON.stringify(await instance.postValidate(backupCodesStore, ''))).to.not.be.ok;
+		expect(JSON.stringify(await instance.postValidate(backupCodesStore, realToken))).to.not.equal(currentStrategyStringified);
 	});
 
 	it('Valid, but untyped `type` (from storage)', async function () {

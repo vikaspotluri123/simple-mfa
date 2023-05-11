@@ -85,6 +85,13 @@ describe('Unit > Strategy > MagicLink', function () {
 		});
 	});
 
+	it('postvalidate', async function () {
+		const store = strategy.create(user_id, MagicLinkStrategy.type, config);
+		// @ts-expect-error we can't do non-null assertions in js
+		const {data: {token}} = await strategy.prepare(store, MAGIC_LINK_REQUESTING_EMAIL, config);
+		expect(strategy.postValidate(store, token, config)).to.not.be.ok;
+	});
+
 	it('share', function () {
 		expect(strategy.share(strategy.create(user_id, MagicLinkStrategy.type, config))).to.equal(null);
 	});

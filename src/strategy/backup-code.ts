@@ -32,7 +32,8 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 			context: '',
 		};
 
-		return this._serialize(response, codes);
+		await this._serialize(response, codes);
+		return response;
 	}
 
 	prepare(_strategy: Strategy, _untrustedPayload: unknown, _config: Config) {
@@ -61,8 +62,14 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[], undefi
 	}
 
 	private async _serialize(strategy: Strategy, codes: string[]) {
+		const serializedCodes = codes.join('|');
+		const existingSerializedCodes = decryptionCache.get(strategy)?.join('|');
+		if (existingSerializedCodes === serializedCodes) {
+			return;
+		}
+
 		decryptionCache.set(strategy, codes);
-		strategy.context = await this._storage.encodeSecret(strategy.type, codes.join('|'));
+		strategy.context = await this._storage.encodeSecret(strategy.type, serializedCodes);
 		return strategy;
 	}
 
