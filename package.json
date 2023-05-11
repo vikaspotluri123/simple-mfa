@@ -131,7 +131,7 @@
   },
   "devDependencies": {
     "@gradebook/release-utils": "^0.7.0",
-    "@types/chai": "^4.3.4",
+    "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.3",
     "@types/sinon": "^10.0.13",
