@@ -127,7 +127,8 @@
     "pretest": "tsc -p tsconfig-coverage.json",
     "test": "mocha --recursive test/unit test/integration",
     "pretest:coverage": "tsc -p tsconfig-coverage.json",
-    "test:coverage": "c8 mocha --recursive test/unit test/integration"
+    "test:coverage": "c8 mocha --recursive test/unit test/integration",
+    "test:coverage:ci": "c8 mocha --recursive test/unit test/integration"
   },
   "devDependencies": {
     "@gradebook/release-utils": "^0.7.0",
