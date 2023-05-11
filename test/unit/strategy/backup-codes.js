@@ -46,7 +46,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 	});
 
 	it('postValidate', async function () {
-		let store = await strategy.create(user_id, BackupCodeStrategy.type, config);
+		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
 		store.status = 'active';
 		const codes = await strategy.share(store);
 
@@ -56,7 +56,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 		for (const hyphenateCode of codes) {
 			const code = hyphenateCode.replace(/-/g, '');
 			expect(await strategy.validate(store, code, config), 'first use should pass').to.be.true;
-			store = await strategy.postValidate(store, code, config);
+			await strategy.postValidate(store, code, config);
 			expect(await strategy.validate(store, code, config), 'second use should fail').to.be.false;
 			expect(await strategy.share(store), 'shared codes should not include expired codes')
 				.to.have.length(--codesCount);
