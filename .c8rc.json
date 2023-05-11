@@ -1,0 +1,9 @@
+{
+  "src": "src",
+  "exclude": ["src/interfaces", "test"],
+  "checkCoverage": true,
+  "branches": 97,
+  "functions": 96,
+  "lines": 99,
+  "all": true
+}
