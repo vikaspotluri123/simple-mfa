@@ -130,6 +130,7 @@
     "test:coverage": "c8 mocha --recursive test/unit test/integration"
   },
   "devDependencies": {
+    "@gradebook/release-utils": "^0.7.0",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.3",
