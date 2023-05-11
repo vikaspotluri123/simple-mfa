@@ -2,7 +2,7 @@ import {webcrypto} from 'node:crypto';
 import {type SimpleMfaConfig, type InternalSimpleMfaConfig, type UntypedStrategyRecord} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 
-const DEFAULT_ID_GENERATOR = webcrypto.randomUUID;
+const DEFAULT_ID_GENERATOR = webcrypto.randomUUID.bind(webcrypto);
 
 const DEFAULT_STRATEGY_SERIALIZER = async (
 	store: SerializedAuthStrategy<string>,
