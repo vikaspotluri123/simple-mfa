@@ -35,7 +35,7 @@ type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse | undefined> {
+export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
 	private readonly _expiredTokens: TokenExpiryStore;

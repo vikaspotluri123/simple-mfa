@@ -38,7 +38,7 @@ export interface AuthStrategy<
 	 * After a successful validation, perform a mutation to the stored data
 	 */
 	postValidate: (strategy: TInternalStrategy, payload: unknown, config: StrategyConfig) =>
-	MaybePromise<TInternalStrategy | void>;
+	MaybePromise<TInternalStrategy | undefined> | void;
 	/**
 	 * @description
 	 * Convert the private stored data into a user-specific public version
