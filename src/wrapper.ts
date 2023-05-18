@@ -1,31 +1,20 @@
 /* eslint-disable @typescript-eslint/promise-function-async */
 import {StrategyError} from './error.js';
-import {type MaybePromise} from './interfaces/shared.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
-import {type AuthStrategy} from './interfaces/controller.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 import {type StorageService} from './storage.js';
-
-type NarrowSerializedFromStrategy<TStrategy extends AuthStrategy<any, any, any>, TNarrowStrategies extends string> =
-	TStrategy extends AuthStrategy<infer AuthContext, any, any>
-		? SerializedAuthStrategy<TNarrowStrategies, AuthContext>
-		: never;
-
-type ShareType<TStrategy extends AuthStrategy<any, any, any>> =
-	TStrategy extends AuthStrategy<any, infer ShareContext, any> ? ShareContext : never;
-
-type PrepareType<TStrategy extends AuthStrategy<any, any, any>> =
-	TStrategy extends AuthStrategy<any, any, infer Prepare> ? Prepare : never;
+import {type SimpleMfaApi} from './interfaces/wrapper.js';
 
 export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
 	internalConfig: InternalSimpleMfaConfig<TStrategies>,
 ) {
 	const {config, strategies} = internalConfig;
 
-	type Strategy = keyof TStrategies;
+	type Strategy = keyof TStrategies & string;
+	type StoredStrategy = SerializedAuthStrategy<Strategy>;
 
-	const wrapper = {
-		assertStatusTransition(storedStrategy: SerializedAuthStrategy<any>, nextStatus: SerializedAuthStrategy<any>['status']) {
+	const wrapper: SimpleMfaApi<TStrategies> = {
+		assertStatusTransition(storedStrategy: StoredStrategy, nextStatus: StoredStrategy['status']) {
 			const {status: currentStatus} = storedStrategy;
 			if (
 				// CASE: transitioning to the current status doesn't make any sense
@@ -59,34 +48,34 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return store;
 		},
 
-		coerce(storedStrategy: SerializedAuthStrategy<any>): SerializedAuthStrategy<Strategy & string> {
+		coerce(storedStrategy: StoredStrategy): StoredStrategy {
 			if (storedStrategy.type in strategies) {
-				return storedStrategy as SerializedAuthStrategy<Strategy & string>;
+				return storedStrategy;
 			}
 
 			throw new StrategyError('Invalid strategy', false);
 		},
 
-		create<TStrategy extends Strategy & string>(type: TStrategy, owner: string) {
+		create(type: Strategy, owner: string) {
 			const strategy = strategies[type];
 			if (!strategy) {
 				throw new StrategyError(`Invalid type: ${type}`, true);
 			}
 
-			return strategy.create(owner, type, config) as MaybePromise<NarrowSerializedFromStrategy<TStrategies[TStrategy], TStrategy & string>>;
+			return strategy.create(owner, type, config);
 		},
 
-		prepare<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
+		prepare(storedStrategy: StoredStrategy, userPayload: unknown) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.prepare(storedStrategy, userPayload, config) as MaybePromise<PrepareType<TStrategies[TStrategy]>>;
+			return strategy.prepare(storedStrategy, userPayload, config);
 		},
 
-		validate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, userPayload: unknown) {
+		validate(storedStrategy: StoredStrategy, userPayload: unknown) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
@@ -95,7 +84,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.validate(storedStrategy, userPayload, config);
 		},
 
-		postValidate<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy>, payload: unknown) {
+		postValidate(storedStrategy: StoredStrategy, payload: unknown) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
@@ -104,17 +93,17 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return strategy.postValidate(storedStrategy, payload, config);
 		},
 
-		share<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>) {
+		share(storedStrategy: StoredStrategy) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.share(storedStrategy) as MaybePromise<ShareType<TStrategies[TStrategy]>>;
+			return strategy.share(storedStrategy);
 		},
 
-		serialize<TStrategy extends Strategy & string>(storedStrategy: SerializedAuthStrategy<TStrategy, string>, isTrusted: boolean) {
+		serialize(storedStrategy: StoredStrategy, isTrusted: boolean) {
 			const strategy = strategies[storedStrategy.type];
 			if (!strategy) {
 				throw new StrategyError('Invalid strategy', false);
