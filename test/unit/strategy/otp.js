@@ -64,7 +64,7 @@ describe('Unit > Strategy > OTP', function () {
 		it('invalid secret (not likely)', async function () {
 			const validOtp = await realOtp();
 			store.context = store.context.slice(0, -5);
-			expect(await strategy.validate(store, validOtp, config)).to.be.false;
+			expect(await strategy.validate({...store}, validOtp, config)).to.be.false;
 		});
 	});
 
@@ -82,7 +82,7 @@ describe('Unit > Strategy > OTP', function () {
 		store.context = store.context.slice(0, -5);
 
 		try {
-			await strategy.share(store);
+			await strategy.share({...store});
 			expect(false, 'should have thrown').to.be.true;
 		} catch (error) {
 			expect(error).to.be.an.instanceOf(StrategyError);

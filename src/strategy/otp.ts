@@ -7,21 +7,18 @@ type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
+const decryptionCache = new WeakMap<Strategy, string>();
+
 export class OtpStrategy implements AuthStrategy<string, string> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
-	#lastDecryptedSecretCypher?: string;
-	#lastDecryptedSecretPlain?: string;
 
 	constructor(private readonly _storageService: StorageService) {}
 
 	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const plainText = authenticator.generateSecret();
 		const context = await this._storageService.encodeSecret('otp', plainText);
-		this.#lastDecryptedSecretPlain = plainText;
-		this.#lastDecryptedSecretCypher = context;
-
-		return {
+		const strategy: Strategy = {
 			id: generateId(),
 			name: '',
 			status: 'pending',
@@ -30,6 +27,9 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 			context,
 			type,
 		};
+
+		decryptionCache.set(strategy, plainText);
+		return strategy;
 	}
 
 	prepare(_strategy: Strategy, _untrustedPayload: unknown, _config: Config) {
@@ -41,7 +41,7 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 			throw new StrategyError('Invalid client payload', true);
 		}
 
-		const serverMemorySecret = await this._decode(strategy.context);
+		const serverMemorySecret = await this._decode(strategy);
 
 		if (!serverMemorySecret) {
 			return false;
@@ -55,7 +55,7 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 	}
 
 	async share(strategy: Strategy) {
-		const decoded = await this._decode(strategy.context);
+		const decoded = await this._decode(strategy);
 
 		if (!decoded) {
 			throw new StrategyError('Unable to extract secret', false);
@@ -64,18 +64,17 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 		return decoded;
 	}
 
-	private async _decode(secret: string) {
-		if (this.#lastDecryptedSecretCypher === secret) {
-			return this.#lastDecryptedSecretPlain!;
+	private async _decode(strategy: Strategy) {
+		if (decryptionCache.has(strategy)) {
+			return decryptionCache.get(strategy);
 		}
 
-		const plainText = await this._storageService.decodeSecret(OtpStrategy.type, secret);
+		const plainText = await this._storageService.decodeSecret(OtpStrategy.type, strategy.context);
 		if (!plainText) {
 			return null;
 		}
 
-		this.#lastDecryptedSecretCypher = secret;
-		this.#lastDecryptedSecretPlain = plainText;
+		decryptionCache.set(strategy, plainText);
 		return plainText;
 	}
 }
