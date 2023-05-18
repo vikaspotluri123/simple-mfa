@@ -22,7 +22,7 @@ export type ValidationResult<TStrategies extends UntypedStrategyRecord> = {
 	response: Public<ControllerResponse<TStrategies, 'postValidate'>>;
 };
 
-export interface SimpleMfaApi<
+export interface SimpleMfaApiImplementation<
 	TStrategies extends UntypedStrategyRecord,
 	Strategy extends keyof TStrategies & string = keyof TStrategies & string,
 	StoredStrategy extends SerializedAuthStrategy<Strategy> = SerializedAuthStrategy<Strategy>,
@@ -36,3 +36,5 @@ export interface SimpleMfaApi<
 	share(storedStrategy: StoredStrategy): ReturnType<TStrategies[Strategy]['share']>;
 	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): MaybePromise<Partial<StoredStrategy>>;
 }
+
+export type SimpleMfaApi<TStrategies extends UntypedStrategyRecord> = SimpleMfaApiImplementation<TStrategies>;
