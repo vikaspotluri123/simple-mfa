@@ -7,12 +7,14 @@ export interface PrepareResponse {
 	data: unknown;
 }
 
+export type AllowedPrepareType = string | PrepareResponse;
+
 export interface AuthStrategy<
-	TAuthContext,
-	TSharedConfig,
-	TPrepareResponse extends string | PrepareResponse | undefined,
-	TStrategies extends string = string,
-	TInternalStrategy = SerializedAuthStrategy<TStrategies, TAuthContext>,
+	TStoredContextDefinition,
+	TShareType,
+	TPrepareType extends AllowedPrepareType = never,
+	TStrategyNames extends string = string,
+	TInternalStrategy = SerializedAuthStrategy<TStrategyNames, TStoredContextDefinition>,
 > {
 	readonly secretType?: 'none' | 'aes';
 	/**
@@ -25,7 +27,7 @@ export interface AuthStrategy<
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
 	 * This isn't required in many scenarios, and can default to a noop.
 	 */
-	prepare: (strategy: TInternalStrategy, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<TPrepareResponse>;
+	prepare: (strategy: TInternalStrategy, untrustedPayload: unknown, config: StrategyConfig) => MaybePromise<TPrepareType | undefined> | void;
 	/**
 	 * @description
 	 * Authenticate the user using this strategy based on the data they provided
@@ -41,7 +43,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Convert the private stored data into a user-specific public version
 	 */
-	share: (strategy: TInternalStrategy) => MaybePromise<TSharedConfig>;
+	share: (strategy: TInternalStrategy) => MaybePromise<TShareType>;
 	/**
 	 * @description
 	 * Convert the private stored data into an api-compatible format

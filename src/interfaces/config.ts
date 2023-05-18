@@ -1,6 +1,6 @@
-import {type AuthStrategy} from './controller.js';
+import {type AllowedPrepareType, type AuthStrategy} from './controller.js';
 
-export type UntypedStrategyRecord = Record<string, AuthStrategy<any, any, any>>;
+export type UntypedStrategyRecord = Record<string, AuthStrategy<any, any, AllowedPrepareType>>;
 
 export interface CreateSimpleMfaConfig<TStrategies = UntypedStrategyRecord> {
 	generateId: () => string;

@@ -57,12 +57,12 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 		},
 
 		create(type: Strategy, owner: string) {
-			const strategy = strategies[type];
-			if (!strategy) {
+			const controller = strategies[type];
+			if (!controller) {
 				throw new StrategyError(`Invalid type: ${type}`, true);
 			}
 
-			return strategy.create(owner, type, config);
+			return controller.create(owner, type, config);
 		},
 
 		prepare(storedStrategy: StoredStrategy, userPayload: unknown) {
@@ -94,22 +94,22 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 		},
 
 		share(storedStrategy: StoredStrategy) {
-			const strategy = strategies[storedStrategy.type];
-			if (!strategy) {
+			const controller = strategies[storedStrategy.type];
+			if (!controller) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.share(storedStrategy);
+			return controller.share(storedStrategy);
 		},
 
 		serialize(storedStrategy: StoredStrategy, isTrusted: boolean) {
-			const strategy = strategies[storedStrategy.type];
-			if (!strategy) {
+			const controller = strategies[storedStrategy.type];
+			if (!controller) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return strategy.serialize!(storedStrategy, isTrusted, wrapper.share);
+			return controller.serialize!(storedStrategy, isTrusted, wrapper.share);
 		},
 	};
 

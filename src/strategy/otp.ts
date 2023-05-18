@@ -7,7 +7,7 @@ type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-export class OtpStrategy implements AuthStrategy<string, string, undefined> {
+export class OtpStrategy implements AuthStrategy<string, string> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
 	#lastDecryptedSecretCypher?: string;
