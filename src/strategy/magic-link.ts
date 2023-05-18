@@ -22,7 +22,7 @@ export interface TokenExpiryStore {
 }
 
 export interface MagicLinkPrepareResponse {
-	type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL;
+	action: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL;
 	data: {
 		token: string;
 	};
@@ -66,7 +66,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
 		const encryptedToken = await this._storageService.encodeSecret(strategy.type, plainTextToken);
-		return {type: MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: encryptedToken}};
+		return {action: MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: encryptedToken}};
 	}
 
 	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {

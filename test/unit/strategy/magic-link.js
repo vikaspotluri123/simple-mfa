@@ -30,7 +30,7 @@ describe('Unit > Strategy > MagicLink', function () {
 		expect(await strategy.prepare(store, '', config)).to.not.be.ok;
 
 		// Explicitly type the response to make sure it aligns
-		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}} | undefined} */
+		/** @type {{action: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}} | undefined} */
 		const prepareResponse = await strategy.prepare(store, MAGIC_LINK_REQUESTING_EMAIL, config);
 
 		// Wrapped like this for type safety
@@ -39,7 +39,7 @@ describe('Unit > Strategy > MagicLink', function () {
 			return;
 		}
 
-		expect(prepareResponse.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
+		expect(prepareResponse.action).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
 		expect(prepareResponse.data).to.be.an('object').with.keys(['token']);
 		expect(Object.keys(prepareResponse)).to.have.length(2);
 	});

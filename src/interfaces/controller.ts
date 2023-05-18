@@ -3,7 +3,7 @@ import {type MaybePromise} from './shared.js';
 import {type SerializedAuthStrategy} from './storage.js';
 
 export interface PrepareResponse {
-	type: string;
+	action: string;
 	data: unknown;
 }
 
