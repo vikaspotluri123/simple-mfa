@@ -75,9 +75,10 @@ describe('Unit > Strategy > OTP', function () {
 	});
 
 	it('share', async function () {
-		expect(
-			await strategy.share(await strategy.create(user_id, OtpStrategy.type, config)),
-		).to.be.a('string').with.length(16);
+		const store = await strategy.create(user_id, OtpStrategy.type, config);
+		const shared = await strategy.share(store);
+		expect(shared).to.be.a('string').with.length(16);
+		expect(await strategy.share({...store})).to.equal(shared);
 
 		store.context = store.context.slice(0, -5);
 
