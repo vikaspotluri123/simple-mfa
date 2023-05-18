@@ -45,6 +45,12 @@ describe('Integration > SimpleMFA', function () {
 	it('OTP Strategy', async function () {
 		const otpStore = await instance.create('otp', 'abcd');
 		const sharedSecret = await instance.share(otpStore);
+
+		if (typeof sharedSecret !== 'string') {
+			expect(sharedSecret, 'type inference').to.be.a('string');
+			return;
+		}
+
 		const currentToken = createOtp(sharedSecret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
 
@@ -90,6 +96,12 @@ describe('Integration > SimpleMFA', function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
 		expect(backupCodesStore.status).to.equal('pending');
 		const sharedCodes = await instance.share(backupCodesStore);
+
+		if (!Array.isArray(sharedCodes)) {
+			expect(sharedCodes, 'type inference').to.be.an('Array');
+			return;
+		}
+
 		const realToken = sharedCodes[0].replace(/-/g, '');
 
 		await shouldThrowStrategyError(() => instance.validate(backupCodesStore, ''));
