@@ -52,6 +52,8 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 		let codesCount = codes.length;
 
+		expect(await strategy.postValidate(store, 'does-not-exist', config)).to.not.be.ok;
+
 		/* eslint-disable no-await-in-loop */
 		for (const hyphenateCode of codes) {
 			const code = hyphenateCode.replace(/-/g, '');

@@ -1,7 +1,13 @@
 // @ts-check
 
 import {expect} from 'chai';
-import {createSimpleMfa, MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL, StrategyError} from '../../dist/cjs/index.js';
+import {
+	createSimpleMfa,
+	MAGIC_LINK_REQUESTING_EMAIL,
+	MAGIC_LINK_SERVER_TO_SEND_EMAIL,
+	StrategyError,
+	BACKUP_CODE_PENDING_TO_ACTIVE_PROOF as ACTIVATE_BACKUP,
+} from '../../dist/cjs/index.js';
 import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedStorageService} from '../fixtures/storage.js';
@@ -25,8 +31,9 @@ const shouldThrowStrategyError = async (fn, ...args) => {
 };
 
 describe('Integration > SimpleMFA', function () {
-	it('Invalid strategy', async function () {
+	it('Strategy coercion', async function () {
 		const strategy = await instance.create('otp', 'abcd');
+		expect(instance.coerce(strategy)).to.equal(strategy);
 		// @ts-expect-error
 		strategy.type = 'Does not exist';
 
@@ -40,6 +47,9 @@ describe('Integration > SimpleMFA', function () {
 			shouldThrowStrategyError(instance.serialize, strategy, false),
 			shouldThrowStrategyError(instance.serialize, strategy, true),
 		]);
+
+		strategy.status = 'active';
+		await shouldThrowStrategyError(instance.validate, strategy, '');
 	});
 
 	it('OTP Strategy', async function () {
@@ -173,5 +183,13 @@ describe('Integration > SimpleMFA', function () {
 			assertTransition('disabled', 'pending', false),
 			assertTransition('disabled', 'active', true),
 		]);
+	});
+
+	it('activate requires a pending strategy', async function () {
+		const backupCodesStore = await instance.create('backup-code', 'abcd');
+		expect(backupCodesStore.status).to.equal('pending');
+		expect(await instance.activate(backupCodesStore, ACTIVATE_BACKUP)).to.be.ok;
+		backupCodesStore.status = 'active';
+		shouldThrowStrategyError(instance.activate, backupCodesStore, ACTIVATE_BACKUP);
 	});
 });
