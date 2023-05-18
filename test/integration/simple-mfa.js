@@ -10,14 +10,19 @@ const instance = createSimpleMfa({
 	strategies: defaultStrategies(new MockedStorageService()),
 });
 
-/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<string>[]} */
-const mockDatabase = await Promise.all([
-	instance.create('otp', 'abcd'),
-	instance.create('magic-link', 'abcd'),
-	instance.create('otp', 'bcde'),
-	instance.create('otp', 'cdef'),
-	instance.create('magic-link', 'defg'),
-]);
+/**
+ * @template T
+ * @param {T} fn
+ * @param {Parameters<T extends (...args: any[]) => any ? T : () => void>} args
+ */
+const shouldThrowStrategyError = async (fn, ...args) => {
+	try {
+		// @ts-expect-error
+		await fn(...args);
+	} catch (error) {
+		expect(error).to.be.instanceOf(StrategyError);
+	}
+};
 
 describe('Integration > SimpleMFA', function () {
 	it('Invalid strategy', async function () {
@@ -25,25 +30,16 @@ describe('Integration > SimpleMFA', function () {
 		// @ts-expect-error
 		strategy.type = 'Does not exist';
 
-		/**
-		 * @template T
-		 * @param {T} fn
-		 * @param {Parameters<T extends (...args: any[]) => any ? T : () => void>} args
-		 */
-		const shouldThrow = (fn, ...args) => {
+		await Promise.all([
+			shouldThrowStrategyError(instance.coerce, strategy),
 			// @ts-expect-error
-			expect(() => fn(...args)).to.throw(StrategyError);
-		};
-
-		shouldThrow(instance.coerce, strategy);
-		// @ts-expect-error
-		shouldThrow(instance.create, 'does not exist');
-		shouldThrow(instance.prepare, strategy, '');
-		shouldThrow(instance.validate, strategy, '');
-		shouldThrow(instance.postValidate, strategy, '');
-		shouldThrow(instance.share, strategy);
-		shouldThrow(instance.serialize, strategy, false);
-		shouldThrow(instance.serialize, strategy, true);
+			shouldThrowStrategyError(instance.create, 'does not exist'),
+			shouldThrowStrategyError(instance.activate, strategy, ''),
+			shouldThrowStrategyError(instance.validate, strategy, ''),
+			shouldThrowStrategyError(instance.share, strategy),
+			shouldThrowStrategyError(instance.serialize, strategy, false),
+			shouldThrowStrategyError(instance.serialize, strategy, true),
+		]);
 	});
 
 	it('OTP Strategy', async function () {
@@ -63,22 +59,31 @@ describe('Integration > SimpleMFA', function () {
 	it('MagicLink Strategy', async function () {
 		const magicLinkStore = await instance.create('magic-link', 'abcd');
 		expect(magicLinkStore.status).to.equal('active');
-		expect(await instance.prepare(magicLinkStore, '')).to.not.be.ok;
+		expect(await instance.validate(magicLinkStore, '')).to.deep.equal({type: 'validationFailed'});
 
-		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: string}} | undefined} */
-		const response = await instance.prepare(magicLinkStore, MAGIC_LINK_REQUESTING_EMAIL);
+		const validation = await instance.validate(magicLinkStore, MAGIC_LINK_REQUESTING_EMAIL);
 
-		// Wrapped like this for type safety
-		if (!response) {
-			expect(response).to.be.ok;
+		expect(validation).to.deep.equal({
+			type: 'serverActionRequired',
+			response: {
+				action: MAGIC_LINK_SERVER_TO_SEND_EMAIL,
+				data: {
+					// @ts-expect-error
+					token: validation.response.data.token,
+				},
+			},
+		});
+
+		if (validation.type !== 'serverActionRequired') {
+			expect(false, 'type inference error').to.be.true;
 			return;
 		}
 
-		expect(response.type).to.equal(MAGIC_LINK_SERVER_TO_SEND_EMAIL);
-		expect(response.data).to.be.an('object').with.keys(['token']);
-		expect(Object.keys(response)).to.have.length(2);
-
-		expect(await instance.validate(magicLinkStore, response.data.token)).to.be.true;
+		expect(validation.response.data).to.be.an('object').with.keys(['token']);
+		expect(await instance.validate(magicLinkStore, validation.response.data.token)).to.deep.equal({
+			type: 'validationSucceeded',
+			response: undefined,
+		});
 	});
 
 	it('BackupCode Strategy', async function () {
@@ -86,31 +91,22 @@ describe('Integration > SimpleMFA', function () {
 		expect(backupCodesStore.status).to.equal('pending');
 		const sharedCodes = await instance.share(backupCodesStore);
 		const realToken = sharedCodes[0].replace(/-/g, '');
-		expect(await instance.validate(backupCodesStore, realToken)).to.be.false;
+
+		await shouldThrowStrategyError(() => instance.validate(backupCodesStore, ''));
 		backupCodesStore.status = 'active';
-		expect(await instance.validate(backupCodesStore, realToken)).to.be.true;
-
 		const currentStrategyStringified = JSON.stringify(backupCodesStore);
-		expect(JSON.stringify(await instance.postValidate(backupCodesStore, ''))).to.not.be.ok;
-		expect(JSON.stringify(await instance.postValidate(backupCodesStore, realToken))).to.not.equal(currentStrategyStringified);
-	});
+		const validation = await instance.validate(backupCodesStore, realToken);
 
-	it('Valid, but untyped `type` (from storage)', async function () {
-		const unsafeStore = mockDatabase.at(Math.floor(Math.random() * mockDatabase.length));
-
-		// Type safety
-		if (!unsafeStore) {
-			expect(false).to.be.true;
+		if (validation.type !== 'validationSucceeded') {
+			expect(false, 'type inference').to.be.true;
 			return;
 		}
 
-		const store = instance.coerce(unsafeStore);
-
-		/** @type {{type: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL; data: {token: string}} | undefined} */
-		const prepareResponse = await instance.prepare(store, '');
-
-		expect(prepareResponse === undefined || prepareResponse.type === MAGIC_LINK_SERVER_TO_SEND_EMAIL).to.be.true;
-		expect(await instance.validate(store, '')).to.be.false;
+		expect(validation).to.deep.contain({type: 'validationSucceeded'});
+		expect(validation.response.context).to.be.a('string').and.to.not.equal(currentStrategyStringified);
+		expect(await instance.validate(backupCodesStore, realToken)).to.deep.equal({
+			type: 'validationFailed',
+		});
 	});
 
 	it('syncSecrets', async function () {
@@ -134,33 +130,36 @@ describe('Integration > SimpleMFA', function () {
 		expect(currentState).to.deep.contain(unchangedState);
 	});
 
-	it('assertStatusTransition', function () {
+	it('assertStatusTransition', async function () {
 		/**
-		 * @typedef {typeof mockDatabase[number]['status']} Status
-		 * @type {(from: Status, to: Status, isAllowed: boolean) => void}
+		 * @typedef {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<any, any>['status']} Status
+		 * @type {(from: Status, to: Status, isAllowed: boolean) => Promise<void>}
 		 */
-		const assertTransition = (from, to, isAllowed) => {
+		const assertTransition = async (from, to, isAllowed) => {
+			const transition = `${from} -> ${to}`;
+			/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<any, any>} */
 			// @ts-expect-error duck typing
-			const deferredTransition = () => instance.assertStatusTransition({status: from}, to);
-			const expectAssertion = expect(deferredTransition, `${from} -> ${to}`);
+			const mockedStore = {status: from};
 
 			if (isAllowed) {
-				expectAssertion.to.not.throw().and.equal(true);
+				expect(() => instance.assertStatusTransition(mockedStore, to), transition).to.not.throw().and.equal(true);
 			} else {
-				expectAssertion.to.throw(StrategyError);
+				await shouldThrowStrategyError(instance.assertStatusTransition, mockedStore, to);
 			}
 		};
 
-		assertTransition('active', 'disabled', true);
-		assertTransition('active', 'pending', false);
-		assertTransition('active', 'active', false);
+		await Promise.all([
+			assertTransition('active', 'disabled', true),
+			assertTransition('active', 'pending', false),
+			assertTransition('active', 'active', false),
 
-		assertTransition('pending', 'disabled', false);
-		assertTransition('pending', 'pending', false);
-		assertTransition('pending', 'active', true);
+			assertTransition('pending', 'disabled', false),
+			assertTransition('pending', 'pending', false),
+			assertTransition('pending', 'active', true),
 
-		assertTransition('disabled', 'disabled', false);
-		assertTransition('disabled', 'pending', false);
-		assertTransition('disabled', 'active', true);
+			assertTransition('disabled', 'disabled', false),
+			assertTransition('disabled', 'pending', false),
+			assertTransition('disabled', 'active', true),
+		]);
 	});
 });

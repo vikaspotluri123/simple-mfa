@@ -3,7 +3,7 @@ import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 import {type StorageService} from './storage.js';
-import {type SimpleMfaApi} from './interfaces/wrapper.js';
+import {type ControllerResponse, type SimpleMfaApi} from './interfaces/wrapper.js';
 
 export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
 	internalConfig: InternalSimpleMfaConfig<TStrategies>,
@@ -48,6 +48,19 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return store;
 		},
 
+		activate(storedStrategy: StoredStrategy, userPayload: unknown) {
+			if (storedStrategy.status !== 'pending') {
+				throw new StrategyError('Strategy must be pending to activate', true);
+			}
+
+			const controller = strategies[storedStrategy.type];
+			if (!controller) {
+				throw new StrategyError('Invalid strategy', false);
+			}
+
+			return controller.validate(storedStrategy, userPayload, config);
+		},
+
 		coerce(storedStrategy: StoredStrategy): StoredStrategy {
 			if (storedStrategy.type in strategies) {
 				return storedStrategy;
@@ -65,32 +78,39 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			return controller.create(owner, type, config);
 		},
 
-		prepare(storedStrategy: StoredStrategy, userPayload: unknown) {
-			const strategy = strategies[storedStrategy.type];
-			if (!strategy) {
+		async validate(storedStrategy: StoredStrategy, userPayload: unknown) {
+			if (storedStrategy.status !== 'active') {
+				throw new StrategyError('Inactive strategies cannot be used for verification', true);
+			}
+
+			const controller = strategies[storedStrategy.type];
+			if (!controller) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return strategy.prepare(storedStrategy, userPayload, config);
-		},
+			type Prepared = ControllerResponse<TStrategies, 'prepare'>;
+			const prepared = await controller.prepare(storedStrategy, userPayload, config) as Awaited<Prepared>;
 
-		validate(storedStrategy: StoredStrategy, userPayload: unknown) {
-			const strategy = strategies[storedStrategy.type];
-			if (!strategy) {
-				throw new StrategyError('Invalid strategy', false);
+			if (prepared) {
+				return {
+					type: 'serverActionRequired',
+					response: prepared,
+				};
 			}
 
-			return strategy.validate(storedStrategy, userPayload, config);
-		},
+			const validated = await controller.validate(storedStrategy, userPayload, config);
 
-		postValidate(storedStrategy: StoredStrategy, payload: unknown) {
-			const strategy = strategies[storedStrategy.type];
-			if (!strategy) {
-				throw new StrategyError('Invalid strategy', false);
+			if (!validated) {
+				return {type: 'validationFailed'};
 			}
 
-			return strategy.postValidate(storedStrategy, payload, config);
+			type PostValidated = ControllerResponse<TStrategies, 'postValidate'>;
+			const postValidated = await controller.postValidate(storedStrategy, userPayload, config) as PostValidated;
+
+			return {
+				type: 'validationSucceeded',
+				response: postValidated,
+			};
 		},
 
 		share(storedStrategy: StoredStrategy) {
