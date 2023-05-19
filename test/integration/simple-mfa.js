@@ -43,7 +43,7 @@ describe('Integration > SimpleMFA', function () {
 			shouldThrowStrategyError(instance.create, 'does not exist'),
 			shouldThrowStrategyError(instance.activate, strategy, ''),
 			shouldThrowStrategyError(instance.validate, strategy, ''),
-			shouldThrowStrategyError(instance.share, strategy),
+			shouldThrowStrategyError(instance.getSecret, strategy),
 			shouldThrowStrategyError(instance.serialize, strategy, false),
 			shouldThrowStrategyError(instance.serialize, strategy, true),
 		]);
@@ -54,14 +54,14 @@ describe('Integration > SimpleMFA', function () {
 
 	it('OTP Strategy', async function () {
 		const otpStore = await instance.create('otp', 'abcd');
-		const sharedSecret = await instance.share(otpStore);
+		const secret = await instance.getSecret(otpStore);
 
-		if (typeof sharedSecret !== 'string') {
-			expect(sharedSecret, 'type inference').to.be.a('string');
+		if (typeof secret !== 'string') {
+			expect(secret, 'type inference').to.be.a('string');
 			return;
 		}
 
-		const currentToken = createOtp(sharedSecret);
+		const currentToken = createOtp(secret);
 		expect(instance.validate(otpStore, currentToken)).to.be.ok;
 
 		expect(await instance.serialize(otpStore, false)).to.not.include.keys('context');
@@ -105,14 +105,14 @@ describe('Integration > SimpleMFA', function () {
 	it('BackupCode Strategy', async function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
 		expect(backupCodesStore.status).to.equal('pending');
-		const sharedCodes = await instance.share(backupCodesStore);
+		const codes = await instance.getSecret(backupCodesStore);
 
-		if (!Array.isArray(sharedCodes)) {
-			expect(sharedCodes, 'type inference').to.be.an('Array');
+		if (!Array.isArray(codes)) {
+			expect(codes, 'type inference').to.be.an('Array');
 			return;
 		}
 
-		const realToken = sharedCodes[0].replace(/-/g, '');
+		const realToken = codes[0].replace(/-/g, '');
 
 		await shouldThrowStrategyError(() => instance.validate(backupCodesStore, ''));
 		backupCodesStore.status = 'active';

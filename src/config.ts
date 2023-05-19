@@ -7,12 +7,12 @@ const DEFAULT_ID_GENERATOR = webcrypto.randomUUID.bind(webcrypto);
 const DEFAULT_STRATEGY_SERIALIZER = async (
 	store: SerializedAuthStrategy<string>,
 	isTrusted: boolean,
-	share: (store: SerializedAuthStrategy<string>) => unknown,
+	getSecret: (store: SerializedAuthStrategy<string>) => unknown,
 ) => {
 	const cloned: Partial<SerializedAuthStrategy<string>> = {...store};
 
 	if (isTrusted && store.status === 'pending') {
-		cloned.context = await share(store);
+		cloned.context = await getSecret(store);
 	} else {
 		delete cloned.context;
 	}

@@ -97,7 +97,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		// Noop
 	}
 
-	share(_: Strategy) {
+	getSecret(_: Strategy) {
 		return null;
 	}
 }

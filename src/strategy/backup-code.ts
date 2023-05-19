@@ -56,7 +56,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 		return this._serialize(strategy, codes);
 	}
 
-	async share(strategy: Strategy) {
+	async getSecret(strategy: Strategy) {
 		const codes = await this._deserialize(strategy);
 		return codes.map(code => `${code.slice(0, 4)}-${code.slice(4, 8)}-${code.slice(8)}`);
 	}

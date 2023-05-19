@@ -54,7 +54,7 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 		// Noop
 	}
 
-	async share(strategy: Strategy) {
+	async getSecret(strategy: Strategy) {
 		const decoded = await this._decode(strategy);
 
 		if (!decoded) {

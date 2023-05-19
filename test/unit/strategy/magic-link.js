@@ -92,7 +92,7 @@ describe('Unit > Strategy > MagicLink', function () {
 		expect(strategy.postValidate(store, token, config)).to.not.be.ok;
 	});
 
-	it('share', function () {
-		expect(strategy.share(strategy.create(user_id, MagicLinkStrategy.type, config))).to.equal(null);
+	it('getSecret', function () {
+		expect(strategy.getSecret(strategy.create(user_id, MagicLinkStrategy.type, config))).to.equal(null);
 	});
 });

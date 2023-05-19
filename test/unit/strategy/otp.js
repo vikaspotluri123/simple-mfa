@@ -21,7 +21,7 @@ describe('Unit > Strategy > OTP', function () {
 	let store;
 
 	async function realOtp() {
-		return createOtp(await strategy.share(store));
+		return createOtp(await strategy.getSecret(store));
 	}
 
 	beforeEach(async function () {
@@ -70,20 +70,20 @@ describe('Unit > Strategy > OTP', function () {
 
 	it('postvalidate', async function () {
 		const store = await strategy.create(user_id, OtpStrategy.type, config);
-		const token = createOtp(await strategy.share(store));
+		const token = createOtp(await strategy.getSecret(store));
 		expect(strategy.postValidate(store, token, config)).to.not.be.ok;
 	});
 
-	it('share', async function () {
+	it('getSecret', async function () {
 		const store = await strategy.create(user_id, OtpStrategy.type, config);
-		const shared = await strategy.share(store);
-		expect(shared).to.be.a('string').with.length(16);
-		expect(await strategy.share({...store})).to.equal(shared);
+		const secret = await strategy.getSecret(store);
+		expect(secret).to.be.a('string').with.length(16);
+		expect(await strategy.getSecret({...store})).to.equal(secret);
 
 		store.context = store.context.slice(0, -5);
 
 		try {
-			await strategy.share({...store});
+			await strategy.getSecret({...store});
 			expect(false, 'should have thrown').to.be.true;
 		} catch (error) {
 			expect(error).to.be.an.instanceOf(StrategyError);
