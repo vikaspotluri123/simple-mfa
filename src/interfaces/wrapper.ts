@@ -33,7 +33,6 @@ export interface SimpleMfaApiImplementation<
 	create(type: Strategy, owner: string): MaybePromise<StoredStrategy>;
 	activate(storedStrategy: StoredStrategy, userPayload: unknown): MaybePromise<boolean>;
 	validate(storedStrategy: StoredStrategy, userPayload: unknown): Promise<ValidationResult<TStrategies>>;
-	getSecret(storedStrategy: StoredStrategy): ReturnType<TStrategies[Strategy]['getSecret']>;
 	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): MaybePromise<Partial<StoredStrategy>>;
 }
 

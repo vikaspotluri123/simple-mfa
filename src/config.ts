@@ -28,6 +28,7 @@ export function coerce<TStrategies extends UntypedStrategyRecord>(config: Simple
 
 	for (const strategy of Object.values(strategies)) {
 		strategy.serialize ??= DEFAULT_STRATEGY_SERIALIZER;
+		strategy.getSecret = strategy.getSecret.bind(strategy);
 	}
 
 	return {

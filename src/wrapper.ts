@@ -113,23 +113,13 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			};
 		},
 
-		getSecret(storedStrategy: StoredStrategy) {
-			const controller = strategies[storedStrategy.type];
-			if (!controller) {
-				throw new StrategyError('Invalid strategy', false);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return controller.getSecret(storedStrategy);
-		},
-
 		serialize(storedStrategy: StoredStrategy, isTrusted: boolean) {
 			const controller = strategies[storedStrategy.type];
 			if (!controller) {
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return controller.serialize!(storedStrategy, isTrusted, wrapper.getSecret);
+			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret);
 		},
 	};
 
