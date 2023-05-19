@@ -20,14 +20,14 @@ const DEFAULT_STRATEGY_SERIALIZER = async (
 	return cloned;
 };
 
-export function coerce<TStrategies>(config: SimpleMfaConfig<TStrategies>): InternalSimpleMfaConfig<TStrategies> {
+export function coerce<TStrategies extends UntypedStrategyRecord>(config: SimpleMfaConfig<TStrategies>): InternalSimpleMfaConfig<TStrategies> {
 	const {
 		generateId = DEFAULT_ID_GENERATOR,
 		strategies,
 	} = config;
 
-	for (const strategy of Object.values(strategies as Record<string, TStrategies>)) {
-		(strategy as UntypedStrategyRecord[string]).serialize ??= DEFAULT_STRATEGY_SERIALIZER;
+	for (const strategy of Object.values(strategies)) {
+		strategy.serialize ??= DEFAULT_STRATEGY_SERIALIZER;
 	}
 
 	return {
