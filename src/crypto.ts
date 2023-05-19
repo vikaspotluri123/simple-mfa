@@ -1,5 +1,6 @@
 import {Buffer} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
+import {type SimpleMfaCrypto} from './interfaces/crypto.js';
 
 const KEY_USAGES: ['encrypt', 'decrypt'] = ['encrypt', 'decrypt'];
 const ALGORITHM = 'AES-GCM';
@@ -14,7 +15,7 @@ const KEY_ENCODING = 'hex';
 
 Object.freeze(KEY_USAGES);
 
-export class StorageService<TKeyType extends string = string> {
+export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements SimpleMfaCrypto<TKeyType> {
 	private readonly _keys: Map<string, CryptoKey | Promise<CryptoKey>>;
 
 	constructor(keys: Record<TKeyType, string>, private readonly crypto = webcrypto) {

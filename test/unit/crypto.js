@@ -3,7 +3,7 @@ import {Buffer} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
 import sinon from 'sinon';
 import {expect} from 'chai';
-import {StorageService} from '../../dist/cjs/storage.js';
+import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 
 const KEY = 'action';
 const crypto = {
@@ -13,7 +13,7 @@ const crypto = {
 	getRandomValues: webcrypto.getRandomValues.bind(webcrypto),
 };
 
-const demo = new StorageService({[KEY]: Buffer.from('ThisIsASecretKey').toString('hex')}, crypto);
+const demo = new SimpleMfaNodeCrypto({[KEY]: Buffer.from('ThisIsASecretKey').toString('hex')}, crypto);
 
 const cypherWithStubbedIv = '42424242424242424242424242424242Zfgmc/nfd6kxCGeJJI9jpJmKuYYHjCMXxGiYR9t7gojQXKe4Y4wNQIXbmLGBVyJNRpSn1LAB2GQI';
 const plainText = 'This is extremely secret! Don\'t touch it!';
@@ -21,7 +21,7 @@ const plainText = 'This is extremely secret! Don\'t touch it!';
 /** @param {Uint8Array} vector */
 const stubIv = vector => vector.fill(0x42);
 
-describe('Unit > StorageService', function () {
+describe('Unit > SimpleMfaNodeCrypto', function () {
 	beforeEach(function () {
 		sinon.restore();
 	});

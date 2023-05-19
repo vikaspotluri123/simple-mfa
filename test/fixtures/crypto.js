@@ -1,4 +1,4 @@
-import {StorageService} from '../../dist/cjs/storage.js';
+import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 
 const DEFAULT_KEYS = {
 	otp: '5375706572447570657253616665416e6453656375726521',
@@ -6,7 +6,7 @@ const DEFAULT_KEYS = {
 	'backup-code': '5375706572447570657253616665416e6453656375726521',
 };
 
-export class MockedStorageService extends StorageService {
+export class MockedCrypto extends SimpleMfaNodeCrypto {
 	/** @type {boolean | null} */
 	lastUpdateFailed = null;
 	/** @param {Record<string, string>} keys */

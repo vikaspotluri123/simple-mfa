@@ -2,7 +2,7 @@
 import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
-import {type StorageService} from './storage.js';
+import {type SimpleMfaCrypto} from './interfaces/crypto.js';
 import {type ControllerResponse, type SimpleMfaApi} from './interfaces/wrapper.js';
 
 export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
@@ -34,14 +34,14 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			throw new StrategyError(`Cannot change status from ${currentStatus} to ${nextStatus}`, true);
 		},
 
-		syncSecrets(storageService: StorageService, store: Record<string, string> = {}) {
+		syncSecrets(crypto: SimpleMfaCrypto, store: Record<string, string> = {}) {
 			for (const [strategyType, strategy] of Object.entries(strategies)) {
 				if (
 					(strategy as TStrategies[Strategy]).secretType === 'aes'
 					&& !Object.hasOwnProperty.call(store, strategyType)
 				) {
-					store[strategyType] = storageService.generateSecretEncoded(32);
-					void storageService.update(strategyType, store[strategyType]);
+					store[strategyType] = crypto.generateSecretEncoded(32);
+					void crypto.update(strategyType, store[strategyType]);
 				}
 			}
 

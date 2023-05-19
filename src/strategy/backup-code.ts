@@ -1,7 +1,7 @@
 import {BACKUP_CODE_PENDING_TO_ACTIVE_PROOF} from '../constants.js';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
-import {type StorageService} from '../storage.js';
+import {type SimpleMfaCrypto} from '../interfaces/crypto.js';
 
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
@@ -12,12 +12,12 @@ const decryptionCache = new WeakMap<Strategy, string[]>();
 export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 	static readonly type = 'backup-code';
 	public readonly secretType = 'aes';
-	constructor(private readonly _storage: StorageService, private readonly countToCreate = 10) {}
+	constructor(private readonly _crypto: SimpleMfaCrypto, private readonly countToCreate = 10) {}
 
 	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const codes: string[] = Array.from({length: this.countToCreate});
 		for (const [index, _] of codes.entries()) {
-			const untrimmedCode = Array.from(this._storage.generateSecret(12)).join('');
+			const untrimmedCode = Array.from(this._crypto.generateSecret(12)).join('');
 			const trimmedCode = untrimmedCode.length === 12 ? untrimmedCode : untrimmedCode.slice(1, 13);
 			codes[index] = trimmedCode;
 		}
@@ -69,7 +69,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 		}
 
 		decryptionCache.set(strategy, codes);
-		strategy.context = await this._storage.encodeSecret(strategy.type, serializedCodes);
+		strategy.context = await this._crypto.encodeSecret(strategy.type, serializedCodes);
 		return strategy;
 	}
 
@@ -79,7 +79,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 			return cached;
 		}
 
-		const decrypted = await this._storage.decodeSecret(strategy.type, strategy.context);
+		const decrypted = await this._crypto.decodeSecret(strategy.type, strategy.context);
 		if (!decrypted) {
 			throw new StrategyError('Failed deserializing context', false);
 		}

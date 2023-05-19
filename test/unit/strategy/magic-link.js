@@ -3,13 +3,13 @@
 import {expect} from 'chai';
 import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/cjs/constants.js';
 import {MagicLinkStrategy} from '../../../dist/cjs/strategy/magic-link.js';
-import {MockedStorageService} from '../../fixtures/storage.js';
+import {MockedCrypto} from '../../fixtures/crypto.js';
 
 // eslint-disable-next-line camelcase
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
-const strategy = new MagicLinkStrategy(new MockedStorageService());
+const strategy = new MagicLinkStrategy(new MockedCrypto());
 const config = {generateId};
 
 describe('Unit > Strategy > MagicLink', function () {

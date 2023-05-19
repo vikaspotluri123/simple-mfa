@@ -10,10 +10,10 @@ import {
 } from '../../dist/cjs/index.js';
 import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
-import {MockedStorageService} from '../fixtures/storage.js';
+import {MockedCrypto} from '../fixtures/crypto.js';
 
 const instance = createSimpleMfa({
-	strategies: defaultStrategies(new MockedStorageService()),
+	strategies: defaultStrategies(new MockedCrypto()),
 });
 
 /**
@@ -132,21 +132,21 @@ describe('Integration > SimpleMFA', function () {
 	});
 
 	it('syncSecrets', async function () {
-		const storageService = new MockedStorageService({});
+		const crypto = new MockedCrypto({});
 		/** @type {Record<string, string>} */
 		const currentState = {};
-		instance.syncSecrets(storageService, currentState);
+		instance.syncSecrets(crypto, currentState);
 		expect(Object.keys(currentState)).to.deep.equal(['otp', 'magic-link', 'backup-code']);
 		// Wait for key imports to complete
 		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
-		expect(storageService.lastUpdateFailed).to.be.false;
+		expect(crypto.lastUpdateFailed).to.be.false;
 
 		delete currentState.otp;
 		const unchangedState = {...currentState};
 
-		instance.syncSecrets(storageService, currentState);
+		instance.syncSecrets(crypto, currentState);
 		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
-		expect(storageService.lastUpdateFailed).to.be.true; // Tried to recreate a key
+		expect(crypto.lastUpdateFailed).to.be.true; // Tried to recreate a key
 
 		expect(Object.keys(currentState)).to.deep.equal(['magic-link', 'backup-code', 'otp']);
 		expect(currentState).to.deep.contain(unchangedState);

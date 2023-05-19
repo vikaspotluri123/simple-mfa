@@ -1,7 +1,7 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
-import {type StorageService} from '../storage.js';
+import {type SimpleMfaCrypto} from '../interfaces/crypto.js';
 
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
@@ -13,11 +13,11 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
 
-	constructor(private readonly _storageService: StorageService) {}
+	constructor(private readonly _crypto: SimpleMfaCrypto) {}
 
 	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
 		const plainText = authenticator.generateSecret();
-		const context = await this._storageService.encodeSecret('otp', plainText);
+		const context = await this._crypto.encodeSecret('otp', plainText);
 		const strategy: Strategy = {
 			id: generateId(),
 			name: '',
@@ -69,7 +69,7 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 			return decryptionCache.get(strategy);
 		}
 
-		const plainText = await this._storageService.decodeSecret(OtpStrategy.type, strategy.context);
+		const plainText = await this._crypto.decodeSecret(OtpStrategy.type, strategy.context);
 		if (!plainText) {
 			return null;
 		}

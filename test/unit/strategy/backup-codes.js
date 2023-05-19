@@ -3,14 +3,14 @@
 import {expect} from 'chai';
 import {BackupCodeStrategy} from '../../../dist/cjs/strategy/backup-code.js';
 import {StrategyError} from '../../../dist/cjs/error.js';
-import {MockedStorageService} from '../../fixtures/storage.js';
+import {MockedCrypto} from '../../fixtures/crypto.js';
 
 // eslint-disable-next-line camelcase
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
 
-const strategy = new BackupCodeStrategy(new MockedStorageService());
+const strategy = new BackupCodeStrategy(new MockedCrypto());
 const config = {generateId};
 
 describe('Unit > Strategy > Backup Codes', function () {
