@@ -11,7 +11,7 @@ export type AllowedPrepareType = string | PrepareResponse;
 
 export interface AuthStrategy<
 	TStoredContextDefinition,
-	TShareType,
+	TParsedSecretType,
 	TPrepareType extends AllowedPrepareType = never,
 	TStrategyNames extends string = string,
 	TInternalStrategy = SerializedAuthStrategy<TStrategyNames, TStoredContextDefinition>,
@@ -43,7 +43,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Convert the private stored data into a user-specific public version
 	 */
-	getSecret: (strategy: TInternalStrategy) => MaybePromise<TShareType>;
+	getSecret: (strategy: TInternalStrategy) => MaybePromise<TParsedSecretType>;
 	/**
 	 * @description
 	 * Convert the private stored data into an api-compatible format
