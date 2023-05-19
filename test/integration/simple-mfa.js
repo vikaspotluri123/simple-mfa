@@ -43,7 +43,6 @@ describe('Integration > SimpleMFA', function () {
 			shouldThrowStrategyError(instance.create, 'does not exist'),
 			shouldThrowStrategyError(instance.activate, strategy, ''),
 			shouldThrowStrategyError(instance.validate, strategy, ''),
-			shouldThrowStrategyError(instance.getSecret, strategy),
 			shouldThrowStrategyError(instance.serialize, strategy, false),
 			shouldThrowStrategyError(instance.serialize, strategy, true),
 		]);
@@ -54,7 +53,9 @@ describe('Integration > SimpleMFA', function () {
 
 	it('OTP Strategy', async function () {
 		const otpStore = await instance.create('otp', 'abcd');
-		const secret = await instance.getSecret(otpStore);
+		const serializedOtpStore = await instance.serialize(otpStore, true);
+		expect(otpStore).to.not.equal(serializedOtpStore);
+		const secret = serializedOtpStore.context;
 
 		if (typeof secret !== 'string') {
 			expect(secret, 'type inference').to.be.a('string');
@@ -105,7 +106,9 @@ describe('Integration > SimpleMFA', function () {
 	it('BackupCode Strategy', async function () {
 		const backupCodesStore = await instance.create('backup-code', 'abcd');
 		expect(backupCodesStore.status).to.equal('pending');
-		const codes = await instance.getSecret(backupCodesStore);
+		const serializedBackupCodes = await instance.serialize(backupCodesStore, true);
+		expect(backupCodesStore).to.not.equal(serializedBackupCodes);
+		const {context: codes} = serializedBackupCodes;
 
 		if (!Array.isArray(codes)) {
 			expect(codes, 'type inference').to.be.an('Array');
