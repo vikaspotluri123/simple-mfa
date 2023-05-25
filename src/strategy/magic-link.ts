@@ -1,7 +1,6 @@
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 import {RingMap} from '../utils.js';
-import {type SimpleMfaCrypto} from '../interfaces/crypto.js';
 import {type MaybePromise} from '../interfaces/shared.js';
 import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../constants.js';
 
@@ -40,7 +39,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 	public readonly secretType = 'aes';
 	private readonly _expiredTokens: TokenExpiryStore;
 
-	constructor(private readonly _crypto: SimpleMfaCrypto, tokenStore = defaultTokenStore()) {
+	constructor(tokenStore = defaultTokenStore()) {
 		this._expiredTokens = tokenStore;
 	}
 
@@ -57,7 +56,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		};
 	}
 
-	async prepare(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
+	async prepare(strategy: Strategy, untrustedPayload: unknown, {crypto}: Config) {
 		// CASE: This is not a request to send an email --> proceed to validation stage
 		if (untrustedPayload !== MAGIC_LINK_REQUESTING_EMAIL) {
 			return undefined;
@@ -65,11 +64,11 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 
 		// `id::expiration::salt`
 		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
-		const encryptedToken = await this._crypto.encodeSecret(strategy.type, plainTextToken);
+		const encryptedToken = await crypto.encodeSecret(strategy.type, plainTextToken);
 		return {action: MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: encryptedToken}};
 	}
 
-	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
+	async validate(strategy: Strategy, untrustedPayload: unknown, {crypto}: Config) {
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Unable to understand this MagicLink', true);
 		}
@@ -78,7 +77,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 			throw new StrategyError('This MagicLink has already been used', true);
 		}
 
-		const decrypted = await this._crypto.decodeSecret(strategy.type, untrustedPayload);
+		const decrypted = await crypto.decodeSecret(strategy.type, untrustedPayload);
 		if (!decrypted) {
 			return false;
 		}

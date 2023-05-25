@@ -1,12 +1,11 @@
-import {type SimpleMfaCrypto} from './interfaces/crypto.js';
 import {BackupCodeStrategy} from './strategy/backup-code.js';
 import {MagicLinkStrategy} from './strategy/magic-link.js';
 import {OtpStrategy} from './strategy/otp.js';
 
-export function defaultStrategies(crypto: SimpleMfaCrypto) {
+export function defaultStrategies() {
 	return {
-		[OtpStrategy.type]: new OtpStrategy(crypto),
-		[MagicLinkStrategy.type]: new MagicLinkStrategy(crypto),
-		[BackupCodeStrategy.type]: new BackupCodeStrategy(crypto),
+		[OtpStrategy.type]: new OtpStrategy(),
+		[MagicLinkStrategy.type]: new MagicLinkStrategy(),
+		[BackupCodeStrategy.type]: new BackupCodeStrategy(),
 	};
 }

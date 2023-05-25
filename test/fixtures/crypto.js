@@ -30,4 +30,8 @@ export class MockedCrypto extends SimpleMfaNodeCrypto {
 			return null;
 		}
 	}
+
+	__reset() {
+		this._keys.clear();
+	}
 }

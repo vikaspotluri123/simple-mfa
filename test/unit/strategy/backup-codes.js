@@ -10,8 +10,8 @@ const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
 
-const strategy = new BackupCodeStrategy(new MockedCrypto());
-const config = {generateId};
+const strategy = new BackupCodeStrategy();
+const config = {generateId, crypto: new MockedCrypto()};
 
 describe('Unit > Strategy > Backup Codes', function () {
 	it('create', async function () {
@@ -31,7 +31,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 	it('validate', async function () {
 		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
-		const codes = await strategy.getSecret(store);
+		const codes = await strategy.getSecret(store, config);
 		const validCode = codes[0].replace(/-/g, '');
 
 		expect(await strategy.validate(store, 'acknowledged', config)).to.be.true;
@@ -48,7 +48,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 	it('postValidate', async function () {
 		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
 		store.status = 'active';
-		const codes = await strategy.getSecret(store);
+		const codes = await strategy.getSecret(store, config);
 
 		let codesCount = codes.length;
 
@@ -60,7 +60,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 			expect(await strategy.validate(store, code, config), 'first use should pass').to.be.true;
 			await strategy.postValidate(store, code, config);
 			expect(await strategy.validate(store, code, config), 'second use should fail').to.be.false;
-			expect(await strategy.getSecret(store), 'codes should not include expired codes')
+			expect(await strategy.getSecret(store, config), 'codes should not include expired codes')
 				.to.have.length(--codesCount);
 		}
 		/* eslint-enable no-await-in-loop */
@@ -68,7 +68,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 	it('getSecret', async function () {
 		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
-		const codes = await strategy.getSecret(store);
+		const codes = await strategy.getSecret(store, config);
 		expect(codes).to.be.an('array').with.length(10);
 		for (const code of codes) {
 			expect(code).to.match(/^(?:\d{4}-){2}\d{4}$/);
@@ -76,7 +76,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 		try {
 			// Create a new object to prevent using cached data
-			await strategy.getSecret({...store, context: ''});
+			await strategy.getSecret({...store, context: ''}, config);
 			expect(false, 'should have failed').to.be.true;
 		} catch (error) {
 			expect(error).to.be.instanceOf(StrategyError);

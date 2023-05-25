@@ -1,4 +1,3 @@
-import {type SimpleMfaCrypto} from './crypto.js';
 import {type UntypedStrategyRecord} from './config.js';
 import {type Public, type MaybePromise} from './shared.js';
 import {type SerializedAuthStrategy} from './storage.js';
@@ -28,7 +27,7 @@ export interface SimpleMfaApiImplementation<
 	StoredStrategy extends SerializedAuthStrategy<Strategy> = SerializedAuthStrategy<Strategy>,
 > {
 	assertStatusTransition(storedStrategy: StoredStrategy, nextStatus: StoredStrategy['status']): boolean;
-	syncSecrets(crypto: SimpleMfaCrypto, store?: Record<string, string>): Record<string, string>;
+	syncSecrets(store?: Record<string, string>): Record<string, string>;
 	coerce(storedStrategy: SerializedAuthStrategy<string>): StoredStrategy;
 	create(type: Strategy, owner: string): MaybePromise<StoredStrategy>;
 	activate(storedStrategy: StoredStrategy, userPayload: unknown): MaybePromise<boolean>;

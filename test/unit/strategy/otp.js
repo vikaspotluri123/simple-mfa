@@ -12,16 +12,16 @@ const user_id = 'user_id';
 const generateId = () => 'rAnDOmId';
 
 const crypto = new MockedCrypto();
-const strategy = new OtpStrategy(crypto);
+const strategy = new OtpStrategy();
 
-const config = {generateId};
+const config = {generateId, crypto};
 
 describe('Unit > Strategy > OTP', function () {
 	/** @type {Awaited<ReturnType<strategy['create']>>} */
 	let store;
 
 	async function realOtp() {
-		return createOtp(await strategy.getSecret(store));
+		return createOtp(await strategy.getSecret(store, config));
 	}
 
 	beforeEach(async function () {
@@ -70,20 +70,20 @@ describe('Unit > Strategy > OTP', function () {
 
 	it('postvalidate', async function () {
 		const store = await strategy.create(user_id, OtpStrategy.type, config);
-		const token = createOtp(await strategy.getSecret(store));
+		const token = createOtp(await strategy.getSecret(store, config));
 		expect(strategy.postValidate(store, token, config)).to.not.be.ok;
 	});
 
 	it('getSecret', async function () {
 		const store = await strategy.create(user_id, OtpStrategy.type, config);
-		const secret = await strategy.getSecret(store);
+		const secret = await strategy.getSecret(store, config);
 		expect(secret).to.be.a('string').with.length(16);
-		expect(await strategy.getSecret({...store})).to.equal(secret);
+		expect(await strategy.getSecret({...store}, config)).to.equal(secret);
 
 		store.context = store.context.slice(0, -5);
 
 		try {
-			await strategy.getSecret({...store});
+			await strategy.getSecret({...store}, config);
 			expect(false, 'should have thrown').to.be.true;
 		} catch (error) {
 			expect(error).to.be.an.instanceOf(StrategyError);

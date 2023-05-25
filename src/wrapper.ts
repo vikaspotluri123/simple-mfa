@@ -2,7 +2,6 @@
 import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
-import {type SimpleMfaCrypto} from './interfaces/crypto.js';
 import {type ControllerResponse, type SimpleMfaApi} from './interfaces/wrapper.js';
 
 export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
@@ -34,14 +33,14 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			throw new StrategyError(`Cannot change status from ${currentStatus} to ${nextStatus}`, true);
 		},
 
-		syncSecrets(crypto: SimpleMfaCrypto, store: Record<string, string> = {}) {
+		syncSecrets(store: Record<string, string> = {}) {
 			for (const [strategyType, strategy] of Object.entries(strategies)) {
 				if (
 					(strategy as TStrategies[Strategy]).secretType === 'aes'
 					&& !Object.hasOwnProperty.call(store, strategyType)
 				) {
-					store[strategyType] = crypto.generateSecretEncoded(32);
-					void crypto.update(strategyType, store[strategyType]);
+					store[strategyType] = config.crypto.generateSecretEncoded(32);
+					void config.crypto.update(strategyType, store[strategyType]);
 				}
 			}
 
@@ -119,7 +118,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret);
+			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret, config);
 		},
 	};
 

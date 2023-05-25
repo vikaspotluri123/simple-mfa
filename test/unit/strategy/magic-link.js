@@ -9,8 +9,8 @@ import {MockedCrypto} from '../../fixtures/crypto.js';
 const user_id = 'user_id';
 
 const generateId = () => 'rAnDOmId';
-const strategy = new MagicLinkStrategy(new MockedCrypto());
-const config = {generateId};
+const strategy = new MagicLinkStrategy();
+const config = {generateId, crypto: new MockedCrypto()};
 
 describe('Unit > Strategy > MagicLink', function () {
 	it('create', function () {

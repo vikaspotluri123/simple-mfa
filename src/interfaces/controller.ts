@@ -43,7 +43,7 @@ export interface AuthStrategy<
 	 * @description
 	 * Convert the private stored data into a user-specific public version
 	 */
-	getSecret: (strategy: TInternalStrategy) => MaybePromise<TParsedSecretType>;
+	getSecret: (strategy: TInternalStrategy, config: StrategyConfig) => MaybePromise<TParsedSecretType>;
 	/**
 	 * @description
 	 * Convert the private stored data into an api-compatible format
@@ -51,7 +51,7 @@ export interface AuthStrategy<
 	 *  - decrypt data if required
 	 * If a serializer is not provided, a default serializer is used - the store is cloned, and `context` is removed
 	 */
-	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret']) => MaybePromise<Partial<TInternalStrategy>>;
+	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret'], config: StrategyConfig) => MaybePromise<Partial<TInternalStrategy>>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {

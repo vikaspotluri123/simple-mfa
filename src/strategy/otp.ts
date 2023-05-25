@@ -1,7 +1,6 @@
 import {authenticator, totp} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
-import {type SimpleMfaCrypto} from '../interfaces/crypto.js';
 
 type MyStrategy = AuthStrategyHelper<string>;
 type Strategy = MyStrategy['strategy'];
@@ -13,11 +12,9 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
 
-	constructor(private readonly _crypto: SimpleMfaCrypto) {}
-
-	async create(user_id: string, type: string, {generateId}: Config): Promise<Strategy> {
+	async create(user_id: string, type: string, {generateId, crypto}: Config): Promise<Strategy> {
 		const plainText = authenticator.generateSecret();
-		const context = await this._crypto.encodeSecret('otp', plainText);
+		const context = await crypto.encodeSecret('otp', plainText);
 		const strategy: Strategy = {
 			id: generateId(),
 			name: '',
@@ -36,12 +33,12 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 		return undefined;
 	}
 
-	async validate(strategy: Strategy, untrustedPayload: unknown, _config: Config) {
+	async validate(strategy: Strategy, untrustedPayload: unknown, config: Config) {
 		if (typeof untrustedPayload !== 'string') {
 			throw new StrategyError('Invalid client payload', true);
 		}
 
-		const serverMemorySecret = await this._decode(strategy);
+		const serverMemorySecret = await this._decode(strategy, config);
 
 		if (!serverMemorySecret) {
 			return false;
@@ -54,8 +51,8 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 		// Noop
 	}
 
-	async getSecret(strategy: Strategy) {
-		const decoded = await this._decode(strategy);
+	async getSecret(strategy: Strategy, config: Config) {
+		const decoded = await this._decode(strategy, config);
 
 		if (!decoded) {
 			throw new StrategyError('Unable to extract secret', false);
@@ -64,12 +61,12 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 		return decoded;
 	}
 
-	private async _decode(strategy: Strategy) {
+	private async _decode(strategy: Strategy, {crypto}: Config) {
 		if (decryptionCache.has(strategy)) {
 			return decryptionCache.get(strategy);
 		}
 
-		const plainText = await this._crypto.decodeSecret(OtpStrategy.type, strategy.context);
+		const plainText = await crypto.decodeSecret(OtpStrategy.type, strategy.context);
 		if (!plainText) {
 			return null;
 		}

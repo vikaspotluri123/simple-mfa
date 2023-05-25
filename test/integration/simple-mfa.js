@@ -12,8 +12,10 @@ import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedCrypto} from '../fixtures/crypto.js';
 
+const crypto = new MockedCrypto();
 const instance = createSimpleMfa({
-	strategies: defaultStrategies(new MockedCrypto()),
+	crypto,
+	strategies: defaultStrategies(),
 });
 
 /**
@@ -135,19 +137,18 @@ describe('Integration > SimpleMFA', function () {
 	});
 
 	it('syncSecrets', async function () {
-		const crypto = new MockedCrypto({});
+		crypto.__reset();
 		/** @type {Record<string, string>} */
 		const currentState = {};
-		instance.syncSecrets(crypto, currentState);
+		instance.syncSecrets(currentState);
 		expect(Object.keys(currentState)).to.deep.equal(['otp', 'magic-link', 'backup-code']);
-		// Wait for key imports to complete
 		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
 		expect(crypto.lastUpdateFailed).to.be.false;
 
 		delete currentState.otp;
 		const unchangedState = {...currentState};
 
-		instance.syncSecrets(crypto, currentState);
+		instance.syncSecrets(currentState);
 		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
 		expect(crypto.lastUpdateFailed).to.be.true; // Tried to recreate a key
 
