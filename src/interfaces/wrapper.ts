@@ -36,4 +36,4 @@ export interface SimpleMfaApiImplementation<
 	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): MaybePromise<Partial<StoredStrategy>>;
 }
 
-export type SimpleMfaApi<TStrategies extends UntypedStrategyRecord> = Public<SimpleMfaApiImplementation<TStrategies>>;
+export type SimpleMfaApi<TStrategies extends UntypedStrategyRecord = UntypedStrategyRecord> = Public<SimpleMfaApiImplementation<TStrategies>>;
