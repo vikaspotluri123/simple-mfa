@@ -1,5 +1,5 @@
 // @ts-check
-
+import {setImmediate} from 'node:timers/promises';
 import {expect} from 'chai';
 import {
 	createSimpleMfa,
@@ -138,22 +138,26 @@ describe('Integration > SimpleMFA', function () {
 
 	it('syncSecrets', async function () {
 		crypto.__reset();
-		/** @type {Record<string, string>} */
-		const currentState = {};
-		instance.syncSecrets(currentState);
+		expect(crypto.getCurrentKeys()).to.be.empty;
+		const currentState = instance.syncSecrets();
+		expect(currentState).to.be.ok;
+		// @ts-expect-error
 		expect(Object.keys(currentState)).to.deep.equal(['otp', 'magic-link', 'backup-code']);
-		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
+		await setImmediate();
 		expect(crypto.lastUpdateFailed).to.be.false;
+		expect(instance.syncSecrets()).to.be.null;
+	});
 
-		delete currentState.otp;
-		const unchangedState = {...currentState};
+	it('syncSecrets (invalid)', async function () {
+		crypto.__reset();
+		expect(crypto.getCurrentKeys()).to.be.empty;
+		expect(instance.syncSecrets()).to.be.ok;
+		await setImmediate();
 
-		instance.syncSecrets(currentState);
-		await new Promise(resolve => setTimeout(resolve, 0)); // eslint-disable-line no-promise-executor-return
-		expect(crypto.lastUpdateFailed).to.be.true; // Tried to recreate a key
-
-		expect(Object.keys(currentState)).to.deep.equal(['magic-link', 'backup-code', 'otp']);
-		expect(currentState).to.deep.contain(unchangedState);
+		delete crypto.keys.otp;
+		expect(instance.syncSecrets()).to.be.ok;
+		await setImmediate();
+		expect(crypto.lastUpdateFailed).to.be.true;
 	});
 
 	it('assertStatusTransition', async function () {

@@ -15,14 +15,26 @@ const KEY_ENCODING = 'hex';
 
 Object.freeze(KEY_USAGES);
 
+function isomorphicStructuredClone(value: unknown): any {
+	if ('structuredClone' in globalThis) {
+		return structuredClone(value);
+	}
+
+	return JSON.parse(JSON.stringify(value));
+}
+
 export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements SimpleMfaCrypto<TKeyType> {
 	private readonly _keys: Map<string, CryptoKey | Promise<CryptoKey>>;
 
-	constructor(keys: Record<TKeyType, string>, private readonly crypto = webcrypto) {
+	constructor(private readonly keys: Record<TKeyType, string>, private readonly crypto = webcrypto) {
 		this._keys = new Map();
 		for (const [keyId, key] of Object.entries<string>(keys)) {
 			this._keys.set(keyId, this._importKey(keyId as TKeyType, key));
 		}
+	}
+
+	getCurrentKeys() {
+		return isomorphicStructuredClone(this.keys) as Record<TKeyType, string>;
 	}
 
 	async update(keyId: TKeyType, key64: string) {
@@ -30,6 +42,7 @@ export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements Si
 			throw new Error('overriding keys is not supported');
 		}
 
+		this.keys[keyId] = key64;
 		return this._importKey(keyId, key64);
 	}
 

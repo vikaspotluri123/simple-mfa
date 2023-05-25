@@ -33,18 +33,22 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			throw new StrategyError(`Cannot change status from ${currentStatus} to ${nextStatus}`, true);
 		},
 
-		syncSecrets(store: Record<string, string> = {}) {
+		syncSecrets() {
+			const secrets = config.crypto.getCurrentKeys();
+			let returnSecrets = false;
 			for (const [strategyType, strategy] of Object.entries(strategies)) {
 				if (
 					(strategy as TStrategies[Strategy]).secretType === 'aes'
-					&& !Object.hasOwnProperty.call(store, strategyType)
+					&& !Object.hasOwnProperty.call(secrets, strategyType)
 				) {
-					store[strategyType] = config.crypto.generateSecretEncoded(32);
-					void config.crypto.update(strategyType, store[strategyType]);
+					returnSecrets = true;
+					const secret = config.crypto.generateSecretEncoded(32);
+					secrets[strategyType] = secret;
+					void config.crypto.update(strategyType, secret);
 				}
 			}
 
-			return store;
+			return returnSecrets ? secrets : null;
 		},
 
 		activate(storedStrategy: StoredStrategy, userPayload: unknown) {

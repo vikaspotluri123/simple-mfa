@@ -27,7 +27,7 @@ export interface SimpleMfaApiImplementation<
 	StoredStrategy extends SerializedAuthStrategy<Strategy> = SerializedAuthStrategy<Strategy>,
 > {
 	assertStatusTransition(storedStrategy: StoredStrategy, nextStatus: StoredStrategy['status']): boolean;
-	syncSecrets(store?: Record<string, string>): Record<string, string>;
+	syncSecrets(): Record<string, string> | null; // eslint-disable-line @typescript-eslint/ban-types
 	coerce(storedStrategy: SerializedAuthStrategy<string>): StoredStrategy;
 	create(type: Strategy, owner: string): MaybePromise<StoredStrategy>;
 	activate(storedStrategy: StoredStrategy, userPayload: unknown): MaybePromise<boolean>;
