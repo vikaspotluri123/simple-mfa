@@ -6,6 +6,7 @@ import {expect} from 'chai';
 import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 
 const KEY = 'action';
+const NEW_KEY = 'late_action';
 const crypto = {
 	randomUUID: webcrypto.randomUUID.bind(webcrypto),
 	CryptoKey: webcrypto.CryptoKey.bind(webcrypto),
@@ -13,6 +14,7 @@ const crypto = {
 	getRandomValues: webcrypto.getRandomValues.bind(webcrypto),
 };
 
+/** @type {SimpleMfaNodeCrypto<typeof KEY | typeof NEW_KEY>} */
 const demo = new SimpleMfaNodeCrypto({[KEY]: Buffer.from('ThisIsASecretKey').toString('hex')}, crypto);
 
 const cypherWithStubbedIv = '42424242424242424242424242424242Zfgmc/nfd6kxCGeJJI9jpJmKuYYHjCMXxGiYR9t7gojQXKe4Y4wNQIXbmLGBVyJNRpSn1LAB2GQI';
@@ -38,5 +40,12 @@ describe('Unit > SimpleMfaNodeCrypto', function () {
 
 	it('can safely decrypt data', async function () {
 		expect(await demo.decodeSecret(KEY, cypherWithStubbedIv)).to.equal(plainText);
+	});
+
+	it('update allows immediate usage of a new key', async function () {
+		const whenKeyIsLoaded = demo.update(NEW_KEY, Buffer.from('ThisIsASecretKey').toString('hex'));
+		expect(await demo.encodeSecret(NEW_KEY, plainText)).to.equal(cypherWithStubbedIv);
+		await whenKeyIsLoaded;
+		expect(await demo.encodeSecret(NEW_KEY, plainText)).to.equal(cypherWithStubbedIv);
 	});
 });

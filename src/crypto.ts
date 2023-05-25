@@ -74,9 +74,12 @@ export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements Si
 	}
 
 	private async _importKey(keyId: TKeyType, key64: string): Promise<CryptoKey> {
-		const importedKey = await this.crypto.subtle.importKey(
+		const importedKey = this.crypto.subtle.importKey(
 			'raw', Buffer.from(key64, KEY_ENCODING), {name: ALGORITHM}, true, KEY_USAGES,
-		);
+		).then(key => {
+			this._keys.set(keyId, key);
+			return key;
+		});
 
 		this._keys.set(keyId, importedKey);
 		return importedKey;
