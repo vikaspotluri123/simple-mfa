@@ -21,15 +21,21 @@ export type ValidationResult<TStrategies extends UntypedStrategyRecord> = {
 	response: Public<ControllerResponse<TStrategies, 'postValidate'>>;
 };
 
+// @TODO: allow customization by creating an interface that can be overridden by a consumer
+type MinimalStrategy<TStrategy extends string> = Public<
+Pick<SerializedAuthStrategy<TStrategy>, 'type' | 'status' | 'context'>
+& Partial<SerializedAuthStrategy<TStrategy>
+>>;
+
 export interface SimpleMfaApiImplementation<
 	TStrategies extends UntypedStrategyRecord,
 	Strategy extends keyof TStrategies & string = keyof TStrategies & string,
-	StoredStrategy extends SerializedAuthStrategy<Strategy> = SerializedAuthStrategy<Strategy>,
+	StoredStrategy extends MinimalStrategy<Strategy> = MinimalStrategy<Strategy>,
 > {
 	assertStatusTransition(storedStrategy: StoredStrategy, nextStatus: StoredStrategy['status']): boolean;
 	syncSecrets(): Record<string, string> | null; // eslint-disable-line @typescript-eslint/ban-types
 	coerce(storedStrategy: SerializedAuthStrategy<string>): StoredStrategy;
-	create(type: Strategy, owner: string): MaybePromise<StoredStrategy>;
+	create(type: Strategy, owner: string): MaybePromise<Public<Required<StoredStrategy>>>;
 	activate(storedStrategy: StoredStrategy, userPayload: unknown): MaybePromise<boolean>;
 	validate(storedStrategy: StoredStrategy, userPayload: unknown): Promise<ValidationResult<TStrategies>>;
 	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): MaybePromise<Partial<StoredStrategy>>;
