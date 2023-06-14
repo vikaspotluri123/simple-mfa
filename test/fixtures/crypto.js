@@ -1,3 +1,4 @@
+// @ts-check
 import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 
 const DEFAULT_KEYS = {
@@ -6,6 +7,7 @@ const DEFAULT_KEYS = {
 	'backup-code': '5375706572447570657253616665416e6453656375726521',
 };
 
+// @ts-expect-error
 export class MockedCrypto extends SimpleMfaNodeCrypto {
 	/** @type {boolean | null} */
 	lastUpdateFailed = null;
@@ -31,6 +33,7 @@ export class MockedCrypto extends SimpleMfaNodeCrypto {
 	}
 
 	__reset() {
+		// @ts-expect-error
 		this._keys.clear();
 		this.keys = {};
 	}

@@ -15,6 +15,7 @@ const crypto = {
 };
 
 /** @type {SimpleMfaNodeCrypto<typeof KEY | typeof NEW_KEY>} */
+// @ts-expect-error
 const demo = new SimpleMfaNodeCrypto({[KEY]: Buffer.from('ThisIsASecretKey').toString('hex')}, crypto);
 
 const cypherWithStubbedIv = '42424242424242424242424242424242Zfgmc/nfd6kxCGeJJI9jpJmKuYYHjCMXxGiYR9t7gojQXKe4Y4wNQIXbmLGBVyJNRpSn1LAB2GQI';
