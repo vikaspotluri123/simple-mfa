@@ -8,15 +8,16 @@ import {
 	StrategyError,
 	BACKUP_CODE_PENDING_TO_ACTIVE_PROOF as ACTIVATE_BACKUP,
 } from '../../dist/cjs/index.js';
+import {MagicLinkStrategy} from '../../dist/cjs/strategy/magic-link.js';
 import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedCrypto} from '../fixtures/crypto.js';
 
+const customMagicLinkInstance = new MagicLinkStrategy();
+const strategies = defaultStrategies({[MagicLinkStrategy.type]: customMagicLinkInstance});
+
 const crypto = new MockedCrypto();
-const instance = createSimpleMfa({
-	crypto,
-	strategies: defaultStrategies(),
-});
+const instance = createSimpleMfa({crypto, strategies});
 
 /**
  * @template T
@@ -33,6 +34,10 @@ const shouldThrowStrategyError = async (fn, ...args) => {
 };
 
 describe('Integration > SimpleMFA', function () {
+	it('Custom instance of a default strategy', function () {
+		expect(strategies[MagicLinkStrategy.type]).to.equal(customMagicLinkInstance);
+	});
+
 	it('Strategy coercion', async function () {
 		const strategy = await instance.create('otp', 'abcd');
 		expect(instance.coerce(strategy)).to.equal(strategy);
