@@ -1,24 +1,12 @@
 import {StrategyError} from '../error.js';
-import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
-import {RingMap} from '../utils.js';
-import {type MaybePromise} from '../interfaces/shared.js';
+import {type AuthStrategy} from '../interfaces/controller.js';
 import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../constants.js';
+import {type Config, type Strategy} from '../interfaces/magic-link.js';
+import {DefaultTokenStore, type TokenStore} from './_magic-link/token-store.js';
+
+export {type TokenStore} from './_magic-link/token-store.js';
 
 const TYPE = 'magic-link' as const;
-const EXPIRATION_TIME_MS = 36_000_000; // 10 Minutes
-
-let expiredTokens: RingMap<string>;
-
-const defaultTokenStore = () => {
-	expiredTokens ??= new RingMap();
-	return expiredTokens;
-};
-
-export interface TokenExpiryStore {
-	get(token: string): MaybePromise<string | undefined>;
-	has(token: string): MaybePromise<boolean>;
-	set(token: string, value: string | undefined): MaybePromise<void>;
-}
 
 export interface MagicLinkPrepareResponse {
 	action: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL;
@@ -27,20 +15,14 @@ export interface MagicLinkPrepareResponse {
 	};
 }
 
-let counter = Math.floor(Math.random() * 100);
-
-type MyStrategy = AuthStrategyHelper<void>;
-type Strategy = MyStrategy['strategy'];
-type Config = MyStrategy['config'];
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
-	private readonly _expiredTokens: TokenExpiryStore;
+	private readonly _tokens: TokenStore;
 
-	constructor(tokenStore = defaultTokenStore()) {
-		this._expiredTokens = tokenStore;
+	constructor(tokenStore?: TokenStore | undefined) {
+		this._tokens = tokenStore ?? new DefaultTokenStore();
 	}
 
 	create(user_id: string, type: string, {generateId}: Config): Strategy {
@@ -63,8 +45,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		}
 
 		// `id::expiration::salt`
-		const plainTextToken = `${strategy.id}::${Date.now() + EXPIRATION_TIME_MS}::${counter++}`;
-		const encryptedToken = await crypto.encodeSecret(strategy.type, plainTextToken);
+		const encryptedToken = await this._tokens.create(strategy, crypto);
 		return {action: MAGIC_LINK_SERVER_TO_SEND_EMAIL, data: {token: encryptedToken}};
 	}
 
@@ -73,23 +54,7 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 			throw new StrategyError('Unable to understand this MagicLink', true);
 		}
 
-		if (await this._expiredTokens.has(untrustedPayload)) {
-			throw new StrategyError('This MagicLink has already been used', true);
-		}
-
-		const decrypted = await crypto.decodeSecret(strategy.type, untrustedPayload);
-		if (!decrypted) {
-			return false;
-		}
-
-		const [id, expiration, _] = decrypted.split('::');
-
-		if (id === strategy.id && Number(expiration) > Date.now()) {
-			await this._expiredTokens.set(untrustedPayload, undefined);
-			return true;
-		}
-
-		return false;
+		return this._tokens.validate(strategy, crypto, untrustedPayload);
 	}
 
 	postValidate(_strategy: Strategy, _token: unknown, _config: Config) {
