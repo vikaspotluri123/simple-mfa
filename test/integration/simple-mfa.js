@@ -159,6 +159,7 @@ describe('Integration > SimpleMFA', function () {
 		expect(instance.syncSecrets()).to.be.ok;
 		await setImmediate();
 
+		// @ts-expect-error
 		delete crypto.keys.otp;
 		expect(instance.syncSecrets()).to.be.ok;
 		await setImmediate();
