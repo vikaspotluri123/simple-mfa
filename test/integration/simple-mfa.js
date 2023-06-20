@@ -135,7 +135,7 @@ describe('Integration > SimpleMFA', function () {
 		}
 
 		expect(validation).to.deep.contain({type: 'validationSucceeded'});
-		expect(validation.response.context).to.be.a('string').and.to.not.equal(currentStrategyStringified);
+		expect(validation.response?.context).to.be.a('string').and.to.not.equal(currentStrategyStringified);
 		expect(await instance.validate(backupCodesStore, realToken)).to.deep.equal({
 			type: 'validationFailed',
 		});

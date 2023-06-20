@@ -15,6 +15,11 @@ const strategy = new MagicLinkStrategy().create(
 describe('Unit > Strategy > MagicLink > TokenStore', function () {
 	it('validate', async function () {
 		let validToken = await store.create(strategy, crypto);
+		/**
+		 * @param {string} token
+		 * @param {boolean} validity
+		 * @param {string} message
+		 */
 		const assertValid = async (token, validity, message) => store.validate(strategy, crypto, token)
 			.catch(error => {
 				if (error instanceof StrategyError) {
