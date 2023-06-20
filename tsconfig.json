@@ -1,21 +1,7 @@
 {
-  "include": ["src/**/*.ts"],
-  "compilerOptions": {
-    "outDir": "dist/esm",
-    "declaration": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "downlevelIteration": true,
-    "esModuleInterop": true,
-    "module": "es2022",
-    "moduleResolution": "node",
-    "target": "es2020",
-    "noEmit": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "useDefineForClassFields": true,
-    "isolatedModules": true,
-    "skipLibCheck": true
-  },
+  "include": ["src/**/*.ts", "test/**/*.js"],
+  "extends": [
+    "./tsconfig-main.json",
+    "./tsconfig-tests.json"
+  ]
 }

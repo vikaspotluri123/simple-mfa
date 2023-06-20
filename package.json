@@ -122,8 +122,8 @@
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
     "lint": "xo && tsc -p tsconfig-tests.json",
-    "dev": "tsc -w",
-    "build:esm": "tsc",
+    "dev": "tsc -w -p tsconfig-main.json",
+    "build:esm": "tsc -p tsconfig-main.json",
     "build:cjs": "tsc -p tsconfig-cjs.json && ./add-cjs-package.sh",
     "pretest": "tsc -p tsconfig-coverage.json && ./add-cjs-package.sh",
     "test": "mocha --recursive test/unit test/integration",

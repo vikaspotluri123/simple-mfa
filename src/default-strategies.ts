@@ -11,6 +11,7 @@ interface DefaultSimpleMfaStrategies {
 export function defaultStrategies(overrides: Partial<DefaultSimpleMfaStrategies> = {}) {
 	return {
 		[OtpStrategy.type]: overrides[OtpStrategy.type] ?? new OtpStrategy(),
+		/* c8 ignore next 2 */
 		[MagicLinkStrategy.type]: overrides[MagicLinkStrategy.type] ?? new MagicLinkStrategy(),
 		[BackupCodeStrategy.type]: overrides[BackupCodeStrategy.type] ?? new BackupCodeStrategy(),
 	};

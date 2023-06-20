@@ -15,6 +15,7 @@ const KEY_ENCODING = 'hex';
 
 Object.freeze(KEY_USAGES);
 
+/* c8 ignore next 7 */
 function isomorphicStructuredClone(value: unknown): any {
 	if ('structuredClone' in globalThis) {
 		return structuredClone(value);
