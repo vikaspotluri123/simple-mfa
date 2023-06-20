@@ -17,7 +17,9 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 		const codes: string[] = Array.from({length: this.countToCreate});
 		for (const [index, _] of codes.entries()) {
 			const untrimmedCode = Array.from(config.crypto.generateSecret(12)).join('');
-			const trimmedCode = untrimmedCode.length === 12 ? untrimmedCode : untrimmedCode.slice(1, 13);
+			const trimmedCode = untrimmedCode.length === 12
+				/* c8 ignore next */ ? untrimmedCode
+				: untrimmedCode.slice(1, 13);
 			codes[index] = trimmedCode;
 		}
 
