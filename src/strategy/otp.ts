@@ -1,4 +1,4 @@
-import {authenticator, totp} from 'otplib';
+import {authenticator} from 'otplib';
 import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 
@@ -44,7 +44,7 @@ export class OtpStrategy implements AuthStrategy<string, string> {
 			return false;
 		}
 
-		return totp.check(untrustedPayload, serverMemorySecret);
+		return authenticator.check(untrustedPayload, serverMemorySecret);
 	}
 
 	postValidate(_strategy: Strategy, _otp: unknown, _config: Config) {
