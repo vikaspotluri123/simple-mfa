@@ -123,6 +123,8 @@
     "build": "yarn build:esm && yarn build:cjs",
     "lint": "xo && tsc -p tsconfig-tests.json",
     "dev": "tsc -w -p tsconfig-main.json",
+    "docs:lint": "node docs/_lint/doc-linter.js",
+    "docs:dev": "cd docs; JEKYLL_ENV=virtual jekyll serve -H 0.0.0.0 -l",
     "build:esm": "tsc -p tsconfig-main.json",
     "build:cjs": "tsc -p tsconfig-cjs.json && ./add-cjs-package.sh",
     "pretest": "tsc -p tsconfig-coverage.json && ./add-cjs-package.sh",
@@ -159,7 +161,7 @@
     "overrides": [
       {
         "files": [
-          "test/**/*.js"
+          "**/*.js"
         ],
         "envs": [
           "mocha"
