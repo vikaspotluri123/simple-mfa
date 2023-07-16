@@ -7,9 +7,9 @@ has_children: true
 
 # Getting Started
 
-SimpleMFA serves as the middleman for MFA, and a sidekick for second factor management.
+SimpleMfa serves as the middleman for MFA, and a sidekick for second factor management.
 
-The first step is adding SimpleMFA to your project:
+The first step is adding SimpleMfa to your project:
 
 ```bash
 # For npm users
@@ -22,4 +22,4 @@ yarn add @potluri/simple-mfa
 pnpm add @potluri/simple-mfa
 ```
 
-Next up: <a href="./integrate">Integrate SimpleMFA into your application</a>
+Next up: <a href="./integrate">Integrate SimpleMfa into your application</a>
