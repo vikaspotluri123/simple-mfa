@@ -15,6 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  *   reportError: (errorMeta: {
  *     message: string;
  *     location: Location;
+ *     subRule?: string;
  *   }) => void
  * }} RuleContext
  *
@@ -116,8 +117,12 @@ async function runRule(file, rule, errors) {
  */
 function createContext(rule, file, store) {
 	return {
-		reportError({message, location}) {
+		reportError({message, location, subRule = ''}) {
 			store[file] ??= [];
+			if (subRule) {
+				rule = `${rule}/${subRule}`;
+			}
+
 			store[file].push({rule, file, message, location});
 		},
 	};
