@@ -65,7 +65,7 @@ export interface SimpleMfaApiImplementation<
 	 *          // `simpleMfa.coerce()` passed, so strategy.type is guaranteed to be known
 	 *          const type = strategy.type satisfies keyof typeof strategies
 	 * @note the implementation only checks on the strategy type, be sure other required fields (e.g. context, status)
-	 * exist when interfacing with SimpleMFA.
+	 * exist when interfacing with SimpleMfa.
 	 */
 	coerce(storedStrategy: SerializedAuthStrategy<string>): StoredStrategy;
 	/**
@@ -76,19 +76,19 @@ export interface SimpleMfaApiImplementation<
 	 * @description confirms a strategy can be converted from `pending` to `active` based on a user proof.
 	 * @throws {StrategyError} if the strategy is not pending, or is unknown
 	 * @note some strategies (e.g. backup codes) use a hard-coded value as a user proof to distinguish between intentional
-	 *       activation and unintentional verification. SimpleMFA exposes the constants used by built-in strategies.
+	 *       activation and unintentional verification. SimpleMfa exposes the constants used by built-in strategies.
 	 */
 	activate(storedStrategy: StoredStrategy, userPayload: unknown): MaybePromise<boolean>;
 	/**
 	 * @description confirm "something you have" - does the provided {userPayload} satisfy the requirements of {storedStrategy}?
-	 * @note for multi-step verification (e.g. MagicLink), {userPayload} can be a hard-coded constant. SimpleMFA exposes
+	 * @note for multi-step verification (e.g. MagicLink), {userPayload} can be a hard-coded constant. SimpleMfa exposes
 	 *       the constants used by built-in strategies.
 	 * @returns a discriminated union based on `type`, with the details in `response`:
 	 *   1. `serverActionRequired`: There is a multi-step process for validation; an action needs to be performed on the
 	 *                              server (e.g. send an email). `response` is a discriminated union based on `action` to
-	 *                              determine what to do. SimpleMFA exposes actions defined by built-in strategies.
-	 *                              Actions are expected to be a globally unique key. SimpleMFA exposes the keys used by
-	 *                              built-in strategies as constants. Since SimpleMFA is stateless, you will need to
+	 *                              determine what to do. SimpleMfa exposes actions defined by built-in strategies.
+	 *                              Actions are expected to be a globally unique key. SimpleMfa exposes the keys used by
+	 *                              built-in strategies as constants. Since SimpleMfa is stateless, you will need to
 	 *                              perform validation (e.g. rate-limiting) separately.
 	 *   2. `validationFailed`: {userPayload} does not map to a valid value or known constant.
 	 *   3. `validationSucceeded`: User has proven something they have. `response` will be a POJO of the updated

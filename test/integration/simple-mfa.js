@@ -33,7 +33,7 @@ const shouldThrowStrategyError = async (fn, ...args) => {
 	}
 };
 
-describe('Integration > SimpleMFA', function () {
+describe('Integration > SimpleMfa', function () {
 	it('Custom instance of a default strategy', function () {
 		expect(strategies[MagicLinkStrategy.type]).to.equal(customMagicLinkInstance);
 	});
