@@ -1,0 +1,16 @@
+{
+  "files": ["index.js"],
+  "compilerOptions": {
+    "strict": true,
+    "rootDir": ".",
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "checkJs": true,
+    "module": "es2022",
+    "target": "es2020",
+    "moduleResolution": "node16"
+  }
+}
