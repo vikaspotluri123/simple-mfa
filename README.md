@@ -3,4 +3,4 @@
 # Simple MFA
 </center>
 
-> Add MFA to your app, simply.
+> Effortlessly add MFA to your app
