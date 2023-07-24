@@ -1,6 +1,6 @@
 import {type StrategyConfig} from './config.js';
-import {type MaybePromise} from './shared.js';
-import {type SerializedAuthStrategy} from './storage.js';
+import {type SerializationResponse, type MaybePromise} from './shared.js';
+import {type MinimalAuthStrategy, type SerializedAuthStrategy} from './storage.js';
 
 export interface PrepareResponse {
 	action: string;
@@ -14,14 +14,15 @@ export interface AuthStrategy<
 	TParsedSecretType,
 	TPrepareType extends AllowedPrepareType = never,
 	TStrategyNames extends string = string,
-	TInternalStrategy = SerializedAuthStrategy<TStrategyNames, TStoredContextDefinition>,
+	TExtraFields extends Record<string, any> | void = void,
+	TInternalStrategy = SerializedAuthStrategy<TStrategyNames, TExtraFields, TStoredContextDefinition>,
 > {
 	readonly secretType?: 'none' | 'aes';
 	/**
 	 * @description
 	 * Create a globally unique strategy for the specific user
 	 */
-	create: (owner: string, type: string, config: StrategyConfig) => MaybePromise<TInternalStrategy>;
+	create: (owner: string, type: string, config: StrategyConfig) => MaybePromise<MinimalAuthStrategy<TStrategyNames, TStoredContextDefinition>>;
 	/**
 	 * @description
 	 * After the user selects to authenticate with this strategy, perform an action and respond with context
@@ -51,10 +52,11 @@ export interface AuthStrategy<
 	 *  - decrypt data if required
 	 * If a serializer is not provided, a default serializer is used - the store is cloned, and `context` is removed
 	 */
-	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret'], config: StrategyConfig) => MaybePromise<Partial<TInternalStrategy>>;
+	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret'], config: StrategyConfig) => SerializationResponse<TStrategyNames, TExtraFields, TStoredContextDefinition>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {
 	config: StrategyConfig;
-	strategy: SerializedAuthStrategy<string, TAuthContext>;
+	createdStrategy: MinimalAuthStrategy<string, TAuthContext>;
+	strategy: SerializedAuthStrategy<string, void, TAuthContext>;
 }

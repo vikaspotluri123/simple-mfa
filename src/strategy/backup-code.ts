@@ -3,17 +3,18 @@ import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 
 type MyStrategy = AuthStrategyHelper<string>;
+type NewStrategy = MyStrategy['createdStrategy'];
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-const decryptionCache = new WeakMap<Strategy, string[]>();
+const decryptionCache = new WeakMap<NewStrategy, string[]>();
 
 export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 	static readonly type = 'backup-code';
 	public readonly secretType = 'aes';
 	constructor(private readonly countToCreate = 10) {}
 
-	async create(user_id: string, type: string, config: Config): Promise<Strategy> {
+	async create(user_id: string, type: string, config: Config): Promise<NewStrategy> {
 		const codes: string[] = Array.from({length: this.countToCreate});
 		for (const [index, _] of codes.entries()) {
 			const untrimmedCode = Array.from(config.crypto.generateSecret(12)).join('');
@@ -23,12 +24,10 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 			codes[index] = trimmedCode;
 		}
 
-		const response: Strategy = {
+		const response: NewStrategy = {
 			id: config.generateId(),
-			name: '',
 			user_id,
 			status: 'pending',
-			priority: null,
 			type,
 			context: '',
 		};
@@ -62,7 +61,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 		return codes.map(code => `${code.slice(0, 4)}-${code.slice(4, 8)}-${code.slice(8)}`);
 	}
 
-	private async _serialize(strategy: Strategy, codes: string[], {crypto}: Config) {
+	private async _serialize<TStrategy extends NewStrategy | Strategy>(strategy: TStrategy, codes: string[], {crypto}: Config) {
 		const serializedCodes = codes.join('|');
 		const existingSerializedCodes = decryptionCache.get(strategy)?.join('|');
 		if (existingSerializedCodes === serializedCodes) {

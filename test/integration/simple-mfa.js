@@ -13,11 +13,22 @@ import {defaultStrategies} from '../../dist/cjs/default-strategies.js';
 import {createOtp} from '../../dist/cjs/testing/index.js';
 import {MockedCrypto} from '../fixtures/crypto.js';
 
+let __sequence = 0;
+
 const customMagicLinkInstance = new MagicLinkStrategy();
 const strategies = defaultStrategies({[MagicLinkStrategy.type]: customMagicLinkInstance});
 
 const crypto = new MockedCrypto();
-const instance = createSimpleMfa({crypto, strategies});
+const instance = createSimpleMfa({
+	crypto,
+	strategies,
+	customStoredFields: {
+		get sequence() {
+			return __sequence++;
+		},
+		name: null,
+	},
+});
 
 /**
  * @template T
@@ -46,8 +57,7 @@ describe('Integration > SimpleMfa', function () {
 
 		await Promise.all([
 			shouldThrowStrategyError(instance.coerce, strategy),
-			// @ts-expect-error
-			shouldThrowStrategyError(instance.create, 'does not exist'),
+			shouldThrowStrategyError(instance.create, strategy.type, 'user'),
 			shouldThrowStrategyError(instance.activate, strategy, ''),
 			shouldThrowStrategyError(instance.validate, strategy, ''),
 			shouldThrowStrategyError(instance.serialize, strategy, false),
@@ -173,7 +183,7 @@ describe('Integration > SimpleMfa', function () {
 		 */
 		const assertTransition = async (from, to, isAllowed) => {
 			const transition = `${from} -> ${to}`;
-			/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<any, any>} */
+			/** @type {import('../../dist/cjs/interfaces/storage.js').SerializedAuthStrategy<any, never, any>} */
 			// @ts-expect-error duck typing
 			const mockedStore = {status: from};
 
@@ -205,5 +215,22 @@ describe('Integration > SimpleMfa', function () {
 		expect(await instance.activate(backupCodesStore, ACTIVATE_BACKUP)).to.be.ok;
 		backupCodesStore.status = 'active';
 		shouldThrowStrategyError(instance.activate, backupCodesStore, ACTIVATE_BACKUP);
+	});
+
+	it('custom fields', async function () {
+		const store1 = await instance.create('otp', 'owner');
+		const store2 = await instance.create('otp', 'owner');
+
+		expect(store1.sequence).to.not.equal(store2.sequence);
+		expect(store1.id).to.not.equal(store2.id);
+
+		/** @type {(keyof typeof store1)[]} */
+		const differingKeys = ['context', 'id', 'sequence'];
+		for (const key of differingKeys) {
+			delete store1[key];
+			delete store2[key];
+		}
+
+		expect(store1).to.deep.equal(store2);
 	});
 });

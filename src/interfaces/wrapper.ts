@@ -1,7 +1,7 @@
 // @ts-expect-error importing StrategyError for docs
 import type {StrategyError} from '../error.js';
 import {type UntypedStrategyRecord} from './config.js';
-import {type Public, type MaybePromise} from './shared.js';
+import {type Public, type MaybePromise, type SerializationResponse} from './shared.js';
 import {type SerializedAuthStrategy} from './storage.js';
 
 type NoVoid<T> = T extends void ? never : T;
@@ -30,16 +30,11 @@ export type ValidationResult<TStrategies extends UntypedStrategyRecord> = {
 	response: Public<ControllerResponse<TStrategies, 'postValidate'>> | void;
 };
 
-// @TODO: allow customization by creating an interface that can be overridden by a consumer
-type MinimalStrategy<TStrategy extends string> = Public<
-Pick<SerializedAuthStrategy<TStrategy>, 'type' | 'status' | 'context'>
-& Partial<SerializedAuthStrategy<TStrategy>
->>;
-
 export interface SimpleMfaApiImplementation<
 	TStrategies extends UntypedStrategyRecord,
+	TExtraFields extends Record<string, any> | void = void,
 	Strategy extends keyof TStrategies & string = keyof TStrategies & string,
-	StoredStrategy extends MinimalStrategy<Strategy> = MinimalStrategy<Strategy>,
+	StoredStrategy extends SerializedAuthStrategy<Strategy, TExtraFields> = SerializedAuthStrategy<Strategy, TExtraFields>,
 > {
 	/**
 	 * @description Asserts that a strategy can transition from its current status to {nextStatus}. Primarily used as a
@@ -67,11 +62,11 @@ export interface SimpleMfaApiImplementation<
 	 * @note the implementation only checks on the strategy type, be sure other required fields (e.g. context, status)
 	 * exist when interfacing with SimpleMfa.
 	 */
-	coerce(storedStrategy: SerializedAuthStrategy<string>): StoredStrategy;
+	coerce(storedStrategy: SerializedAuthStrategy<string, TExtraFields>): StoredStrategy;
 	/**
 	 * @description creates a {type} strategy for {owner} that can be stored in a database
 	 */
-	create(type: Strategy, owner: string): MaybePromise<Public<Required<StoredStrategy>>>;
+	create(type: Strategy, owner: string): Promise<StoredStrategy>;
 	/**
 	 * @description confirms a strategy can be converted from `pending` to `active` based on a user proof.
 	 * @throws {StrategyError} if the strategy is not pending, or is unknown
@@ -103,7 +98,10 @@ export interface SimpleMfaApiImplementation<
 	 *       context! If you don't, it's possible that internal state can be leaked, and in the worst case, negate
 	 *       the point of multi-factor authentication.
 	 */
-	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): MaybePromise<Partial<StoredStrategy>>;
+	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): SerializationResponse<Strategy, TExtraFields>;
 }
 
-export type SimpleMfaApi<TStrategies extends UntypedStrategyRecord = UntypedStrategyRecord> = Public<SimpleMfaApiImplementation<TStrategies>>;
+export type SimpleMfaApi<
+	TStrategies extends UntypedStrategyRecord = UntypedStrategyRecord,
+	TExtraFields extends Record<string, any> | void = void,
+> = Public<SimpleMfaApiImplementation<TStrategies, TExtraFields>>;

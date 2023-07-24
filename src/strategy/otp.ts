@@ -3,23 +3,22 @@ import {StrategyError} from '../error.js';
 import {type AuthStrategyHelper, type AuthStrategy} from '../interfaces/controller.js';
 
 type MyStrategy = AuthStrategyHelper<string>;
+type NewStrategy = MyStrategy['createdStrategy'];
 type Strategy = MyStrategy['strategy'];
 type Config = MyStrategy['config'];
 
-const decryptionCache = new WeakMap<Strategy, string>();
+const decryptionCache = new WeakMap<NewStrategy, string>();
 
 export class OtpStrategy implements AuthStrategy<string, string> {
 	static readonly type = 'otp';
 	public readonly secretType = 'aes';
 
-	async create(user_id: string, type: string, {generateId, crypto}: Config): Promise<Strategy> {
+	async create(user_id: string, type: string, {generateId, crypto}: Config): Promise<NewStrategy> {
 		const plainText = authenticator.generateSecret();
 		const context = await crypto.encodeSecret('otp', plainText);
-		const strategy: Strategy = {
+		const strategy: NewStrategy = {
 			id: generateId(),
-			name: '',
 			status: 'pending',
-			priority: null,
 			user_id,
 			context,
 			type,

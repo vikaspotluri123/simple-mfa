@@ -1,6 +1,7 @@
 import {webcrypto} from 'node:crypto';
 import {type SimpleMfaConfig, type InternalSimpleMfaConfig, type UntypedStrategyRecord, type StrategyConfig} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
+import {type SerializationResponse} from './interfaces/shared.js';
 
 const DEFAULT_ID_GENERATOR = webcrypto.randomUUID.bind(webcrypto);
 
@@ -10,7 +11,7 @@ const DEFAULT_STRATEGY_SERIALIZER = async (
 	getSecret: (store: SerializedAuthStrategy<string>, config: StrategyConfig) => unknown,
 	config: StrategyConfig,
 ) => {
-	const cloned: Partial<SerializedAuthStrategy<string>> = {...store};
+	const cloned: SerializationResponse<string> = {...store};
 
 	if (isTrusted && store.status === 'pending') {
 		cloned.context = await getSecret(store, config);
@@ -21,11 +22,15 @@ const DEFAULT_STRATEGY_SERIALIZER = async (
 	return cloned;
 };
 
-export function coerce<TStrategies extends UntypedStrategyRecord>(config: SimpleMfaConfig<TStrategies>): InternalSimpleMfaConfig<TStrategies> {
+export function coerce<
+	TStrategies extends UntypedStrategyRecord,
+	TExtraFields extends Record<string, any> | void = void,
+>(config: SimpleMfaConfig<TStrategies, TExtraFields>): InternalSimpleMfaConfig<TStrategies, TExtraFields> {
 	const {
 		generateId = DEFAULT_ID_GENERATOR,
 		strategies,
 		crypto,
+		customStoredFields,
 	} = config;
 
 	for (const strategy of Object.values(strategies)) {
@@ -36,5 +41,6 @@ export function coerce<TStrategies extends UntypedStrategyRecord>(config: Simple
 	return {
 		config: {generateId, crypto},
 		strategies: strategies as Required<TStrategies>,
+		customStoredFields,
 	};
 }

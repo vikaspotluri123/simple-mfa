@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/promise-function-async */
 import {StrategyError} from './error.js';
 import {type UntypedStrategyRecord, type InternalSimpleMfaConfig} from './interfaces/config.js';
+import {type SerializationResponse} from './interfaces/shared.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 import {type ControllerResponse, type SimpleMfaApi} from './interfaces/wrapper.js';
 
-export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>(
-	internalConfig: InternalSimpleMfaConfig<TStrategies>,
+export function createStrategyWrapper<
+	TStrategies extends UntypedStrategyRecord,
+	TExtraFields extends Record<string, any> | void = void,
+>(
+	internalConfig: InternalSimpleMfaConfig<TStrategies, TExtraFields>,
 ) {
-	const {config, strategies} = internalConfig;
+	const {config, strategies, customStoredFields} = internalConfig;
 
 	type Strategy = keyof TStrategies & string;
-	type StoredStrategy = SerializedAuthStrategy<Strategy>;
+	type StoredStrategy = SerializedAuthStrategy<Strategy, TExtraFields>;
 
-	const wrapper: SimpleMfaApi<TStrategies> = {
+	const wrapper: SimpleMfaApi<TStrategies, TExtraFields> = {
 		assertStatusTransition(storedStrategy: StoredStrategy, nextStatus: StoredStrategy['status']) {
 			const {status: currentStatus} = storedStrategy;
 			if (
@@ -72,13 +76,18 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 			throw new StrategyError('Invalid strategy', false);
 		},
 
-		create(type: Strategy, owner: string) {
+		async create(type: Strategy, owner: string) {
 			const controller = strategies[type];
 			if (!controller) {
 				throw new StrategyError(`Invalid type: ${type}`, true);
 			}
 
-			return controller.create(owner, type, config);
+			const strategy = {
+				...(await controller.create(owner, type, config)),
+				...customStoredFields,
+			};
+
+			return strategy as StoredStrategy;
 		},
 
 		async validate(storedStrategy: StoredStrategy, userPayload: unknown) {
@@ -122,7 +131,7 @@ export function createStrategyWrapper<TStrategies extends UntypedStrategyRecord>
 				throw new StrategyError('Invalid strategy', false);
 			}
 
-			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret, config);
+			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret, config) as SerializationResponse<Strategy, TExtraFields>;
 		},
 	};
 

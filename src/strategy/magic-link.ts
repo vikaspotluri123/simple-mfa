@@ -1,7 +1,7 @@
 import {StrategyError} from '../error.js';
 import {type AuthStrategy} from '../interfaces/controller.js';
 import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../constants.js';
-import {type Config, type Strategy} from '../interfaces/magic-link.js';
+import {type Config, type Strategy, type NewStrategy} from '../interfaces/magic-link.js';
 import {DefaultTokenStore, type TokenStore} from './_magic-link/token-store.js';
 
 export {type TokenStore} from './_magic-link/token-store.js';
@@ -25,14 +25,12 @@ export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrep
 		this._tokens = tokenStore ?? new DefaultTokenStore();
 	}
 
-	create(user_id: string, type: string, {generateId}: Config): Strategy {
+	create(user_id: string, type: string, {generateId}: Config): NewStrategy {
 		const id = generateId();
 		return {
 			id,
-			name: '',
 			type,
 			status: 'active',
-			priority: null,
 			user_id,
 			context: undefined,
 		};
