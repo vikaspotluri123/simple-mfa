@@ -5,7 +5,7 @@ import {simpleMfa} from './0-instance.js';
 
 /**
  * @typedef {keyof typeof import('./0-instance.js').strategies} StrategyType
- * @typedef {import('@potluri/simple-mfa').StoredAuthStrategy<StrategyType>[]} DemoStrategies
+ * @typedef {import('@potluri/simple-mfa').BasicAuthStrategy<StrategyType>[]} DemoStrategies
  */
 
 /**
@@ -13,7 +13,7 @@ import {simpleMfa} from './0-instance.js';
  */
 export function createBrowseController(userStrategies) {
 	/**
-	 * @param {import('@potluri/simple-mfa').StoredAuthStrategy['status'] | null} status
+	 * @param {import('@potluri/simple-mfa').BasicAuthStrategy['status'] | null} status
 	 */
 	return (user, status, isTrusted = true) => simpleMfa.serializeAll(
 		userStrategies.filter(
