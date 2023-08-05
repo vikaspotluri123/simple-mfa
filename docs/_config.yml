@@ -23,6 +23,10 @@ kramdown:
   input: GFM
 mermaid:
   version: 'latest'
+callouts:
+  hint:
+    title: Hint
+    color: purple
 
 # Things you can enable when working locally
 # theme: just-the-docs
