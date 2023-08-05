@@ -33,7 +33,7 @@ export async function createDemoStrategies(strategies) {
 			const serialized = await simpleMfa.serialize(forPrint, true);
 			serialized.secret = serialized.context ?? '(none)';
 			delete serialized.context;
-			console.log(' ', JSON.stringify(serialized, null, 2).replace(/\n/g, '\n  '));
+			console.log(' ', JSON.stringify(serialized, null, 2).replaceAll('\n', '\n  '));
 		}
 	}
 

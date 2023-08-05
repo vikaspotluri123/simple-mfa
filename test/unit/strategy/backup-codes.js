@@ -32,7 +32,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 	it('validate', async function () {
 		const store = await strategy.create(user_id, BackupCodeStrategy.type, config);
 		const codes = await strategy.getSecret(store, config);
-		const validCode = codes[0].replace(/-/g, '');
+		const validCode = codes[0].replaceAll('-', '');
 
 		expect(await strategy.validate(store, 'acknowledged', config)).to.be.true;
 		expect(await strategy.validate(store, validCode, config)).to.be.false;
@@ -42,7 +42,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 		// Trigger cache miss for coverage
 		expect(await strategy.validate({...store}, 15, config)).to.be.false;
 		expect(await strategy.validate(store, validCode.slice(5), config)).to.be.false;
-		expect(await strategy.validate(store, validCode.replace(/-/g, ''), config)).to.be.true;
+		expect(await strategy.validate(store, validCode.replaceAll('-', ''), config)).to.be.true;
 	});
 
 	it('postValidate', async function () {
@@ -56,7 +56,7 @@ describe('Unit > Strategy > Backup Codes', function () {
 
 		/* eslint-disable no-await-in-loop */
 		for (const hyphenateCode of codes) {
-			const code = hyphenateCode.replace(/-/g, '');
+			const code = hyphenateCode.replaceAll('-', '');
 			expect(await strategy.validate(store, code, config), 'first use should pass').to.be.true;
 			await strategy.postValidate(store, code, config);
 			expect(await strategy.validate(store, code, config), 'second use should fail').to.be.false;

@@ -25,6 +25,7 @@ const CODE_BLOCKS = new Set([BLOCK_CODE, BLOCK_JAVASCRIPT_CODE, BLOCK_TYPESCRIPT
  * @param {string} line
  */
 function lineContainsLintComment(line) {
+	// eslint-disable-next-line unicorn/prefer-string-replace-all
 	const flat = line.replace(/\s+/g, '');
 	if (!flat.trim().startsWith('<!--')) {
 		return false;

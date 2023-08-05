@@ -3,5 +3,5 @@ export function cleanProof<TProofType = unknown>(proof: TProofType): TProofType 
 		return proof;
 	}
 
-	return proof.trim().replace(/-/g, '') as TProofType;
+	return proof.trim().replaceAll('-', '') as TProofType;
 }

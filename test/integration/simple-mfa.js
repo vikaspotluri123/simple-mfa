@@ -130,7 +130,7 @@ describe('Integration > SimpleMfa', function () {
 			return;
 		}
 
-		const realToken = codes[0].replace(/-/g, '');
+		const realToken = codes[0].replaceAll('-', '');
 
 		await shouldThrowStrategyError(() => instance.validate(backupCodesStore, ''));
 		backupCodesStore.status = 'active';

@@ -6,8 +6,8 @@ export function getOtpUri(
 ) {
 	// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
 	// > The issuer and account name should be separated by a literal or url-encoded colon, and optional spaces may precede the account name. Neither issuer nor account name may themselves contain a colon.
-	const safeLabel = label.replace(/:/g, '-');
-	const safeAccount = account.replace(/:/g, '-');
+	const safeLabel = label.replaceAll(':', '-');
+	const safeAccount = account.replaceAll(':', '-');
 	const safeSecret = secret.toUpperCase();
 	const extras = new URLSearchParams();
 	extras.set('secret', safeSecret);
