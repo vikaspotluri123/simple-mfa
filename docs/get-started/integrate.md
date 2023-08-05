@@ -94,13 +94,26 @@ simpleMfa.assertStatusTransition(secondFactor, 'disabled');
 
 SimpleMfa also serves as the middleman for second factor validation:
 
+ - Context-aware factor serialization
+ - Factor Validation
+
 <!-- simple-mfa:lint -->
 ```javascript
 import {simpleMfa} from '$lib/simple-mfa.js';
 
-const {proof, factorId} = await getSecondFactorProof();
-const factor = await fetchFactorFromStorage(factorId);
+const unsafeFactors = await lookupSecondFactors('user_id');
 
+// Context-aware factor serialization
+// Convert an array of database factors to one that is public facing.
+// The second parameter determines the trust level:
+//  - In trusted contexts (e.g. for factor management), some secrets will be decoded and listed
+//  - In untrusted contexts (e.g. for factor validation), all sensitive data will be completely stripped.
+// SimpleMfa#serializeAll is a convenience wrapper for SimpleMfa#serialize on arrays
+const factors = await simpleMfa.serializeAll(unsafeFactors, false);
+const {proof, factorId} = await getSecondFactorProof(factors);
+
+// Factor Validation
+const factor = await fetchFactorFromStorage(factorId);
 const validationResult = await simpleMfa.validate(factor, proof);
 
 switch (validationResult.type) {
@@ -120,6 +133,10 @@ switch (validationResult.type) {
 		switch (validationResult.response.action) {
 			// Action is a string* describing the action to be taken - you need to respond accordingly.
 			// *fully type safe - typescript will infer the available cases for you 🎉
+
+			// Note: SimpleMfa doesn't provide any kind of rate limiting -
+			// make sure these actions are guarded from misuse.
+
 			// possible cases intentionally omitted in this section
 			default: {
 				logger.error({message: `Unknown SimpleMfa server action: ${validationResult.response.action}`});
