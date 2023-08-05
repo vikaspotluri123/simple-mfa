@@ -61,7 +61,7 @@ export class BackupCodeStrategy implements AuthStrategy<string, string[]> {
 		return codes.map(code => `${code.slice(0, 4)}-${code.slice(4, 8)}-${code.slice(8)}`);
 	}
 
-	private async _serialize<TStrategy extends NewStrategy | Strategy>(strategy: TStrategy, codes: string[], {crypto}: Config) {
+	private async _serialize<TStrategy extends NewStrategy>(strategy: TStrategy, codes: string[], {crypto}: Config) {
 		const serializedCodes = codes.join('|');
 		const existingSerializedCodes = decryptionCache.get(strategy)?.join('|');
 		if (existingSerializedCodes === serializedCodes) {
