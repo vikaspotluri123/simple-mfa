@@ -231,4 +231,39 @@ describe('Integration > SimpleMfa', function () {
 
 		expect(store1).to.deep.equal(store2);
 	});
+
+	it('serializeAll', async function () {
+		const factors = await Promise.all([
+			instance.create('otp', 'user'),
+			instance.create('otp', 'user'),
+		]);
+
+		const trustedSerializedFactors = await instance.serializeAll(factors, true);
+		const untrustedSerializedFactors = await instance.serializeAll(factors, false);
+
+		expect(trustedSerializedFactors).to.have.length(2);
+		expect(untrustedSerializedFactors).to.have.length(2);
+
+		for (const factor of trustedSerializedFactors) {
+			expect(factor.context).to.be.a('string');
+		}
+
+		for (const factor of untrustedSerializedFactors) {
+			expect(factor).to.not.contain.keys('context');
+		}
+
+		// We want one of the serializations to fail, and we're doing it by preventing decryption.
+		// The OTP strategy has an identity-based cache which we can bypass by creating a new object.
+		factors[1] = {
+			...factors[1],
+			context: 'this is not encrypted',
+		};
+
+		try {
+			console.log(await instance.serializeAll(factors, true));
+			expect(false, 'Should have thrown').to.be.true;
+		} catch (error) {
+			expect(error instanceof StrategyError).to.be.true;
+		}
+	});
 });

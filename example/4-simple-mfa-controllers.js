@@ -15,9 +15,11 @@ export function createBrowseController(userStrategies) {
 	/**
 	 * @param {import('@potluri/simple-mfa').StoredAuthStrategy['status'] | null} status
 	 */
-	return (user, status) => Promise.all(userStrategies
-		.filter(strategy => strategy.user_id === user && (status ? strategy.status === status : true))
-		.map(strategy => simpleMfa.serialize(strategy, true)),
+	return (user, status, isTrusted = true) => simpleMfa.serializeAll(
+		userStrategies.filter(
+			strategy => strategy.user_id === user && (status ? strategy.status === status : true),
+		),
+		isTrusted,
 	).catch(error => {
 		console.log(error);
 		return {error: 'Failed serializing! Check your console'};
@@ -28,9 +30,11 @@ export function createBrowseController(userStrategies) {
  * @param {DemoStrategies} userStrategies
  */
 export function createReadController(userStrategies) {
-	return (user, id) => Promise.all(userStrategies
-		.filter(strategy => strategy.user_id === user && strategy.id === id)
-		.map(strategy => simpleMfa.serialize(strategy, true)),
+	return (user, id) => simpleMfa.serializeAll(
+		userStrategies.filter(
+			strategy => strategy.user_id === user && strategy.id === id,
+		),
+		true,
 	).catch(error => {
 		console.log(error);
 		return {error: 'Failed serializing! Check your console'};

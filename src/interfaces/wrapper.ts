@@ -79,13 +79,23 @@ export interface SimpleMfaApiImplementation<
 	validate(storedStrategy: StoredStrategy, userPayload: unknown): Promise<ValidationResult<TStrategies>>;
 	/**
 	 * @description convert a stored strategy into one that can be public-facing
-	 * @param isTrusted whether the serialization is being done in a trusted context (e.g. a fully logged in user) - in
-	 *                  trusted contexts, secrets can be made available when applicable.
-	 * @NOTE Be ABSOLUTELY CERTAIN to run a stored strategy through the serializer before using it in a public-facing
+	 * @param isTrusted - whether the serialization is being done in a trusted context (e.g. a fully logged in user).
+	 *                  In trusted contexts, secrets can be made available when applicable.
+	 * @note Be ABSOLUTELY CERTAIN to run a stored strategy through the serializer before using it in a public-facing
 	 *       context! If you don't, it's possible that internal state can be leaked, and in the worst case, negate
 	 *       the point of multi-factor authentication.
 	 */
 	serialize(storedStrategy: StoredStrategy, isTrusted: boolean): SerializationResponse<Strategy, TExtraFields>;
+	/**
+	 * @description convert several stored strategies into a public-facing equivalent
+	 * @param isTrusted - whether the serialization is being done in a trusted context (e.g. a fully logged in user).
+	 *                  In trusted contexts, secrets can be made available when applicable.
+	 * @note Be ABSOLUTELY CERTAIN to run all stored strategies through the serializer before using it in a public-facing
+	 *       context! If you don't, it's possible that internal state can be leaked, and in the worst case, negate
+	 *       the point of multi-factor authentication.
+	 */
+	serializeAll(strategies: StoredStrategy[], isTrusted: boolean):
+	Promise<Array<Awaited<SerializationResponse<Strategy, TExtraFields>>>>;
 }
 
 export type SimpleMfaApi<

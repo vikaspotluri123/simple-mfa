@@ -69,7 +69,7 @@ function strategiesController(browseController) {
 			return;
 		}
 
-		const myStrategies = await browseController(request.session.user, null);
+		const myStrategies = await browseController(request.session.user, null, !request.session.waitingForMfa);
 
 		response.status(200);
 		response.setHeader('content-type', 'application/json');
@@ -116,7 +116,7 @@ function secondFactorSelectController(browseController) {
 
 		response.status(200);
 		response.setHeader('content-type', 'text/html');
-		const strategies = await browseController(request.session.user, status);
+		const strategies = await browseController(request.session.user, status, !request.session.waitingForMfa);
 		let body = '<h1>Select a factor to use</h1><ul>';
 
 		if ('error' in strategies) {

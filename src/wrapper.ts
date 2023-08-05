@@ -125,6 +125,10 @@ export function createStrategyWrapper<
 
 			return controller.serialize!(storedStrategy, isTrusted, controller.getSecret, config) as SerializationResponse<Strategy, TExtraFields>;
 		},
+
+		serializeAll(storedStrategies: StoredStrategy[], isTrusted: boolean) {
+			return Promise.all(storedStrategies.map(strategy => wrapper.serialize(strategy, isTrusted)));
+		},
 	};
 
 	return wrapper;
