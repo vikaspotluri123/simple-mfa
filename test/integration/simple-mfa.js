@@ -51,12 +51,10 @@ describe('Integration > SimpleMfa', function () {
 
 	it('Strategy coercion', async function () {
 		const strategy = await instance.create('otp', 'abcd');
-		expect(instance.coerce(strategy)).to.equal(strategy);
 		// @ts-expect-error
 		strategy.type = 'Does not exist';
 
 		await Promise.all([
-			shouldThrowStrategyError(instance.coerce, strategy),
 			shouldThrowStrategyError(instance.create, strategy.type, 'user'),
 			shouldThrowStrategyError(instance.activate, strategy, ''),
 			shouldThrowStrategyError(instance.validate, strategy, ''),

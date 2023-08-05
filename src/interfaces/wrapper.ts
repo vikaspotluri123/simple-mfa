@@ -51,19 +51,6 @@ export interface SimpleMfaApiImplementation<
 	 */
 	syncSecrets(): Record<string, string> | null; // eslint-disable-line @typescript-eslint/ban-types
 	/**
-	 * @description confirms {storedStrategy} is a known strategy type
-	 * @throws {StrategyError} when the strategy is not known
-	 * @example const databaseResponse: Record<string, unknown> = await database.fetchStrategy(strategyId);
-	 *          // \@ts-expect-error we can't guarantee that simpleMfa knows how to handle `type`
-	 *          let type = databaseResponse.type satisfies keyof typeof strategies;
-	 *          const strategy: StoredStrategy = simpleMfa.coerce(database response);
-	 *          // `simpleMfa.coerce()` passed, so strategy.type is guaranteed to be known
-	 *          const type = strategy.type satisfies keyof typeof strategies
-	 * @note the implementation only checks on the strategy type, be sure other required fields (e.g. context, status)
-	 * exist when interfacing with SimpleMfa.
-	 */
-	coerce(storedStrategy: SerializedAuthStrategy<string, TExtraFields>): StoredStrategy;
-	/**
 	 * @description creates a {type} strategy for {owner} that can be stored in a database
 	 */
 	create(type: Strategy, owner: string): Promise<StoredStrategy>;

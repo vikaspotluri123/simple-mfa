@@ -68,14 +68,6 @@ export function createStrategyWrapper<
 			return controller.validate(storedStrategy, userPayload, config);
 		},
 
-		coerce(storedStrategy: StoredStrategy): StoredStrategy {
-			if (storedStrategy.type in strategies) {
-				return storedStrategy;
-			}
-
-			throw new StrategyError('Invalid strategy', false);
-		},
-
 		async create(type: Strategy, owner: string) {
 			const controller = strategies[type];
 			if (!controller) {
