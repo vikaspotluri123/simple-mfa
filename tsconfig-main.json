@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "module": "es2022",
     "moduleResolution": "node",
-    "target": "es2020",
+    "target": "ES2021",
     "noEmit": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

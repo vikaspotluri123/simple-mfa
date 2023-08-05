@@ -10,7 +10,7 @@
     "allowJs": true,
     "checkJs": true,
     "module": "es2022",
-    "target": "es2020",
+    "target": "es2021",
     "moduleResolution": "node16"
   }
 }
