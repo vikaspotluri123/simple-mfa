@@ -36,3 +36,5 @@ export const strategies = defaultStrategies({
 	});
 })
 ```
+
+Next up: <a href="../secrets-management">SimpleMfa Concepts - Secrets Management</a>
