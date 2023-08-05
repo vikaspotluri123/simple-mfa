@@ -158,3 +158,7 @@ In the default strategies, SimpleMfa makes use of "magic strings" (exported as c
 
  - `MAGIC_LINK_REQUESTING_EMAIL` - A constant used to tell the magic link strategy that an email needs to be sent.
  - `BACKUP_CODE_PENDING_TO_ACTIVE_PROOF` - A constant used to tell the backup code strategy that the codes have been reviewed so the factor can be activated.
+
+---
+
+You've reached the end of the getting started docs. Next up: <a href="../../concepts/strategies">SimpleMfa Concepts - Strategies</a>
