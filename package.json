@@ -121,7 +121,7 @@
   "private": false,
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
-    "lint": "xo && tsc -p tsconfig-tests.json",
+    "lint": "xo && tsc -p tsconfig-tests.json && yarn tsc -p example/tsconfig.json",
     "dev": "tsc -w -p tsconfig-main.json",
     "docs:lint": "node docs/_lint/doc-linter.js",
     "docs:dev": "cd docs; JEKYLL_ENV=virtual jekyll serve -H 0.0.0.0 -l",
