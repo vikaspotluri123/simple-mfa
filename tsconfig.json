@@ -1,7 +1,12 @@
 {
-  "include": ["src/**/*.ts", "test/**/*.js"],
+  "include": ["src/**/*.ts", "test/**/*.js", "docs/**/*.js"],
+  "exclude": ["docs/_site/*"],
   "extends": [
     "./tsconfig-main.json",
-    "./tsconfig-tests.json"
-  ]
+    "./test/tsconfig-tests.json",
+    "./docs/tsconfig.json"
+  ],
+  "compilerOptions": {
+    "rootDir": "."
+  }
 }

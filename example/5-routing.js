@@ -77,7 +77,7 @@ function strategiesController(browseController) {
 	};
 }
 
-function loginPageController(request, response) {
+function loginPageController(_request, response) {
 	const data = `
 <form method="post">
 	<label for="username">Username</label>

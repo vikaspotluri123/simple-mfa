@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig-main.json",
+  "include": ["**/*.js"],
+  "exclude": ["_site/*"],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true
+  }
+}

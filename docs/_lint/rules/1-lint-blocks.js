@@ -34,6 +34,8 @@ function lineContainsLintComment(line) {
 	if (flat.includes('simple-mfa:lint')) {
 		return true;
 	}
+
+	return false;
 }
 
 /** @param {string} line */
@@ -51,6 +53,8 @@ function getBlockType(line) {
 	if (flat.startsWith('```')) {
 		return BLOCK_CODE;
 	}
+
+	return undefined;
 }
 
 /**
@@ -140,6 +144,7 @@ export function lint(contents, {reportError}) {
 /**
  * @param {Block} block
  * @param {import('../doc-linter.js').RuleContext['reportError']} reportError
+ * @returns {void | Promise<void>}
  */
 function lintBlock(block, reportError) {
 	if (isCodeBlock(block)) {
