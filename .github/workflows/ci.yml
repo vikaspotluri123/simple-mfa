@@ -24,16 +24,16 @@ jobs:
         cache: yarn
       env:
         FORCE_COLOR: 0
-    - name: Install Dependencies
-      run: |
-        yarn install --frozen-lockfile --prefer-offline
-        cd example
-        yarn install --frozen-lockfile --prefer-offline
     - name: Link Example App
       run: |
         yarn link
         cd example
         yarn link @potluri/simple-mfa
+    - name: Install Dependencies
+      run: |
+        yarn install --frozen-lockfile --prefer-offline
+        cd example
+        yarn install --frozen-lockfile --prefer-offline
     - name: Build
       run: yarn pretest:coverage
     - name: Lint
