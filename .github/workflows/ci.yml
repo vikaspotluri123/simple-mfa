@@ -34,6 +34,7 @@ jobs:
         yarn install --frozen-lockfile --prefer-offline
         cd example
         yarn install --frozen-lockfile --prefer-offline
+        yarn link @potluri/simple-mfa
     - name: Build
       run: yarn pretest:coverage
     - name: Lint
