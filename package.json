@@ -135,7 +135,8 @@
     "test:coverage": "c8 mocha --recursive test/unit test/integration",
     "test:coverage:ci": "c8 mocha --recursive test/unit test/integration",
     "autorelease:hook.pre": "yarn build",
-    "autorelease:test": "yarn test:ci"
+    "autorelease:test": "yarn test:ci",
+    "prepublish": "echo prepublish intentionally skipped"
   },
   "devDependencies": {
     "@gradebook/release-utils": "^0.7.1",
