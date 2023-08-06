@@ -127,6 +127,7 @@
     "docs:dev": "cd docs; JEKYLL_ENV=virtual jekyll serve -H 0.0.0.0 -l",
     "build:esm": "tsc -p tsconfig-main.json",
     "build:cjs": "tsc -p tsconfig-cjs.json && ./add-cjs-package.sh",
+    "ci:setup": "./scripts/ci-setup.sh",
     "pretest": "tsc -p ./test/tsconfig-coverage.json && ./add-cjs-package.sh",
     "test": "mocha --recursive test/unit test/integration",
     "test:ci": "mocha --recursive test/unit test/integration",

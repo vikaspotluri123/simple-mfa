@@ -24,16 +24,8 @@ jobs:
         cache: yarn
       env:
         FORCE_COLOR: 0
-    - name: Link Example App
-      run: |
-        yarn link
-        cd example
-        yarn link @potluri/simple-mfa
-    - name: Install Dependencies
-      run: |
-        yarn install --frozen-lockfile --prefer-offline
-        cd example
-        yarn install --frozen-lockfile --prefer-offline
+    - name: Install dependencies and set up example app
+      run: yarn ci:setup
     - name: Build
       run: |
         yarn build:esm # For the example app
