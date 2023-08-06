@@ -6,3 +6,6 @@
 
 </center>
 
+## Sound intriguing?
+
+Check out the docs! https://github.vikaspotluri.me/simple-mfa/
