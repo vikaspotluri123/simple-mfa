@@ -1,6 +1,8 @@
 <center>
 
 # Simple MFA
+
+**Effortlessly add MFA to your app**
+
 </center>
 
-> Effortlessly add MFA to your app

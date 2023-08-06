@@ -1,7 +1,7 @@
 {
   "name": "@potluri/simple-mfa",
   "version": "0.1.0-beta.3",
-  "description": "MFA implementation made simple",
+  "description": "Effortlessly add MFA to your app",
   "type": "module",
   "exports": {
     ".": {
