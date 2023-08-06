@@ -118,6 +118,11 @@
   "repository": "https://github.com/vikaspotluri123/simple-mfa",
   "author": "Vikas Potluri",
   "license": "MIT",
+  "gradebook": {
+    "cli:addSkipCIToCommit": false,
+    "cli:releaseTemplate": ".github/release_template.txt",
+    "cli:autoReleases": true
+  },
   "private": false,
   "files": [
     "dist"
