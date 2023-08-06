@@ -119,6 +119,9 @@
   "author": "Vikas Potluri",
   "license": "MIT",
   "private": false,
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
     "lint": "xo && tsc -p tsconfig.json && tsc -p example/tsconfig.json",
