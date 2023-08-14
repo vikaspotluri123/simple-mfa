@@ -1166,7 +1166,7 @@ eslint-plugin-eslint-comments@^3.2.0:
     escape-string-regexp "^1.0.5"
     ignore "^5.0.5"
 
-eslint-plugin-import@^2.27.5:
+eslint-plugin-import@~2.27.5:
   version "2.27.5"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.27.5.tgz#876a6d03f52608a3e5bb439c2550588e51dd6c65"
   integrity sha512-LmEt3GVofgiGuiE+ORpnvP+kAm3h6MLZJ4Q5HCyHADofsb4VzXFsRiWj3c0OFiV+3DWFh0qg3v9gcPlfc3zRow==
@@ -3105,14 +3105,7 @@ semver@^6.0.0, semver@^6.3.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
 
-semver@^7.0.0, semver@^7.3.4, semver@^7.3.5:
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.0.tgz#ed8c5dc8efb6c629c88b23d41dc9bf40c1d96cd0"
-  integrity sha512-+XC0AD/R7Q2mPSRuy2Id0+CGTZ98+8f+KvwirxOKIEyid+XSx6HbC63p+O4IndTHuX5Z+JxQ0TghCkO5Cg/2HA==
-  dependencies:
-    lru-cache "^6.0.0"
-
-semver@^7.5.3, semver@^7.5.4:
+semver@^7.0.0, semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
   integrity sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==
@@ -3599,10 +3592,10 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-xo@^0.55.0:
-  version "0.55.0"
-  resolved "https://registry.yarnpkg.com/xo/-/xo-0.55.0.tgz#54e1971e36048fc4101787033e40f0fe62d32783"
-  integrity sha512-0pINhVcbW3Iz4W4tRlTwQBATVEr1VMMFfQJzFTLwjCRJJdkJRgXh9BEJtcpttmPjbc7lROhVrR2hGXoq0yAsyQ==
+xo@^0.56.0:
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/xo/-/xo-0.56.0.tgz#85fbb215ea4115c9c74af7a4e20a88b6590f02cd"
+  integrity sha512-ohzSqgQ8POgZ3KNaEK/gxDovb6h3cglxv8+xi9Dn7gmRe8g4qotpOZpMs5ACJhvkJDmJOhiKbk6Uq6Mx1Di9DA==
   dependencies:
     "@eslint/eslintrc" "^2.1.0"
     "@typescript-eslint/eslint-plugin" "^6.0.0"
@@ -3618,7 +3611,7 @@ xo@^0.55.0:
     eslint-import-resolver-webpack "^0.13.2"
     eslint-plugin-ava "^14.0.0"
     eslint-plugin-eslint-comments "^3.2.0"
-    eslint-plugin-import "^2.27.5"
+    eslint-plugin-import "~2.27.5"
     eslint-plugin-n "^16.0.1"
     eslint-plugin-no-use-extend-native "^0.5.0"
     eslint-plugin-prettier "^5.0.0"
