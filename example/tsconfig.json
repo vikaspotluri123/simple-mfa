@@ -9,7 +9,7 @@
     "noImplicitAny": false,
     "allowJs": true,
     "checkJs": true,
-    "module": "es2022",
+    "module": "node16",
     "target": "es2021",
     "moduleResolution": "node16"
   }
