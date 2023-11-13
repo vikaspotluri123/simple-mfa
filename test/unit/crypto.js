@@ -8,10 +8,11 @@ import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 const KEY = 'action';
 const NEW_KEY = 'late_action';
 const crypto = {
-	randomUUID: webcrypto.randomUUID.bind(webcrypto),
-	CryptoKey: webcrypto.CryptoKey.bind(webcrypto),
+	randomUUID: () => webcrypto.randomUUID(),
+	CryptoKey: webcrypto.CryptoKey,
 	subtle: webcrypto.subtle,
-	getRandomValues: webcrypto.getRandomValues.bind(webcrypto),
+	/** @type {typeof webcrypto['getRandomValues']} */
+	getRandomValues: store => webcrypto.getRandomValues(store),
 };
 
 /** @type {SimpleMfaNodeCrypto<typeof KEY | typeof NEW_KEY>} */
