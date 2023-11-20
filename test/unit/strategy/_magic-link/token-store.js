@@ -34,7 +34,7 @@ describe('Unit > Strategy > MagicLink > TokenStore', function () {
 
 		await assertValid(validToken, true, 'First use works');
 		await assertValid(validToken, false, 'Second use fails');
-		await assertValid(validToken.slice(0, -1), false, 'Malformed token fails');
+		await assertValid(validToken.slice(0, -2), false, 'Malformed token fails');
 
 		const strategyId = strategy.id;
 		try {
