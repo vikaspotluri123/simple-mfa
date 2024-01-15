@@ -70,12 +70,12 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.46.0.tgz#3f7802972e8b6fe3f88ed1aabc74ec596c456db6"
   integrity sha512-a8TLtmPi8xzPkCbp/OGFUo5yhRkHM2Ko9kOWP4znJr0WAhWyThaw3PnwX4vOTWOAMsV2uRt32PPDcEz63esSaA==
 
-"@gradebook/release-utils@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@gradebook/release-utils/-/release-utils-0.7.1.tgz#c51ad91c00de1e5145e9ccf6e04735f508aa5d45"
-  integrity sha512-CByYeaFtOWp7AjAj+P3+8HaChhqg95MU7WKfurBhrsCzPdYVvEyxPufATulaHBJoXt9ECaXNWIdN5qqI+p0U7Q==
+"@gradebook/release-utils@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@gradebook/release-utils/-/release-utils-0.8.0.tgz#3f5aa86ecd80498750981e802f46b2f3ab57184f"
+  integrity sha512-IfjPuc+R3hrQJCUU9HAircV+VECCSI+XelDfjpw+MUwmHD9bdAoaOzya4SMWWOeFa7Qm9QxYN2v+4N/Xxbt6YA==
   dependencies:
-    "@types/urijs" "^1.19.17"
+    "@types/urijs" "^1.19.20"
     mime "^3.0.0"
     urijs "^1.19.6"
     zx "^4.2.0"
@@ -332,10 +332,10 @@
   resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.2.tgz#bf2e02a3dbd4aecaf95942ecd99b7402e03fad5e"
   integrity sha512-9GcLXF0/v3t80caGs5p2rRfkB+a8VBGLJZVih6CNFkx8IZ994wiKKLSRs9nuFwk1HevWs/1mnUmkApGrSGsShA==
 
-"@types/urijs@^1.19.17":
-  version "1.19.19"
-  resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.19.19.tgz#2789369799907fc11e2bc6e3a00f6478c2281b95"
-  integrity sha512-FDJNkyhmKLw7uEvTxx5tSXfPeQpO0iy73Ry+PmYZJvQy0QIWX8a7kJ4kLWRf+EbTPJEPDSgPXHaM7pzr5lmvCg==
+"@types/urijs@^1.19.20":
+  version "1.19.25"
+  resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.19.25.tgz#ac92b53e674c3b108decdbe88dc5f444a2f42f6a"
+  integrity sha512-XOfUup9r3Y06nFAZh3WvO0rBU4OtlfPB/vgxpjg+NRdGU6CN6djdc6OEiH+PcqHCY6eFLo9Ista73uarf4gnBg==
 
 "@typescript-eslint/eslint-plugin@^6.0.0":
   version "6.2.1"
