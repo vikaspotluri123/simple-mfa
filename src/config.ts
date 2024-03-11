@@ -1,5 +1,7 @@
 import {webcrypto} from 'node:crypto';
-import {type SimpleMfaConfig, type InternalSimpleMfaConfig, type UntypedStrategyRecord, type StrategyConfig} from './interfaces/config.js';
+import {
+	type SimpleMfaConfig, type InternalSimpleMfaConfig, type UntypedStrategyRecord, type StrategyConfig,
+} from './interfaces/config.js';
 import {type SerializedAuthStrategy} from './interfaces/storage.js';
 import {type SerializationResponse} from './interfaces/shared.js';
 

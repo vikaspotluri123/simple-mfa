@@ -125,7 +125,9 @@ function createContext(rule, file, store) {
 				rule = `${rule}/${subRule}`;
 			}
 
-			store[file].push({rule, file, message, location});
+			store[file].push({
+				rule, file, message, location,
+			});
 		},
 	};
 }
