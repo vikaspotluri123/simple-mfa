@@ -55,12 +55,12 @@ export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements Si
 		const cypher = encryptedValue.slice(ENCODED_IV_LENGTH);
 
 		try {
-			const binPlainText = await this.crypto.subtle.decrypt(
+			const binaryPlainText = await this.crypto.subtle.decrypt(
 				{name: ALGORITHM, iv: Buffer.from(iv, IV_ENCODING)},
 				key,
 				Buffer.from(cypher, CYPHER_ENCODING),
 			);
-			return Buffer.from(binPlainText).toString(TEXT_ENCODING);
+			return Buffer.from(binaryPlainText).toString(TEXT_ENCODING);
 		} catch {
 			return null;
 		}

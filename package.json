@@ -169,7 +169,8 @@
       "@typescript-eslint/class-literal-property-style": [
         "error",
         "fields"
-      ]
+      ],
+      "prefer-object-has-own": "warn"
     },
     "overrides": [
       {

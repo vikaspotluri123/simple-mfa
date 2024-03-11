@@ -32,13 +32,13 @@ const instance = createSimpleMfa({
 
 /**
  * @template T
- * @param {T} fn
- * @param {Parameters<T extends (...args: any[]) => any ? T : () => void>} args
+ * @param {T} candidate
+ * @param {Parameters<T extends (...args: any[]) => any ? T : () => void>} candidateArguments
  */
-const shouldThrowStrategyError = async (fn, ...args) => {
+const shouldThrowStrategyError = async (candidate, ...candidateArguments) => {
 	try {
 		// @ts-expect-error
-		await fn(...args);
+		await candidate(...candidateArguments);
 	} catch (error) {
 		expect(error).to.be.instanceOf(StrategyError);
 	}
