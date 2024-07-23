@@ -10,6 +10,7 @@ const DEFAULT_KEYS = {
 export class MockedCrypto extends SimpleMfaNodeCrypto {
 	/** @type {boolean | null} */
 	lastUpdateFailed = null;
+
 	constructor(keys = DEFAULT_KEYS) {
 		super(keys);
 	}

@@ -170,6 +170,7 @@
         "error",
         "fields"
       ],
+      "n/file-extension-in-import": "off",
       "prefer-object-has-own": "warn"
     },
     "overrides": [
