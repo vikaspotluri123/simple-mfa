@@ -21,7 +21,7 @@ function isomorphicStructuredClone(value: unknown): any {
 		return structuredClone(value);
 	}
 
-	return JSON.parse(JSON.stringify(value));
+	return JSON.parse(JSON.stringify(value)); // eslint-disable-line unicorn/prefer-structured-clone
 }
 
 export class SimpleMfaNodeCrypto<TKeyType extends string = string> implements SimpleMfaCrypto<TKeyType> {

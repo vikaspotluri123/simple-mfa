@@ -156,8 +156,8 @@
     "chai": "^5.0.0",
     "mocha": "^10.2.0",
     "sinon": "^18.0.0",
-    "typescript": "^5.1.6",
-    "xo": "^0.58.0"
+    "typescript": "^5.5.3",
+    "xo": "^0.59.0"
   },
   "xo": {
     "rules": {
@@ -170,6 +170,7 @@
         "error",
         "fields"
       ],
+      "n/file-extension-in-import": "off",
       "prefer-object-has-own": "warn"
     },
     "overrides": [

@@ -6,7 +6,8 @@ import {DefaultTokenStore, type TokenStore} from './_magic-link/token-store.js';
 
 export {type TokenStore} from './_magic-link/token-store.js';
 
-const TYPE = 'magic-link' as const;
+// See `constants.ts` for const assertion context
+const TYPE = 'magic-link' as const; // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
 
 export interface MagicLinkPrepareResponse {
 	action: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL;
