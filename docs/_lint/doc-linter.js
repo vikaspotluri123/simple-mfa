@@ -4,7 +4,6 @@ import path from 'node:path';
 import {readdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {readFile} from 'node:fs/promises';
-// @ts-expect-error
 import glob from 'glob';
 
 const RULE_RELATIVE_PATH = './rules/';
