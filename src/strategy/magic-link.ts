@@ -6,8 +6,7 @@ import {DefaultTokenStore, type TokenStore} from './_magic-link/token-store.js';
 
 export {type TokenStore} from './_magic-link/token-store.js';
 
-// See `constants.ts` for const assertion context
-const TYPE = 'magic-link' as const; // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
+const TYPE = 'magic-link' as const;
 
 export interface MagicLinkPrepareResponse {
 	action: typeof MAGIC_LINK_SERVER_TO_SEND_EMAIL;
@@ -16,12 +15,13 @@ export interface MagicLinkPrepareResponse {
 	};
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-restricted-types
 export class MagicLinkStrategy implements AuthStrategy<void, null, MagicLinkPrepareResponse> {
 	static readonly type = TYPE;
 	public readonly secretType = 'aes';
 	private readonly _tokens: TokenStore;
 
+	// eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
 	constructor(tokenStore?: TokenStore | undefined) {
 		this._tokens = tokenStore ?? new DefaultTokenStore();
 	}

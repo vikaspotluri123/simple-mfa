@@ -21,14 +21,14 @@ describe('Unit > Strategy > MagicLink > TokenStore', function () {
 		 * @param {string} message
 		 */
 		const assertValid = async (token, validity, message) => store.validate(strategy, crypto, token)
-			.catch(error => {
+			.catch(error => { // eslint-disable-line promise/prefer-await-to-then
 				if (error instanceof StrategyError) {
 					return false;
 				}
 
 				throw error;
 			})
-			.then(valid => {
+			.then(valid => { // eslint-disable-line promise/prefer-await-to-then
 				expect(valid, message).to.equal(validity);
 			});
 

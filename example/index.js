@@ -41,4 +41,4 @@ addRoutesTo(app, {
 });
 
 const {server} = await import('./6-serve.js');
-server;
+server; // eslint-disable-line no-unused-expressions

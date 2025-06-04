@@ -2,6 +2,7 @@ import {defineConfig} from 'eslint/config'; // eslint-disable-line import-x/no-e
 
 export default defineConfig([{
 	rules: {
+		'@stylistic/function-paren-newline': 'off',
 		'@typescript-eslint/naming-convention': 'off',
 		'@typescript-eslint/consistent-type-definitions': [
 			'error',
@@ -31,5 +32,12 @@ export default defineConfig([{
 		'@typescript-eslint/class-literal-property-style': 'off',
 		'prefer-arrow-callback': 'off',
 		'no-unused-expressions': 'off',
+	},
+}, {
+	files: ['example/**/*.js'],
+	rules: {
+		'import-x/no-extraneous-dependencies': 'off',
+		'n/no-extraneous-import': 'off',
+		'promise/prefer-await-to-then': 'off',
 	},
 }]);

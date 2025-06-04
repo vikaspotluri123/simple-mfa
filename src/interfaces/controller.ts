@@ -52,7 +52,8 @@ export interface AuthStrategy<
 	 *  - decrypt data if required
 	 * If a serializer is not provided, a default serializer is used - the store is cloned, and `context` is removed
 	 */
-	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret'], config: StrategyConfig) => SerializationResponse<TStrategyNames, TExtraFields, TStoredContextDefinition>;
+	serialize?: (strategy: Readonly<TInternalStrategy>, isTrusted: boolean, getSecret: this['getSecret'], config: StrategyConfig) =>
+	SerializationResponse<TStrategyNames, TExtraFields, TStoredContextDefinition>;
 }
 
 export interface AuthStrategyHelper<TAuthContext> {

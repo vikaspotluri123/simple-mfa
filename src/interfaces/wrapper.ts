@@ -49,7 +49,7 @@ export interface SimpleMfaApiImplementation<
 	 * @note This method is not pure; if you call it multiple times, the final secret state will only be returned
 	 * on the first call - successive calls will return null.
 	 */
-	syncSecrets(): Record<string, string> | null; // eslint-disable-line @typescript-eslint/ban-types
+	syncSecrets(): Record<string, string> | null; // eslint-disable-line @typescript-eslint/no-restricted-types
 	/**
 	 * @description creates a {type} strategy for {owner} that can be stored in a database
 	 */
