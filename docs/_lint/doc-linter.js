@@ -4,7 +4,7 @@ import path from 'node:path';
 import {readdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {readFile} from 'node:fs/promises';
-import glob from 'glob';
+import glob from 'glob'; // eslint-disable-line import-x/no-extraneous-dependencies, n/no-extraneous-import
 
 const RULE_RELATIVE_PATH = './rules/';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -52,6 +52,7 @@ await run();
 async function loadRule(fileName) {
 	const absolutePath = path.resolve(__dirname, RULE_RELATIVE_PATH, fileName);
 	return import(absolutePath)
+		// eslint-disable-next-line promise/prefer-await-to-then
 		.then(module => {
 			if (typeof module.lint !== 'function') {
 				throw new TypeError('lint must be a function');
@@ -62,6 +63,7 @@ async function loadRule(fileName) {
 				implementation: module.lint,
 			};
 		})
+		// eslint-disable-next-line promise/prefer-await-to-then
 		.catch(error => {
 			console.error(`Failed loading rule ${fileName}:`);
 			if (error instanceof Error) {

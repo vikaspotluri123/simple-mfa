@@ -148,7 +148,7 @@ function secondFactorProofController(read) {
 	 * @param {string | undefined | null} message
 	 */
 	return async (request, response, message = null) => {
-		const id = request.params.id;
+		const {id} = request.params;
 
 		if (!request.session.user) {
 			return response.redirect('/');
