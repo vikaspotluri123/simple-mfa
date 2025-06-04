@@ -159,37 +159,6 @@
     "typescript": "^5.5.3",
     "xo": "^1.0.5"
   },
-  "xo": {
-    "rules": {
-      "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/consistent-type-definitions": [
-        "error",
-        "interface"
-      ],
-      "@typescript-eslint/class-literal-property-style": [
-        "error",
-        "fields"
-      ],
-      "n/file-extension-in-import": "off",
-      "prefer-object-has-own": "warn"
-    },
-    "overrides": [
-      {
-        "files": [
-          "**/*.js"
-        ],
-        "envs": [
-          "mocha"
-        ],
-        "rules": {
-          "@typescript-eslint/consistent-type-definitions": "off",
-          "@typescript-eslint/class-literal-property-style": "off",
-          "prefer-arrow-callback": "off",
-          "no-unused-expressions": "off"
-        }
-      }
-    ]
-  },
   "dependencies": {
     "otplib": "^12.0.1"
   }
