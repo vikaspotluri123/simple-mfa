@@ -1,5 +1,4 @@
-// @ts-check
-
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {MAGIC_LINK_REQUESTING_EMAIL, MAGIC_LINK_SERVER_TO_SEND_EMAIL} from '../../../dist/cjs/constants.js';
 import {MagicLinkStrategy} from '../../../dist/cjs/strategy/magic-link.js';

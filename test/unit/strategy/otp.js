@@ -1,5 +1,4 @@
-// @ts-check
-
+import {describe, it, beforeEach} from 'node:test';
 import {expect} from 'chai';
 import {OtpStrategy} from '../../../dist/cjs/strategy/otp.js';
 import {StrategyError} from '../../../dist/cjs/error.js';
@@ -46,8 +45,9 @@ describe('Unit > Strategy > OTP', function () {
 	});
 
 	describe('validate', function () {
-		it('valid use case', function () {
-			expect(strategy.validate(store, realOtp(), config)).to.be.ok;
+		it('valid use case', async function () {
+			// @TODO: update types to reject promises
+			expect(strategy.validate(store, await realOtp(), config)).to.be.ok;
 		});
 
 		it('invalid OTP', async function () {

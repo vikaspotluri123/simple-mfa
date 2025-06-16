@@ -1,4 +1,4 @@
-// @ts-check
+import {describe, it} from 'node:test';
 import {setImmediate} from 'node:timers/promises';
 import {expect} from 'chai';
 import {
@@ -78,7 +78,13 @@ describe('Integration > SimpleMfa', function () {
 		}
 
 		const currentToken = createOtp(secret);
-		expect(instance.validate(otpStore, currentToken)).to.be.ok;
+
+		try {
+			await instance.validate(otpStore, currentToken);
+			expect.fail('Should have thrown');
+		} catch (error) {
+			expect(error.message).to.contain('Inactive strategies cannot be used for verification');
+		}
 
 		expect(await instance.serialize(otpStore, false)).to.not.include.keys('context');
 		expect(await instance.serialize(otpStore, true)).to.include.keys('context');

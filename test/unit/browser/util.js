@@ -1,3 +1,4 @@
+import {describe, it} from 'node:test';
 import {Buffer} from 'node:buffer';
 import {expect} from 'chai';
 import {cleanProof} from '../../../dist/cjs/browser/index.js';
