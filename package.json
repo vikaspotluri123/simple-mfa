@@ -149,7 +149,7 @@
   "devDependencies": {
     "@gradebook/release-utils": "^0.8.0",
     "@types/chai": "^5.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.1",
     "c8": "^10.1.2",
     "chai": "^5.0.0",
     "typescript": "^5.5.3",
