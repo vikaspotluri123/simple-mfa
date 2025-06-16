@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "module": "es2022",
     "moduleResolution": "node",
-    "target": "ES2021",
+    "target": "ES2022",
     "noEmit": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -17,5 +17,5 @@
     "useDefineForClassFields": true,
     "isolatedModules": true,
     "skipLibCheck": true
-  },
+  }
 }
