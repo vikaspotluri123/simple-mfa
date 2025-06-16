@@ -1,5 +1,4 @@
-// @ts-check
-
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {BackupCodeStrategy} from '../../../dist/cjs/strategy/backup-code.js';
 import {StrategyError} from '../../../dist/cjs/error.js';

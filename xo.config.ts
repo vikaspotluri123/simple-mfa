@@ -19,16 +19,6 @@ export default defineConfig([{
 	},
 }, {
 	files: ['test/**/*.js'],
-	languageOptions: {
-		globals: {
-			before: 'readable',
-			beforeEach: 'readable',
-			after: 'readable',
-			afterEach: 'readable',
-			describe: 'readable',
-			it: 'readable',
-		},
-	},
 	rules: {
 		'@typescript-eslint/consistent-type-definitions': 'off',
 		'@typescript-eslint/class-literal-property-style': 'off',

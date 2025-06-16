@@ -137,11 +137,11 @@
     "build:cjs": "tsc -p tsconfig-cjs.json && ./add-cjs-package.sh",
     "ci:setup": "./scripts/ci-setup.sh",
     "pretest": "tsc -p ./test/tsconfig-coverage.json && ./add-cjs-package.sh",
-    "test": "mocha --recursive test/unit test/integration",
-    "test:ci": "mocha --recursive test/unit test/integration",
+    "test": "node --test 'test/unit/**/*.js' 'test/integration/**/*.js'",
+    "test:ci": "node --test 'test/unit/**/*.js' 'test/integration/**/*.js'",
     "pretest:coverage": "tsc -p ./test/tsconfig-coverage.json && ./add-cjs-package.sh",
-    "test:coverage": "c8 mocha --recursive test/unit test/integration",
-    "test:coverage:ci": "c8 mocha --recursive test/unit test/integration",
+    "test:coverage": "c8 node --test 'test/unit/**/*.js' 'test/integration/**/*.js'",
+    "test:coverage:ci": "c8 node --test 'test/unit/**/*.js' 'test/integration/**/*.js'",
     "autorelease:hook.pre": "yarn build",
     "autorelease:test": "yarn test:ci",
     "prepublish": "echo prepublish intentionally skipped"
@@ -149,12 +149,10 @@
   "devDependencies": {
     "@gradebook/release-utils": "^0.8.0",
     "@types/chai": "^5.0.0",
-    "@types/mocha": "^10.0.4",
     "@types/node": "^22.0.0",
     "@types/sinon": "^17.0.1",
     "c8": "^10.1.2",
     "chai": "^5.0.0",
-    "mocha": "^11.1.0",
     "sinon": "^20.0.0",
     "typescript": "^5.5.3",
     "xo": "^1.0.5"

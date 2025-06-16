@@ -1,4 +1,4 @@
-// @ts-check
+import {describe, it} from 'node:test';
 import sinon from 'sinon';
 import {expect} from 'chai';
 import {DefaultTokenStore} from '../../../../dist/cjs/strategy/_magic-link/token-store.js';

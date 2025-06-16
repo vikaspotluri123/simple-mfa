@@ -1,4 +1,4 @@
-// @ts-check
+import {describe, it, beforeEach} from 'node:test';
 import {Buffer} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
 import sinon from 'sinon';

@@ -1,4 +1,4 @@
-
+import {describe, it} from 'node:test';
 import {expect} from 'chai';
 import {getOtpUri} from '../../../dist/cjs/browser/index.js';
 
