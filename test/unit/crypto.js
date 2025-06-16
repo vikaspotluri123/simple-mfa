@@ -1,7 +1,8 @@
-import {describe, it, beforeEach} from 'node:test';
+import {
+	describe, it, mock,
+} from 'node:test';
 import {Buffer} from 'node:buffer';
 import {webcrypto} from 'node:crypto';
-import sinon from 'sinon';
 import {expect} from 'chai';
 import {SimpleMfaNodeCrypto} from '../../dist/cjs/crypto.js';
 
@@ -26,16 +27,13 @@ const plainText = 'This is extremely secret! Don\'t touch it!';
 const stubIv = vector => vector.fill(0x42);
 
 describe('Unit > SimpleMfaNodeCrypto', function () {
-	beforeEach(function () {
-		sinon.restore();
-	});
-
 	it('can safely encrypt data', async function () {
 		const randomIvCypher = await demo.encodeSecret(KEY, plainText);
 		expect(randomIvCypher).to.have.length(cypherWithStubbedIv.length);
 		expect(randomIvCypher).to.not.equal(cypherWithStubbedIv);
 
-		crypto.getRandomValues = sinon.stub().callsFake(stubIv);
+		// @ts-expect-error stubIv covers the API surface we care about
+		crypto.getRandomValues = mock.fn(stubIv, {times: 1});
 
 		expect(await demo.encodeSecret(KEY, plainText)).to.equal(cypherWithStubbedIv);
 	});

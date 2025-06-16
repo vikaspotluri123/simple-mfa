@@ -1,5 +1,4 @@
 import {describe, it} from 'node:test';
-import sinon from 'sinon';
 import {expect} from 'chai';
 import {DefaultTokenStore} from '../../../../dist/cjs/strategy/_magic-link/token-store.js';
 import {MagicLinkStrategy} from '../../../../dist/cjs/strategy/magic-link.js';
@@ -13,7 +12,7 @@ const strategy = new MagicLinkStrategy().create(
 );
 
 describe('Unit > Strategy > MagicLink > TokenStore', function () {
-	it('validate', async function () {
+	it('validate', async function ({mock}) {
 		let validToken = await store.create(strategy, crypto);
 		/**
 		 * @param {string} token
@@ -45,9 +44,8 @@ describe('Unit > Strategy > MagicLink > TokenStore', function () {
 			strategy.id = strategyId;
 		}
 
-		const dateStub = sinon.stub(Date, 'now').returns(0);
+		mock.method(Date, 'now', () => 0, {times: 1});
 		validToken = await store.create(strategy, crypto);
-		dateStub.restore();
 		expect(await assertValid(validToken, false, 'Expired token fails'));
 	});
 });
