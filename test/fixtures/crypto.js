@@ -18,7 +18,7 @@ export class MockedCrypto extends SimpleMfaNodeCrypto {
 	/**
 	 * @param {any} keyId
 	 * @param {any} key64
-	 * @returns {Promise<CryptoKey>}
+	 * @returns {Promise<import('crypto').webcrypto.CryptoKey>}
 	 */
 	async update(keyId, key64) {
 		try {

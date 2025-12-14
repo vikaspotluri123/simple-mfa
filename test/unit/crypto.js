@@ -10,7 +10,6 @@ const KEY = 'action';
 const NEW_KEY = 'late_action';
 const crypto = {
 	randomUUID: () => webcrypto.randomUUID(),
-	CryptoKey: webcrypto.CryptoKey,
 	subtle: webcrypto.subtle,
 	/** @type {typeof webcrypto['getRandomValues']} */
 	getRandomValues: store => webcrypto.getRandomValues(store),
