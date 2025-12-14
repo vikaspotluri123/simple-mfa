@@ -15,6 +15,8 @@ const KEY_ENCODING = 'hex';
 
 Object.freeze(KEY_USAGES);
 
+type CryptoKey = webcrypto.CryptoKey;
+
 /* c8 ignore next 7 */
 function isomorphicStructuredClone(value: unknown): any {
 	if ('structuredClone' in globalThis) {
