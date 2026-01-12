@@ -221,6 +221,11 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.9.0"
 
+"@noble/hashes@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-2.0.1.tgz#fc1a928061d1232b0a52bb754393c37a5216c89e"
+  integrity sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -242,43 +247,50 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@otplib/core@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-12.0.1.tgz#73720a8cedce211fe5b3f683cd5a9c098eaf0f8d"
-  integrity sha512-4sGntwbA/AC+SbPhbsziRiD+jNDdIzsZ3JUyfZwjtKyc/wufl1pnSIaG4Uqx8ymPagujub0o92kgBnB89cuAMA==
+"@otplib/core@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-13.0.2.tgz#4939182729ad0ebdf578a978cdc4fb7c56ae8ffe"
+  integrity sha512-cew1CGyLSyO5whNRYWQIXIP0CmR+oA3M2N0uDjVg9Tv1qi19zIePXznVVhxHK/pJ27WjE0zzyQeqdc3zXsxj2Q==
 
-"@otplib/plugin-crypto@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto/-/plugin-crypto-12.0.1.tgz#2b42c624227f4f9303c1c041fca399eddcbae25e"
-  integrity sha512-qPuhN3QrT7ZZLcLCyKOSNhuijUi9G5guMRVrxq63r9YNOxxQjPm59gVxLM+7xGnHnM6cimY57tuKsjK7y9LM1g==
+"@otplib/hotp@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/hotp/-/hotp-13.0.2.tgz#8eeb78b31b056534e2e7f73502926f93fc9ce0d2"
+  integrity sha512-NSqHein2S0awB2O5T2/qBz6CBJsRDcH7r10FZZr2BKQNE4aM+f9SCc0KmSGeJaTPzUch7eHOAvigFHV947gvLw==
   dependencies:
-    "@otplib/core" "^12.0.1"
+    "@otplib/core" "13.0.2"
+    "@otplib/uri" "13.0.2"
 
-"@otplib/plugin-thirty-two@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-thirty-two/-/plugin-thirty-two-12.0.1.tgz#5cc9b56e6e89f2a1fe4a2b38900ca4e11c87aa9e"
-  integrity sha512-MtT+uqRso909UkbrrYpJ6XFjj9D+x2Py7KjTO9JDPhL0bJUYVu5kFP4TFZW4NFAywrAtFRxOVY261u0qwb93gA==
+"@otplib/plugin-base32-scure@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-base32-scure/-/plugin-base32-scure-13.0.2.tgz#7762c054bd2b19bcf9d22317db0d47b1d8f9a262"
+  integrity sha512-am41uRXlANMcIWIcpQFigNZEDx5yKfmCdihLPe2fsXXWTWMFtYMDN2Z+yakyyqs/k2OaLz/ThIj0ZnPwg7IpRQ==
   dependencies:
-    "@otplib/core" "^12.0.1"
-    thirty-two "^1.0.2"
+    "@otplib/core" "13.0.2"
+    "@scure/base" "^2.0.0"
 
-"@otplib/preset-default@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@otplib/preset-default/-/preset-default-12.0.1.tgz#cb596553c08251e71b187ada4a2246ad2a3165ba"
-  integrity sha512-xf1v9oOJRyXfluBhMdpOkr+bsE+Irt+0D5uHtvg6x1eosfmHCsCC6ej/m7FXiWqdo0+ZUI6xSKDhJwc8yfiOPQ==
+"@otplib/plugin-crypto-noble@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto-noble/-/plugin-crypto-noble-13.0.2.tgz#d23406eb66b766eb9bea80f8143fda23358056c1"
+  integrity sha512-lb4Z/e4UPG7JPoLwvUqVCvZEWGIJq+SvZn5dba8xcQImzjVyU31+tpnsYbRVUOuh70TMYSJs2nB09wqglTXKSg==
   dependencies:
-    "@otplib/core" "^12.0.1"
-    "@otplib/plugin-crypto" "^12.0.1"
-    "@otplib/plugin-thirty-two" "^12.0.1"
+    "@noble/hashes" "^2.0.1"
+    "@otplib/core" "13.0.2"
 
-"@otplib/preset-v11@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@otplib/preset-v11/-/preset-v11-12.0.1.tgz#4c7266712e7230500b421ba89252963c838fc96d"
-  integrity sha512-9hSetMI7ECqbFiKICrNa4w70deTUfArtwXykPUvSHWOdzOlfa9ajglu7mNCntlvxycTiOAXkQGwjQCzzDEMRMg==
+"@otplib/totp@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/totp/-/totp-13.0.2.tgz#a7e345685696837e8579562adde7ea4e104f0946"
+  integrity sha512-Xv9wI4PXGt/bSh/Xj02TguqhMuR2zwnsgIwFNGNHvhdm02l9KKdmoknKKxGJTX20wpERRyP6bap1a+HzX0kxLQ==
   dependencies:
-    "@otplib/core" "^12.0.1"
-    "@otplib/plugin-crypto" "^12.0.1"
-    "@otplib/plugin-thirty-two" "^12.0.1"
+    "@otplib/core" "13.0.2"
+    "@otplib/hotp" "13.0.2"
+    "@otplib/uri" "13.0.2"
+
+"@otplib/uri@13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@otplib/uri/-/uri-13.0.2.tgz#175b9a45ca89668163652d9d14e92c2c971cf505"
+  integrity sha512-wBy1Sc88noOXnuk04Ed9yaMvNL/qPDjFAt0RQG527NSERC9ZUx+51wyi8pmhmRIj4LKIHboq9TZutxJv99yjnA==
+  dependencies:
+    "@otplib/core" "13.0.2"
 
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
@@ -289,6 +301,11 @@
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.7.tgz#eb5014dfd0b03e7f3ba2eeeff506eed89b028058"
   integrity sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==
+
+"@scure/base@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-2.0.0.tgz#ba6371fddf92c2727e88ad6ab485db6e624f9a98"
+  integrity sha512-3E1kpuZginKkek01ovG8krQ0Z44E3DHPjc5S2rjJw9lZn3KSQOs8S7wqikF/AH7iRanHypj85uGyxk0XAyC37w==
 
 "@sec-ant/readable-stream@^0.4.1":
   version "0.4.1"
@@ -3030,14 +3047,17 @@ optionator@^0.9.3:
     type-check "^0.4.0"
     word-wrap "^1.2.5"
 
-otplib@^12.0.1:
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/otplib/-/otplib-12.0.1.tgz#c1d3060ab7aadf041ed2960302f27095777d1f73"
-  integrity sha512-xDGvUOQjop7RDgxTQ+o4pOol0/3xSZzawTiPKRrHnQWAy0WjhNs/5HdIDJCrqC4MBynmjXgULc6YfioaxZeFgg==
+otplib@^13.0.2:
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/otplib/-/otplib-13.0.2.tgz#7ad887823200a57d271dc73bc0b15da7a8e9bbfa"
+  integrity sha512-EJVVB2lm2VhgGFlx6hsd2h8cRreVHBr/JZGlJ1ttDZWtghysAFGJRndKurng9jTwCJ6hkLLi1lf88NnC9jVJPw==
   dependencies:
-    "@otplib/core" "^12.0.1"
-    "@otplib/preset-default" "^12.0.1"
-    "@otplib/preset-v11" "^12.0.1"
+    "@otplib/core" "13.0.2"
+    "@otplib/hotp" "13.0.2"
+    "@otplib/plugin-base32-scure" "13.0.2"
+    "@otplib/plugin-crypto-noble" "13.0.2"
+    "@otplib/totp" "13.0.2"
+    "@otplib/uri" "13.0.2"
 
 own-keys@^1.0.1:
   version "1.0.1"
@@ -3741,11 +3761,6 @@ test-exclude@^7.0.1:
     "@istanbuljs/schema" "^0.1.2"
     glob "^10.4.1"
     minimatch "^9.0.4"
-
-thirty-two@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/thirty-two/-/thirty-two-1.0.2.tgz#4ca2fffc02a51290d2744b9e3f557693ca6b627a"
-  integrity sha512-OEI0IWCe+Dw46019YLl6V10Us5bi574EvlJEOcAkB29IzQ/mYD1A6RyNHLjZPiHCmuodxvgF6U+vZO1L15lxVA==
 
 through@2, through@~2.3, through@~2.3.1:
   version "2.3.8"
